@@ -1,5 +1,6 @@
 export const environment = {
     production: true,
     baseUrl: 'https://api.monsite.com',
-    tokenClientStorage: "client_token"
+    tokenClientStorage: "client_token",
+    tokenManagerStorage: "manager_token"
 };

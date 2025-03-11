@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
     baseUrl: 'http://localhost:5000',
-    tokenClientStorage: "client_token"
+    tokenClientStorage: "client_token",
+    tokenManagerStorage : "manager_token"
 };
