@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://api.monsite.com'  // URL pour la production
-}; 
+    production: true,
+    baseUrl: 'https://api.monsite.com',
+    tokenClientStorage: "client_token"
+};
