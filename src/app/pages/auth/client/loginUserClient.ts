@@ -39,7 +39,7 @@ export class LoginClient {
     loginUser(): void {
         this.errorMessage = "";
         if (this.user.email && this.user.mdp) {
-            this.loginUserService.loginUser(this.user).subscribe(data => {
+            this.loginUserService.loginUserClient(this.user).subscribe(data => {
                 localStorage.setItem(environment.tokenClientStorage, data.token);
                 this.sucessMessage = "Connecté";
             }, error => {
