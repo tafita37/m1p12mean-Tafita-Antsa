@@ -9,19 +9,29 @@ import { Observable } from 'rxjs';
 })
 export class LoginUserService {
     private loginUserClientUrl = environment.baseUrl + "/auth/loginUserClient";
+    private loginUserMecanicienUrl = environment.baseUrl + "/auth/loginUserMecanicien";
     private loginManagerUrl = environment.baseUrl + "/auth/loginManager";
     private registerUserClientUrl = environment.baseUrl + "/auth/registerUserClient";
+    private registerUserMecanicienUrl = environment.baseUrl + "/auth/registerUserMecanicien";
     constructor(private http: HttpClient) { };
 
-    loginUser(user: any): Observable<any> {
+    loginUserClient(user: any): Observable<any> {
         return this.http.post(this.loginUserClientUrl, user);
+    }
+
+    loginUserMecanicien(user: any): Observable<any> {
+        return this.http.post(this.loginUserMecanicienUrl, user);
     }
 
     loginManager(manager: any): Observable<any> {
         return this.http.post(this.loginManagerUrl, manager);
     }
 
-    signUpUser(user: any): Observable<any> {
+    signUpUserClient(user: any): Observable<any> {
         return this.http.post(this.registerUserClientUrl, user);
+    }
+
+    signUpUserMecanicien(user: any): Observable<any> {
+        return this.http.post(this.registerUserMecanicienUrl, user);
     }
 }
