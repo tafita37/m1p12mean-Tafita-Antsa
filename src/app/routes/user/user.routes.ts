@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { CrudMecanicien } from '../../pages/crud/mecanicien/crudMecanicien';
+import { CrudUser } from '../../pages/crud/mecanicien/crudUser';
 
 export default [
     {
         path: 'crud',
-        component: CrudMecanicien
+        component: CrudUser
     },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

@@ -1,0 +1,102 @@
+<p-toolbar styleClass="mb-6">
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="users"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbNonValider"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Liste des inscriptions non validés"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Liste des mécaniciens</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="name" style="min-width: 16rem">
+                Nom
+                <p-sortIcon field="name" />
+            </th>
+            <th pSortableColumn="price" style="min-width: 8rem">
+                Prénom
+                <p-sortIcon field="price" />
+            </th>
+            <th pSortableColumn="category" style="min-width: 10rem">
+                Email
+                <p-sortIcon field="category" />
+            </th>
+            <th pSortableColumn="category" style="min-width: 10rem">
+                Role
+                <p-sortIcon field="category" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-user>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="user" />
+            </td>
+            <td style="min-width: 16rem">{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role.nom }}</td>
+            <td>
+                <p-button icon="pi pi-check" class="mr-2" [rounded]="true" [outlined]="true" (click)="validerInscription(user)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(user)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="validerInscriptionDialog" [style]="{ width: 'auto'}" [header]="'Valider l\'inscription de ' + userCliquer.nom + ' ' + userCliquer.prenom" [modal]="true" *ngIf="roleUserCliquer.niveau==10">
+    <ng-template #content>
+        <div class="flex flex-col gap-6">
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-12">
+                    <label for="price" class="block font-bold mb-3">Date d'embauche</label>
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [(ngModel)]="validerUser.dateEmbauche" [appendTo]="'body'" fluid></p-datepicker>
+                    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Confirmer" icon="pi pi-check" (click)="confirmerValidationInscription()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="validerInscriptionDialog" [style]="{ width: 'auto' }" [header]="'Valider l\'inscription de ' + userCliquer.nom + ' ' + userCliquer.prenom" [modal]="true" #elseBlock>
+    <p-select [(ngModel)]="validerUser.typeClient" [options]="typeClients" optionValue="_id" optionLabel="nom" placeholder="Type de client" [appendTo]="'body'" fluid />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Confirmer" icon="pi pi-check" (click)="confirmerValidationInscription()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
