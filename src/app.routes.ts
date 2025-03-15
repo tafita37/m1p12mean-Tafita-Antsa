@@ -5,6 +5,8 @@ import { Documentation } from './app/pages/documentation/documentation';
 import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { LoginClient } from './app/pages/auth/client/loginUserClient';
+import { AppLayoutManager } from './app/layout/component/manager/layout/app.layout';
+import { authManagerGuard } from './app/guards/authManager.guard';
 
 export const appRoutes: Routes = [
     {
@@ -23,7 +25,8 @@ export const appRoutes: Routes = [
     },
     {
         path: "manager",
-        component: AppLayout,
+        component: AppLayoutManager,
+        canActivate: [authManagerGuard],
         children: [
             { path: "", loadChildren: () => import('./app/routes/manager/manager.routes') }
         ]
