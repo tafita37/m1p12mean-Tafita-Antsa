@@ -6,5 +6,9 @@ export default [
         path: 'user',
         loadChildren: () => import('../user/user.routes')
     },
+    {
+        path: 'piece',
+        loadChildren: () => import('../details/piece.routes')
+    },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

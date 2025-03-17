@@ -1,0 +1,82 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewPiece()" />
+        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="pieces"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbPiece"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Liste des pièces"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Liste des pièces</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="name">
+                Nom
+                <p-sortIcon field="name" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-piece>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="piece" />
+            </td>
+            <td>{{ piece.nom }}</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(piece)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newPieceDialog" [style]="{ width: 'auto' }" header="Nouvelle pièce" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="nomPieceInsert" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

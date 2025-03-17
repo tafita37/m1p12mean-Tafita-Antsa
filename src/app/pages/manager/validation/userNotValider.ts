@@ -59,10 +59,10 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './crudUser.html',
+    templateUrl: './userNotValider.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class CrudUser implements OnInit {
+export class UserNotValider implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
     validerInscriptionDialog: boolean = false;
@@ -117,8 +117,8 @@ export class CrudUser implements OnInit {
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private managerService : ManagerService
-    ) {}
+        private managerService: ManagerService
+    ) { }
 
     exportCSV() {
         this.dt.exportCSV();
@@ -137,7 +137,7 @@ export class CrudUser implements OnInit {
         });
     }
 
-    ngOnInit() : void {
+    ngOnInit(): void {
         this.loadData();
     }
 
@@ -213,7 +213,7 @@ export class CrudUser implements OnInit {
 
     deleteProduct(user: any) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer ' + user.nom+" "+user.prenom + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + user.nom + " " + user.prenom + '?',
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
