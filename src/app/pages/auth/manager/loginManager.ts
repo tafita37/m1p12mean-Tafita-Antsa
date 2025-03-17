@@ -42,7 +42,7 @@ export class LoginManager {
             this.loginUserService.loginManager(this.manager).subscribe(data => {
                 localStorage.setItem(environment.tokenManagerStorage, data.token);
                 this.sucessMessage = "Connecté";
-                this.router.navigate(['/manager/user/crud']);
+                this.router.navigate(['/manager/user/userNotValider']);
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
                 this.errorMessage = error.error.message;

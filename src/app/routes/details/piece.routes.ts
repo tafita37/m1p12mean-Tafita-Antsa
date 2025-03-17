@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { UserNotValider } from '../../pages/manager/validation/userNotValider';
+import { UserNotValider } from '../../pages/manager/details/crudPiece';
 
 export default [
     {
-        path: 'userNotValider',
+        path: 'crud',
         component: UserNotValider
     },
     { path: '**', redirectTo: '/notfound' }

@@ -16,7 +16,11 @@ export class AppSidebarManager {
         this.model = [
             {
                 label: 'Accueil',
-                items: [{ label: 'Utilisateurs', icon: 'pi pi-fw pi-user', routerLink: ['/manager/user/crud'] }]
+                items: [{ label: 'Inscription à valider', icon: 'pi pi-fw pi-user', routerLink: ['/manager/user/userNotValider'] }]
+            },
+            {
+                label: 'Données',
+                items: [{ label: 'Pièces', icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/piece/crud'] }]
             },
             // {
             //     label: 'UI Components',
