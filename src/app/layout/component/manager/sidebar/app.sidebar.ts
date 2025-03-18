@@ -20,7 +20,17 @@ export class AppSidebarManager {
             },
             {
                 label: 'Données',
-                items: [{ label: 'Pièces', icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/piece/crud'] }]
+                items: [
+                    {
+                        label: 'Pièces', icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/piece/crud']
+                    },
+                    {
+                        label: 'Détails pièces', icon: 'pi pi-cog pi-wrench', routerLink: ['/manager/piece/crudDetail']
+                    },
+                    {
+                        label: 'Marques', icon: 'pi pi-car pi-wrench', routerLink: ['/manager/marque/crud']
+                    }
+                ]
             },
             // {
             //     label: 'UI Components',

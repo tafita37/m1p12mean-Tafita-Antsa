@@ -20,8 +20,8 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../service/product.service';
-import { ManagerService, UserInterface } from '../../../service/manager/manager.service';
+import { ProductService } from '../../../service/product.service';
+import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
 
 interface Column {
     field: string;
@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-crud-marque',
     standalone: true,
     imports: [
         CommonModule,
@@ -59,17 +59,17 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './crudPiece.html',
+    templateUrl: './crudMarque.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class UserNotValider implements OnInit {
+export class CRUDMarque implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
-    newPieceDialog: boolean = false;
-    updatePieceDialog: boolean = false;
-    nomPieceInsert : string = '';
-    pieceCliquer : {nom: string, idPiece: string} = {nom: '', idPiece: ''};
-    pieces: [] = [];
+    newMarqueDialog: boolean = false;
+    updateMarqueDialog: boolean = false;
+    nomMarqueInsert: string = '';
+    marqueCliquer: { nom: string, idMarque: string } = { nom: '', idMarque: '' };
+    marques: [] = [];
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -110,7 +110,7 @@ export class UserNotValider implements OnInit {
 
     cols!: Column[];
 
-    nbPiece: number = 0;
+    nbMarque: number = 0;
 
     loading: boolean = false;
 
@@ -129,10 +129,10 @@ export class UserNotValider implements OnInit {
         if (event) {
             page = event.first / event.rows;
         }
-        this.pieces = [];
-        this.managerService.getListPiece(page).subscribe(data => {
-            this.pieces = data.pieces;
-            this.nbPiece = data.nbPiece;
+        this.marques = [];
+        this.managerService.getListMarque(page).subscribe(data => {
+            this.marques = data.marques;
+            this.nbMarque = data.nbMarque;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
@@ -146,17 +146,17 @@ export class UserNotValider implements OnInit {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-    openInsertNewPiece() {
-        this.nomPieceInsert = "";
+    openInsertNewMarque() {
+        this.nomMarqueInsert = "";
         this.submitted = false;
-        this.newPieceDialog = true;
+        this.newMarqueDialog = true;
     }
 
-    openUpdatePiece(piece:any) {
-        this.pieceCliquer.idPiece = piece._id;
-        this.pieceCliquer.nom = piece.nom;
+    openUpdateMarque(marque: any) {
+        this.marqueCliquer.idMarque = marque._id;
+        this.marqueCliquer.nom = marque.nom;
         this.submitted = false;
-        this.updatePieceDialog = true;
+        this.updateMarqueDialog = true;
     }
 
 
@@ -168,20 +168,18 @@ export class UserNotValider implements OnInit {
         this.userCliquer = JSON.parse(JSON.stringify(user));
         this.roleUserCliquer = JSON.parse(JSON.stringify(user.role));
         this.validerUser.typeClient = this.userCliquer.client.typeClient;
-        this.newPieceDialog = true;
+        this.newMarqueDialog = true;
     }
 
-    insertPiece() {
-        this.validerUser.idUser = this.userCliquer._id;
-
-        if (!this.nomPieceInsert) {
-            this.errorMessage = "Le nom de pièce est obligatoire";
-        }  else {
-            this.managerService.insertPiece(
-                this.nomPieceInsert
+    insertMarque() {
+        if (!this.nomMarqueInsert) {
+            this.errorMessage = "Le nom de la marque est obligatoire";
+        } else {
+            this.managerService.insertMarque(
+                this.nomMarqueInsert
             ).subscribe({
                 next: (data) => {
-                    this.hideNewPieceDialog();     // Fermer le dialogue après le succès
+                    this.hideNewMarqueDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
@@ -191,16 +189,16 @@ export class UserNotValider implements OnInit {
         }
     }
 
-    updatePiece() {
-        if (!this.pieceCliquer.idPiece||!this.pieceCliquer.nom) {
-            this.errorMessage = "Veuillez indiquer la pièce que vous souhaitez modifier";
+    updateMarque() {
+        if (!this.marqueCliquer.idMarque || !this.marqueCliquer.nom) {
+            this.errorMessage = "Veuillez indiquer la marque que vous souhaitez modifier";
         } else {
-            this.managerService.updatePiece(
-                this.pieceCliquer.idPiece,
-                this.pieceCliquer.nom
+            this.managerService.updateMarque(
+                this.marqueCliquer.idMarque,
+                this.marqueCliquer.nom
             ).subscribe({
                 next: (data) => {
-                    this.hideUpdatePieceDialog();     // Fermer le dialogue après le succès
+                    this.hideUpdateMarqueDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
@@ -221,7 +219,7 @@ export class UserNotValider implements OnInit {
                 console.log(ids);
 
 
-                this.managerService.deletePiece(
+                this.managerService.deleteMarque(
                     ids
                 ).subscribe({
                     next: (data) => {
@@ -230,6 +228,7 @@ export class UserNotValider implements OnInit {
                         this.loadData();       // Recharger les données après le succès
                     },
                     error: (error) => {
+                        alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
                     }
                 });
@@ -237,30 +236,31 @@ export class UserNotValider implements OnInit {
         });
     }
 
-    hideNewPieceDialog() {
-        this.newPieceDialog = false;
+    hideNewMarqueDialog() {
+        this.newMarqueDialog = false;
         this.submitted = false;
     }
 
-    hideUpdatePieceDialog() {
-        this.updatePieceDialog = false;
+    hideUpdateMarqueDialog() {
+        this.updateMarqueDialog = false;
         this.submitted = false;
     }
 
-    deletePiece(piece: any) {
+    deleteMarque(marque: any) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer ' + piece.nom + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + marque.nom + '?',
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.managerService.deletePiece(
-                    [piece._id]
+                this.managerService.deleteMarque(
+                    [marque._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
                     },
                     error: (error) => {
+                        alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
                     }
                 });
@@ -276,8 +276,8 @@ export class UserNotValider implements OnInit {
 
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.pieces.length; i++) {
-            if (this.pieces[i]["_id"] === id) {
+        for (let i = 0; i < this.marques.length; i++) {
+            if (this.marques[i]["_id"] === id) {
                 index = i;
                 break;
             }

@@ -1,0 +1,121 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewDetailPiece()" />
+        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="detailPieces"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbDetailPiece"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Liste des détails de pièces"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Liste des détails pièces</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="piece">
+                Pièce
+                <p-sortIcon field="piece" />
+            </th>
+            <th pSortableColumn="marque">
+                Marque
+                <p-sortIcon field="marque" />
+            </th>
+            <th pSortableColumn="prixAchat">
+                Prix d'achat actuel
+                <p-sortIcon field="prixAchat" />
+            </th>
+            <th pSortableColumn="prixVente">
+                Prix de vente
+                <p-sortIcon field="prixVente" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-detail>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="detail" />
+            </td>
+            <td>{{ detail.piece.nom }}</td>
+            <td>{{ detail.marque.nom }}</td>
+            <td>{{ detail.prixAchat | number }} Ar</td>
+            <td>{{ detail.prixVente | number }} Ar</td>
+            <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdateDetailPiece(detail)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteDetailPiece(detail)" />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newPieceDetailDialog" [style]="{ width: '450px' }" header="Créer" [modal]="true">
+    <div>
+        <label for="piece" class="block font-bold">Piece</label>
+        <p-select [(ngModel)]="detailInsert.idPiece" [options]="allPieces" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Piece" [appendTo]="'body'" fluid />
+    </div>
+    <div>
+        <label for="marque" class="block font-bold">Marque</label>
+        <p-select [(ngModel)]="detailInsert.idMarque" [options]="allMarques" optionValue="_id" styleClass="mb-3" optionLabel="nom" placeholder="Marque" [appendTo]="'body'" fluid />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <label for="prixAchat" class="block font-bold mb-3">Prix d'achat</label>
+            <p-inputnumber id="prixAchat" fluid  [(ngModel)]="detailInsert.prixAchat"/>
+        </div>
+        <div class="col-span-6">
+            <label for="prixVente" class="block font-bold mb-3">Prix de vente</label>
+            <p-inputnumber id="prixVente" fluid  [(ngModel)]="detailInsert.prixVente"/>
+        </div>
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewPieceDetailDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertDetailPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: '450px' }" header="Modifier" [modal]="true">
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <label for="prixAchat" class="block font-bold mb-3">Prix d'achat</label>
+            <p-inputnumber id="prixAchat" fluid  [(ngModel)]="detailModif.prixAchat"/>
+        </div>
+        <div class="col-span-6">
+            <label for="prixVente" class="block font-bold mb-3">Prix de vente</label>
+            <p-inputnumber id="prixVente" fluid  [(ngModel)]="detailModif.prixVente"/>
+        </div>
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdateDetailPieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updateDetailPiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

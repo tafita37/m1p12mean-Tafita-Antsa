@@ -20,8 +20,8 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../service/product.service';
-import { ManagerService, UserInterface } from '../../../service/manager/manager.service';
+import { ProductService } from '../../../../service/product.service';
+import { ManagerService } from '../../../../../service/manager/manager.service';
 
 interface Column {
     field: string;
@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-crud-detail-piece',
     standalone: true,
     imports: [
         CommonModule,
@@ -59,17 +59,25 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './userNotValider.html',
+    templateUrl: './crudDetailPiece.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class UserNotValider implements OnInit {
+export class CRUDDetailsPiece implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
-    validerInscriptionDialog: boolean = false;
-
-    users: [] = [];
-
-    typeClients: [] = [];
+    newPieceDetailDialog: boolean = false;
+    updatePieceDialog: boolean = false;
+    nomPieceInsert: string = '';
+    pieceCliquer: { nom: string, idPiece: string } = { nom: '', idPiece: '' };
+    detailPieces: [] = [];
+    allMarques: [] = [];
+    allPieces: [] = [];
+    detailInsert: {
+        idMarque: string, idPiece: string, prixAchat: number, prixVente: number
+    } = { idMarque: '', idPiece: '', prixAchat: 0, prixVente: 0 };
+    detailModif: {
+        idDetailPiece : string, prixAchat: number, prixVente: number
+    } = { idDetailPiece: '', prixAchat: 0, prixVente: 0 };
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -98,7 +106,7 @@ export class UserNotValider implements OnInit {
 
     minDate: Date = new Date('2000-01-01');
 
-    selectedProducts!: UserInterface[] | null;
+    selectedProducts: { _id: string, name: string }[] = [];
 
     submitted: boolean = false;
 
@@ -110,7 +118,7 @@ export class UserNotValider implements OnInit {
 
     cols!: Column[];
 
-    nbNonValider: number = 0;
+    nbDetailPiece: number = 0;
 
     loading: boolean = false;
 
@@ -125,13 +133,17 @@ export class UserNotValider implements OnInit {
     }
 
     loadData(event: any | null = null): void {
-        const page = event ? event.first / event.rows : 1;
-        this.users = [];
-        this.typeClients = [];
-        this.managerService.getListUserUnvalidate(page).subscribe(data => {
-            this.users = data.user;
-            this.typeClients = data.typeClients;
-            this.nbNonValider = data.nbUser;
+        var page = 1;
+        if (event) {
+            page = event.first / event.rows;
+        }
+        this.detailPieces = [];
+        this.managerService.getListDetailPiece(page).subscribe(data => {
+            this.detailPieces = data.detailPieces;
+            this.nbDetailPiece = data.nbDetailsPiece;
+            this.allMarques = data.marques;
+            this.allPieces = data.pieces;
+
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
@@ -145,11 +157,22 @@ export class UserNotValider implements OnInit {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-    openNew() {
-        this.userCliquer = {};
+    openInsertNewDetailPiece() {
+        this.errorMessage = "";
+        this.nomPieceInsert = "";
         this.submitted = false;
-        this.validerInscriptionDialog = true;
+        this.newPieceDetailDialog = true;
     }
+
+    openUpdateDetailPiece(piece: any) {
+        this.errorMessage = "";
+        this.detailModif.idDetailPiece = piece._id;
+        this.detailModif.prixAchat = piece.prixAchat;
+        this.detailModif.prixVente = piece.prixVente;
+        this.submitted = false;
+        this.updatePieceDialog = true;
+    }
+
 
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
@@ -159,25 +182,50 @@ export class UserNotValider implements OnInit {
         this.userCliquer = JSON.parse(JSON.stringify(user));
         this.roleUserCliquer = JSON.parse(JSON.stringify(user.role));
         this.validerUser.typeClient = this.userCliquer.client.typeClient;
-        this.validerInscriptionDialog = true;
+        this.newPieceDetailDialog = true;
     }
 
-    confirmerValidationInscription() {
+    insertDetailPiece() {
         this.validerUser.idUser = this.userCliquer._id;
 
-        if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
-            this.errorMessage = "Veuillez entrer le type de client";
-        } else if (this.roleUserCliquer.niveau === 10 && this.validerUser.dateEmbauche === null) {
-            this.errorMessage = "Veuillez entrer la date d'embauche";
+        if (!this.detailInsert.idPiece || !this.detailInsert.idMarque || !this.detailInsert.prixAchat || !this.detailInsert.prixVente || this.detailInsert.prixAchat==0 || this.detailInsert.prixVente==0) {
+            this.errorMessage = "Veuillez entrer les données corrects";
         } else {
-            this.managerService.validerInscription(
-                this.validerUser.idUser,
-                this.validerUser.typeClient,
-                this.validerUser.dateEmbauche
+            this.managerService.insertDetailPiece(
+                this.detailInsert.idPiece,
+                this.detailInsert.idMarque,
+                this.detailInsert.prixAchat,
+                this.detailInsert.prixVente,
             ).subscribe({
                 next: (data) => {
-                    console.log(data.message);
-                    this.hideDialog();     // Fermer le dialogue après le succès
+                    this.hideNewPieceDetailDialog();     // Fermer le dialogue après le succès
+                    this.loadData();       // Recharger les données après le succès
+                },
+                error: (error) => {
+                    this.errorMessage = error.error.message;
+                    console.error('Erreur lors de la connexion:', error);
+                }
+            });
+        }
+    }
+
+    updateDetailPiece() {
+        if (
+            !this.detailModif.idDetailPiece ||
+            !this.detailModif.prixAchat ||
+            !this.detailModif.prixVente ||
+            this.detailModif.prixAchat == 0 ||
+            this.detailModif.prixVente == 0
+        ) {
+            this.errorMessage = "Veuillez entrer les données corrects";
+        } else {
+            this.managerService.updateDetailPiece(
+                this.detailModif.idDetailPiece,
+                this.detailModif.prixAchat,
+                this.detailModif.prixVente
+            ).subscribe({
+                next: (data) => {
+                    this.hideUpdateDetailPieceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
@@ -190,39 +238,51 @@ export class UserNotValider implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete the selected products?',
+            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                // this.users.set(this.users().filter((val) => !this.selectedProducts?.includes(val)));
-                this.selectedProducts = null;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Products Deleted',
-                    life: 3000
+                const ids = this.selectedProducts.map(product => product._id);
+                console.log(ids);
+
+
+                this.managerService.deleteDetailPiece(
+                    ids
+                ).subscribe({
+                    next: (data) => {
+                        console.log(data.message);
+                        // this.hideDialog();     // Fermer le dialogue après le succès
+                        this.loadData();       // Recharger les données après le succès
+                    },
+                    error: (error) => {
+                        console.error('Erreur lors de la connexion:', error);
+                    }
                 });
             }
         });
     }
 
-    hideDialog() {
-        this.validerInscriptionDialog = false;
+    hideNewPieceDetailDialog() {
+        this.newPieceDetailDialog = false;
         this.submitted = false;
     }
 
-    deleteProduct(user: any) {
+    hideUpdateDetailPieceDialog() {
+        this.updatePieceDialog = false;
+        this.submitted = false;
+    }
+
+    deleteDetailPiece(piece: any) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer ' + user.nom + " " + user.prenom + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + piece.piece.nom + ' de '+ piece.marque.nom + '?',
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.managerService.refuserInscription(
-                    user._id
+                this.managerService.deleteDetailPiece(
+                    [piece._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
-                        this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
                     },
                     error: (error) => {
@@ -241,8 +301,8 @@ export class UserNotValider implements OnInit {
 
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.users.length; i++) {
-            if (this.users[i]["_id"] === id) {
+        for (let i = 0; i < this.detailPieces.length; i++) {
+            if (this.detailPieces[i]["_id"] === id) {
                 index = i;
                 break;
             }

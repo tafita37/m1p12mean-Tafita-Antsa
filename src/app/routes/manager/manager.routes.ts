@@ -10,5 +10,9 @@ export default [
         path: 'piece',
         loadChildren: () => import('../details/piece.routes')
     },
+    {
+        path: 'marque',
+        loadChildren: () => import('../details/marque.routes')
+    },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;
