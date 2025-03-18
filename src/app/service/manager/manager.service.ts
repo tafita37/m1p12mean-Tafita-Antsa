@@ -26,9 +26,17 @@ export class ManagerService {
     private validerUserInscriptionUrl = environment.baseUrl + "/manager/validerInscription";
     private refuserUserInscriptionUrl = environment.baseUrl + "/manager/refuserInscription";
     private listPiecePaginateUrl = environment.baseUrl + "/manager/piece/allPiece";
+    private listDetailPiecePaginateUrl = environment.baseUrl + "/manager/piece/details/allDetailPiece";
+    private listMarquePaginateUrl = environment.baseUrl + "/manager/marque/allMarque";
     private ajoutPieceUrl = environment.baseUrl + "/manager/piece/insert";
+    private ajoutPieceDetailUrl = environment.baseUrl + "/manager/piece/details/insert";
+    private ajoutMarqueUrl = environment.baseUrl + "/manager/marque/insert";
     private updatePieceUrl = environment.baseUrl + "/manager/piece/update";
+    private updateDetailPieceUrl = environment.baseUrl + "/manager/piece/details/update";
+    private updateMarqueUrl = environment.baseUrl + "/manager/marque/update";
     private deletePieceUrl = environment.baseUrl + "/manager/piece/delete";
+    private deleteDetailPieceUrl = environment.baseUrl + "/manager/piece/details/delete";
+    private deleteMarqueUrl = environment.baseUrl + "/manager/marque/delete";
 
     constructor(private http: HttpClient) { };
 
@@ -50,6 +58,24 @@ export class ManagerService {
         return this.http.get(this.listPiecePaginateUrl + "?page=" + numPage, { headers });
     }
 
+    getListDetailPiece(numPage: Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(this.listDetailPiecePaginateUrl + "?page=" + numPage, { headers });
+    }
+
+    getListMarque(numPage: Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(this.listMarquePaginateUrl + "?page=" + numPage, { headers });
+    }
+
     validerInscription(idUser: string, typeClient: string | null, dateEmbauche: Date | null): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
@@ -68,6 +94,24 @@ export class ManagerService {
         return this.http.post(this.ajoutPieceUrl, { nom }, { headers });
     }
 
+    insertDetailPiece(idPiece : string, idMarque : string, prixAchat : number, prixVente : Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque, prixAchat, prixVente }, { headers });
+    }
+
+    insertMarque(nom : String): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.ajoutMarqueUrl, { nom }, { headers });
+    }
+
     updatePiece(idPiece: string, nom: string): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
@@ -77,6 +121,28 @@ export class ManagerService {
         return this.http.post(this.updatePieceUrl, { idPiece, nom }, { headers });
     }
 
+    updateDetailPiece(idDetailPiece : string, prixAchat: number, prixVente: number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(
+            this.updateDetailPieceUrl,
+            { idDetailPiece: idDetailPiece, prixAchat: prixAchat, prixVente: prixVente },
+            { headers }
+        );
+    }
+
+    updateMarque(idMarque: string, nom: string): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.updateMarqueUrl, { idMarque, nom }, { headers });
+    }
+
     deletePiece(idPieces: string[]): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
@@ -84,6 +150,24 @@ export class ManagerService {
         });
 
         return this.http.post(this.deletePieceUrl, { idPieces }, { headers });
+    }
+
+    deleteDetailPiece(idDetailPieces: string[]): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.deleteDetailPieceUrl, { idDetailPieces }, { headers });
+    }
+
+    deleteMarque(idMarques: string[]): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.deleteMarqueUrl, { idMarques }, { headers });
     }
 
     refuserInscription(idUser: string): Observable<any> {
