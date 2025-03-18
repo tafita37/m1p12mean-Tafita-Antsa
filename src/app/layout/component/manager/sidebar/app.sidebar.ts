@@ -16,7 +16,13 @@ export class AppSidebarManager {
         this.model = [
             {
                 label: 'Accueil',
-                items: [{ label: 'Inscription à valider', icon: 'pi pi-fw pi-user', routerLink: ['/manager/user/userNotValider'] }]
+                items: [
+                    {
+                        label: 'Inscription à valider',
+                        icon: 'pi pi-fw pi-user',
+                        routerLink: ['/manager/user/userNotValider']
+                    }
+                ]
             },
             {
                 label: 'Données',
@@ -29,6 +35,11 @@ export class AppSidebarManager {
                     },
                     {
                         label: 'Marques', icon: 'pi pi-car pi-wrench', routerLink: ['/manager/marque/crud']
+                    },
+                    {
+                        label: 'Fournisseur',
+                        icon: 'pi pi-users pi-wrench',
+                        routerLink: ['/manager/piece/crudFournisseur']
                     }
                 ]
             },

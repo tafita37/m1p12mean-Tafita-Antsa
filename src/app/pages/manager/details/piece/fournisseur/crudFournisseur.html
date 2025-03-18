@@ -1,0 +1,137 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button
+            label="New"
+            icon="pi pi-plus"
+            severity="secondary"
+            class="mr-2"
+            (onClick)="openInsertNewFournisseur()"
+        />
+        <p-button
+            severity="secondary"
+            label="Delete"
+            icon="pi pi-trash"
+            outlined
+            (onClick)="deleteSelectedProducts()"
+            [disabled]="!selectedProducts || !selectedProducts.length"
+        />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="fournisseurs"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbFournisseur"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Liste des fournisseurs"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Liste des fournisseurs</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="nom">
+                Nom
+                <p-sortIcon field="nom" />
+            </th>
+            <th pSortableColumn="contact">
+                Contact
+                <p-sortIcon field="contact" />
+            </th>
+            <th pSortableColumn="email">
+                Email
+                <p-sortIcon field="email" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-fournisseur>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="fournisseur" />
+            </td>
+            <td>{{ fournisseur.nom }}</td>
+            <td>{{ fournisseur.contact }}</td>
+            <td>{{ fournisseur.email }}</td>
+            <td>
+                <p-button
+                    icon="pi pi-pencil"
+                    class="mr-2"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="openUpdateFournisseur(fournisseur)"
+                />
+                <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="deleteFournisseur(fournisseur)"
+                />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newFournisseurDialog" [style]="{ width: '300px' }" header="Créer" [modal]="true">
+    <div class="mb-3">
+        <label for="nom" class="block font-bold">Nom</label>
+        <input type="text" pInputText id="nom" required autofocus fluid [(ngModel)]="fournisseurInsert.nom" />
+    </div>
+    <div class="mb-3">
+        <label for="contact" class="block font-bold">Contact</label>
+        <input type="text" pInputText id="contact" required autofocus fluid  [(ngModel)]="fournisseurInsert.contact" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="block font-bold">Email</label>
+        <input type="email" pInputText id="email" required autofocus fluid  [(ngModel)]="fournisseurInsert.email" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewFournisseurDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertFournisseur()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: '300px' }" header="Modifier" [modal]="true">
+    <div class="mb-3">
+        <label for="nom" class="block font-bold">Nom</label>
+        <input type="text" pInputText id="nom" required autofocus fluid [(ngModel)]="fournisseurModif.nom" />
+    </div>
+    <div class="mb-3">
+        <label for="contact" class="block font-bold">Contact</label>
+        <input type="text" pInputText id="contact" required autofocus fluid  [(ngModel)]="fournisseurModif.contact" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="block font-bold">Email</label>
+        <input type="email" pInputText id="email" required autofocus fluid  [(ngModel)]="fournisseurModif.email" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdateDetailPieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updateFournisseur()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

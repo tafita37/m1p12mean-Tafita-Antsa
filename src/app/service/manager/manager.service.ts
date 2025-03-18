@@ -27,15 +27,19 @@ export class ManagerService {
     private refuserUserInscriptionUrl = environment.baseUrl + "/manager/refuserInscription";
     private listPiecePaginateUrl = environment.baseUrl + "/manager/piece/allPiece";
     private listDetailPiecePaginateUrl = environment.baseUrl + "/manager/piece/details/allDetailPiece";
+    private listFournisseurPaginateUrl = environment.baseUrl + "/manager/fournisseur/allFournisseur";
     private listMarquePaginateUrl = environment.baseUrl + "/manager/marque/allMarque";
     private ajoutPieceUrl = environment.baseUrl + "/manager/piece/insert";
     private ajoutPieceDetailUrl = environment.baseUrl + "/manager/piece/details/insert";
+    private ajoutFournisseurUrl = environment.baseUrl + "/manager/fournisseur/insert";
     private ajoutMarqueUrl = environment.baseUrl + "/manager/marque/insert";
     private updatePieceUrl = environment.baseUrl + "/manager/piece/update";
     private updateDetailPieceUrl = environment.baseUrl + "/manager/piece/details/update";
+    private updateFournisseurUrl = environment.baseUrl + "/manager/fournisseur/update";
     private updateMarqueUrl = environment.baseUrl + "/manager/marque/update";
     private deletePieceUrl = environment.baseUrl + "/manager/piece/delete";
     private deleteDetailPieceUrl = environment.baseUrl + "/manager/piece/details/delete";
+    private deleteFournisseurUrl = environment.baseUrl + "/manager/fournisseur/delete";
     private deleteMarqueUrl = environment.baseUrl + "/manager/marque/delete";
 
     constructor(private http: HttpClient) { };
@@ -65,6 +69,15 @@ export class ManagerService {
         });
 
         return this.http.get(this.listDetailPiecePaginateUrl + "?page=" + numPage, { headers });
+    }
+
+    getListFournisseur(numPage: Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(this.listFournisseurPaginateUrl + "?page=" + numPage, { headers });
     }
 
     getListMarque(numPage: Number): Observable<any> {
@@ -103,6 +116,15 @@ export class ManagerService {
         return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque, prixAchat, prixVente }, { headers });
     }
 
+    insertFournisseur(nom : string, contact : string, email : string): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.ajoutFournisseurUrl, {nom, contact, email }, { headers });
+    }
+
     insertMarque(nom : String): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
@@ -134,6 +156,19 @@ export class ManagerService {
         );
     }
 
+    updateFournisseur(idFournisseur : string, nom : string, contact : string, email : string): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(
+            this.updateFournisseurUrl,
+            { idFournisseur, nom, contact, email },
+            { headers }
+        );
+    }
+
     updateMarque(idMarque: string, nom: string): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
@@ -159,6 +194,15 @@ export class ManagerService {
         });
 
         return this.http.post(this.deleteDetailPieceUrl, { idDetailPieces }, { headers });
+    }
+
+    deleteFournisseur(idFournisseurs: string[]): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.deleteFournisseurUrl, { idFournisseurs }, { headers });
     }
 
     deleteMarque(idMarques: string[]): Observable<any> {
