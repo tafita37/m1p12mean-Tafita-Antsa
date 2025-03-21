@@ -43,6 +43,14 @@ export class AppSidebarManager {
                     }
                 ]
             },
+            {
+                label: 'Stock',
+                items: [
+                    {
+                        label: 'Pièces', icon: 'pi pi-box pi-wrench', routerLink: ['/manager/piece/stock']
+                    }
+                ]
+            },
             // {
             //     label: 'UI Components',
             //     items: [
