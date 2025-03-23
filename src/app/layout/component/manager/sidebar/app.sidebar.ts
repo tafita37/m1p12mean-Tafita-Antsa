@@ -18,6 +18,17 @@ export class AppSidebarManager {
                 label: 'Accueil',
                 items: [
                     {
+                        label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/manager/dashboard']
+                    },
+                    {
+                        label: 'Stock', icon: 'pi pi-box pi-wrench', routerLink: ['/manager/piece/stock']
+                    },
+                ]
+            },
+            {
+                label: 'Validation',
+                items: [
+                    {
                         label: 'Inscription à valider',
                         icon: 'pi pi-fw pi-user',
                         routerLink: ['/manager/user/userNotValider']
