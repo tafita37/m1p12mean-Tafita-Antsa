@@ -1,16 +1,13 @@
 import { Component } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
-import { LayoutService } from '../../../layout/service/layout.service';
+import { LayoutService } from '../../../../../layout/service/layout.service';
 
 @Component({
     standalone: true,
     selector: 'app-revenue-stream-widget',
     imports: [ChartModule],
-    template: `<div class="card !mb-8">
-        <div class="font-semibold text-xl mb-4">Revenue Stream</div>
-        <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-80" />
-    </div>`
+    templateUrl: "./revenuestreamwidget.html"
 })
 export class RevenueStreamWidget {
     chartData: any;
@@ -36,35 +33,34 @@ export class RevenueStreamWidget {
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
 
         this.chartData = {
-            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            labels: [
+                'Janvier',
+                'Fevrier',
+                'Mars',
+                'Avril',
+                'Mai',
+                'Juin',
+                'Juillet',
+                'Aout',
+                'Septembre',
+                'Octobre',
+                'Novembre',
+                'Décembre'
+            ],
             datasets: [
                 {
                     type: 'bar',
-                    label: 'Subscriptions',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                    data: [4000, 10000, 15000, 4000],
-                    barThickness: 32
-                },
-                {
-                    type: 'bar',
-                    label: 'Advertising',
+                    label: 'Pièces',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
-                    data: [2100, 8400, 2400, 7500],
-                    barThickness: 32
+                    data: [5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000],
+                    barThickness: 10
                 },
                 {
                     type: 'bar',
-                    label: 'Affiliate',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
-                    data: [4100, 5200, 3400, 7400],
-                    borderRadius: {
-                        topLeft: 8,
-                        topRight: 8,
-                        bottomLeft: 0,
-                        bottomRight: 0
-                    },
-                    borderSkipped: false,
-                    barThickness: 32
+                    label: 'Services',
+                    backgroundColor: documentStyle.getPropertyValue('--p-primary-700'),
+                    data: [2100, 8400, 2400, 7500, 5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000],
+                    barThickness: 10
                 }
             ]
         };

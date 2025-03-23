@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
@@ -20,10 +20,9 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../../../service/product.service';
-import { ManagerService, UserInterface } from '../../../../../service/manager/manager.service';
-import { StockService } from '../../../../../service/manager/stock/stock.service';
-import { Router } from '@angular/router';
+import { ProductService } from '../../../../../service/product.service';
+import { StockService } from '../../../../../../service/manager/stock/stock.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface Column {
     field: string;
@@ -37,7 +36,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-liste-mouvement',
     standalone: true,
     imports: [
         CommonModule,
@@ -61,21 +60,27 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './stockPiece.html',
+    templateUrl: './listeMouvement.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class StockPiece implements OnInit {
+export class ListeMouvement implements OnInit {
+    idDetailPiece: string='';
+
     errorMessage: string = '';
     sucessMessage: string = '';
     newStockPieceDialog: boolean = false;
     updatePieceDialog: boolean = false;
     nomPieceInsert: string = '';
     pieceCliquer: { nom: string, idPiece: string } = { nom: '', idPiece: '' };
-    listStock: [] = [];
+    listMouvement: [] = [];
     allPiece: [] = [];
     allMarque: [] = [];
     allUser: [] = [];
     allFournisseur: [] = [];
+    titreAffichage: string = '';
+    typeSearch: [
+        { label: string, value: number }, { label: string, value: number }, { label: string, value: number }
+    ] = [{ label: 'Tout', value: 0 }, { label: 'Entrée', value: 1 }, { label: 'Sortie', value: -1 }];
     mouvementInsert: {
         idPiece: string,
         idMarque: string,
@@ -135,31 +140,48 @@ export class StockPiece implements OnInit {
 
     cols!: Column[];
 
-    nbStock: number = 0;
+    nbMouvement: number = 0;
 
     loading: boolean = false;
-    _selectedDate: Date = new Date();
+    _dateDebut: Date |null = null;
+    _dateFin: Date | null = null;
+    _typeMouvement : number | 0 = 0;
 
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         private stockService: StockService,
-        private router: Router
+        private route: ActivatedRoute
     ) { }
 
-    redirectListeMouvement(stock : any) {
-        this.router.navigate(['/manager/piece/listeMouvement/' + stock.detailPiece._id]);
-    }
     exportCSV() {
         this.dt.exportCSV();
     }
 
-    get selectedDate(): Date {
-        return this._selectedDate;
+    get dateDebut(): Date | null  {
+        return this._dateDebut;
     }
 
-    set selectedDate(value: Date) {
-        this._selectedDate = value;
+    set dateDebut(value: Date) {
+        this._dateDebut = value;
+        this.loadData();
+    }
+
+    get dateFin(): Date | null {
+        return this._dateFin;
+    }
+
+    set dateFin(value: Date) {
+        this._dateFin = value;
+        this.loadData();
+    }
+
+    get typeMouvement(): number {
+        return this._typeMouvement;
+    }
+
+    set typeMouvement(value: number) {
+        this._typeMouvement = value;
         this.loadData();
     }
 
@@ -168,20 +190,20 @@ export class StockPiece implements OnInit {
         if (event) {
             page = event.first / event.rows;
         }
-        this.listStock = [];
-        this.stockService.getListStock(page, this.selectedDate).subscribe(data => {
-            this.listStock = data.stock;
-            this.nbStock = data.nbStock;
-            this.allPiece = data.pieces;
-            this.allMarque = data.marques;
-            this.allUser = data.users;
-            this.allFournisseur = data.fournisseurs;
+        this.listMouvement = [];
+        this.stockService.getListeMouvement(page, this.dateDebut, this.dateFin, this.idDetailPiece, this.typeMouvement).subscribe(data => {
+            this.titreAffichage = "Mouvements de " + data.detailPiece.piece.nom + " " + data.detailPiece.marque.nom;
+            this.listMouvement = data.mouvements;
+            console.log(this.listMouvement);
+
+            this.nbMouvement = data.nbMouvements;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
     }
 
     ngOnInit(): void {
+        this.idDetailPiece = this.route.snapshot.paramMap.get('idDetailPiece')!;
         this.loadData();
     }
 
@@ -340,8 +362,8 @@ export class StockPiece implements OnInit {
 
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.listStock.length; i++) {
-            if (this.listStock[i]["_id"] === id) {
+        for (let i = 0; i < this.listMouvement.length; i++) {
+            if (this.listMouvement[i]["_id"] === id) {
                 index = i;
                 break;
             }

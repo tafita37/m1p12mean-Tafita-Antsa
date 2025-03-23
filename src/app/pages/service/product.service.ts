@@ -1262,7 +1262,7 @@ export class ProductService {
     }
 
     getProductsSmall() {
-        return Promise.resolve(this.getProductsData().slice(0, 10));
+        return Promise.resolve(this.getProductsData().slice(0, 5));
     }
 
     getProducts() {

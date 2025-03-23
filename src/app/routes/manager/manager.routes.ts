@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Crud } from './../../pages/crud/crud';
 
 export default [
     {
