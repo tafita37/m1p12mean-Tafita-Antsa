@@ -49,11 +49,11 @@
                 Marque
                 <p-sortIcon field="marque" />
             </th>
-            <th pSortableColumn="name">
+            <th pSortableColumn="name" style="text-align: right;">
                 Reste en stock
                 <p-sortIcon field="name" />
             </th>
-            <th pSortableColumn="name">
+            <th pSortableColumn="name" style="text-align: right;">
                 Coût d'achat moyen
                 <p-sortIcon field="name" />
             </th>
@@ -63,8 +63,8 @@
         <tr style="cursor: pointer" (click)="redirectListeMouvement(stock)">
             <td>{{ stock.detailPiece.piece.nom }}</td>
             <td>{{ stock.detailPiece.marque.nom }}</td>
-            <td>{{ stock.totalResteAchat | number }}</td>
-            <td>{{ stock.coutAchat | number }} Ar</td>
+            <td style="text-align: right;">{{ stock.totalResteAchat | number:'1.0-2':'fr' }}</td>
+            <td style="text-align: right;">{{ stock.coutAchat | number:'1.0-2':'fr' }} Ar</td>
             <td>
                 <!-- <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" /> -->
                 <!-- <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" /> -->

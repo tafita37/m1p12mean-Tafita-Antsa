@@ -40,8 +40,15 @@
     <div class="card mb-0">
         <div class="flex justify-between mb-4">
             <div>
-                <span class="block text-muted-color font-medium mb-4">Top fournisseur : Garage Speedy</span>
-                <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">23 pièces fournis</div>
+                <span class="block text-muted-color font-medium mb-4">
+                    Top fournisseur : {{ fournisseurStat?.fournisseurDetails?.nom }}
+                </span>
+                <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                    {{fournisseurStat?.totalQuantite | number:'1.0-2':'fr'}} pièces fournis
+                </div>
+                <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
+                    Prix Unitaire moyen : {{fournisseurStat?.prixMoyenPondere  | number:'1.0-2':'fr'}} ar
+                </div>
             </div>
             <div
                 class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border"
@@ -50,7 +57,7 @@
                 <i class="pi pi-users text-cyan-500 !text-xl"></i>
             </div>
         </div>
-        <span class="text-muted-color">Prix moyens : </span>
-        <span class="text-primary font-medium">35 000 ar </span>
+        <span class="text-muted-color">Prix total : </span>
+        <span class="text-primary font-medium">{{ fournisseurStat?.totalPrix | number:'1.0-2':'fr' }} ar </span>
     </div>
 </div>

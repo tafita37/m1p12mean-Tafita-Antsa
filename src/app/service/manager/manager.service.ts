@@ -107,13 +107,13 @@ export class ManagerService {
         return this.http.post(this.ajoutPieceUrl, { nom }, { headers });
     }
 
-    insertDetailPiece(idPiece : string, idMarque : string, prixAchat : number, prixVente : Number): Observable<any> {
+    insertDetailPiece(idPiece : string, idMarque : string): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque, prixAchat, prixVente }, { headers });
+        return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque }, { headers });
     }
 
     insertFournisseur(nom : string, contact : string, email : string): Observable<any> {

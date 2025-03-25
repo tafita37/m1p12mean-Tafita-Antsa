@@ -72,12 +72,7 @@ export class CRUDDetailsPiece implements OnInit {
     detailPieces: [] = [];
     allMarques: [] = [];
     allPieces: [] = [];
-    detailInsert: {
-        idMarque: string, idPiece: string, prixAchat: number, prixVente: number
-    } = { idMarque: '', idPiece: '', prixAchat: 0, prixVente: 0 };
-    detailModif: {
-        idDetailPiece : string, prixAchat: number, prixVente: number
-    } = { idDetailPiece: '', prixAchat: 0, prixVente: 0 };
+    detailInsert: { idMarque: string, idPiece: string} = { idMarque: '', idPiece: '' };
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -163,17 +158,6 @@ export class CRUDDetailsPiece implements OnInit {
         this.submitted = false;
         this.newPieceDetailDialog = true;
     }
-
-    openUpdateDetailPiece(piece: any) {
-        this.errorMessage = "";
-        this.detailModif.idDetailPiece = piece._id;
-        this.detailModif.prixAchat = piece.prixAchat;
-        this.detailModif.prixVente = piece.prixVente;
-        this.submitted = false;
-        this.updatePieceDialog = true;
-    }
-
-
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
     }
@@ -188,14 +172,12 @@ export class CRUDDetailsPiece implements OnInit {
     insertDetailPiece() {
         this.validerUser.idUser = this.userCliquer._id;
 
-        if (!this.detailInsert.idPiece || !this.detailInsert.idMarque || !this.detailInsert.prixAchat || !this.detailInsert.prixVente || this.detailInsert.prixAchat==0 || this.detailInsert.prixVente==0) {
+        if (!this.detailInsert.idPiece || !this.detailInsert.idMarque ) {
             this.errorMessage = "Veuillez entrer les données corrects";
         } else {
             this.managerService.insertDetailPiece(
                 this.detailInsert.idPiece,
                 this.detailInsert.idMarque,
-                this.detailInsert.prixAchat,
-                this.detailInsert.prixVente,
             ).subscribe({
                 next: (data) => {
                     this.hideNewPieceDetailDialog();     // Fermer le dialogue après le succès
@@ -208,33 +190,6 @@ export class CRUDDetailsPiece implements OnInit {
             });
         }
     }
-
-    updateDetailPiece() {
-        if (
-            !this.detailModif.idDetailPiece ||
-            !this.detailModif.prixAchat ||
-            !this.detailModif.prixVente ||
-            this.detailModif.prixAchat == 0 ||
-            this.detailModif.prixVente == 0
-        ) {
-            this.errorMessage = "Veuillez entrer les données corrects";
-        } else {
-            this.managerService.updateDetailPiece(
-                this.detailModif.idDetailPiece,
-                this.detailModif.prixAchat,
-                this.detailModif.prixVente
-            ).subscribe({
-                next: (data) => {
-                    this.hideUpdateDetailPieceDialog();     // Fermer le dialogue après le succès
-                    this.loadData();       // Recharger les données après le succès
-                },
-                error: (error) => {
-                    console.error('Erreur lors de la connexion:', error);
-                }
-            });
-        }
-    }
-
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({

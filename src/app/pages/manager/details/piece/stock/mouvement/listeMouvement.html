@@ -78,9 +78,9 @@
             <th>Fournisseur</th>
             <th>Type</th>
             <th>Date du mouvement</th>
-            <th>Quantité</th>
-            <th>Prix unitaire</th>
-            <th>Prix total</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
         </tr>
     </ng-template>
     <ng-template #body let-mouvement>
@@ -91,9 +91,9 @@
             <td *ngIf="mouvement.isEntree">Entree</td>
             <td *ngIf="!mouvement.isEntree">Sortie</td>
             <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
-            <td>{{mouvement.nb | number}}</td>
-            <td>{{mouvement.prix | number}} Ar</td>
-            <td>{{mouvement.prix*mouvement.nb | number}} Ar</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
             <!-- <td>
                 <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
                 <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
