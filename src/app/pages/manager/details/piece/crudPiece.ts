@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-crud-piece',
     standalone: true,
     imports: [
         CommonModule,

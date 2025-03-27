@@ -26,12 +26,17 @@ export class AppSidebarManager {
                 ]
             },
             {
-                label: 'Validation',
+                label: 'Utilisateur',
                 items: [
                     {
                         label: 'Inscription à valider',
                         icon: 'pi pi-fw pi-user',
                         routerLink: ['/manager/user/userNotValider']
+                    },
+                    {
+                        label: 'CRUD',
+                        icon: 'pi pi-fw pi-database',
+                        routerLink: ['/manager/user/crud']
                     }
                 ]
             },
