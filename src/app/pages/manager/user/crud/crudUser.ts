@@ -20,8 +20,8 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../service/product.service';
-import { ManagerService, UserInterface } from '../../../service/manager/manager.service';
+import { ProductService } from '../../../service/product.service';
+import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
 
 interface Column {
     field: string;
@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-user-not-valider',
     standalone: true,
     imports: [
         CommonModule,
@@ -59,17 +59,15 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './userNotValider.html',
+    templateUrl: './crudUser.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class UserNotValider implements OnInit {
+export class CRUDUser implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
     validerInscriptionDialog: boolean = false;
 
     users: [] = [];
-
-    typeClients: [] = [];
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -98,7 +96,7 @@ export class UserNotValider implements OnInit {
 
     minDate: Date = new Date('2000-01-01');
 
-    selectedProducts!: UserInterface[] | null;
+    selectedProducts: { _id: string, name: string }[] = [];
 
     submitted: boolean = false;
 
@@ -110,7 +108,7 @@ export class UserNotValider implements OnInit {
 
     cols!: Column[];
 
-    nbNonValider: number = 0;
+    nbUser: number = 0;
 
     loading: boolean = false;
 
@@ -127,11 +125,9 @@ export class UserNotValider implements OnInit {
     loadData(event: any | null = null): void {
         const page = event ? event.first / event.rows : 1;
         this.users = [];
-        this.typeClients = [];
-        this.managerService.getListUserUnvalidate(page).subscribe(data => {
-            this.users = data.user;
-            this.typeClients = data.typeClients;
-            this.nbNonValider = data.nbUser;
+        this.managerService.getListUser(page).subscribe(data => {
+            this.users = data.users;
+            this.nbUser = data.nbUser;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
@@ -194,13 +190,19 @@ export class UserNotValider implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                // this.users.set(this.users().filter((val) => !this.selectedProducts?.includes(val)));
-                this.selectedProducts = null;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Products Deleted',
-                    life: 3000
+                const ids = this.selectedProducts.map(product => product._id);
+                this.managerService.deleteUsers(
+                    ids
+                ).subscribe({
+                    next: (data) => {
+                        console.log(data.message);
+                        // this.hideDialog();     // Fermer le dialogue après le succès
+                        this.loadData();       // Recharger les données après le succès
+                    },
+                    error: (error) => {
+                        alert(error.error.message);
+                        console.error('Erreur lors de la connexion:', error);
+                    }
                 });
             }
         });

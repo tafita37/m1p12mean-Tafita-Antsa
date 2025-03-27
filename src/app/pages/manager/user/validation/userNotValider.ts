@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-marque',
+    selector: 'app-user-not-valider',
     standalone: true,
     imports: [
         CommonModule,
@@ -59,17 +59,17 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './crudMarque.html',
+    templateUrl: './userNotValider.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class CRUDMarque implements OnInit {
+export class UserNotValider implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
-    newMarqueDialog: boolean = false;
-    updateMarqueDialog: boolean = false;
-    nomMarqueInsert: string = '';
-    marqueCliquer: { nom: string, idMarque: string } = { nom: '', idMarque: '' };
-    marques: [] = [];
+    validerInscriptionDialog: boolean = false;
+
+    users: [] = [];
+
+    typeClients: [] = [];
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -98,7 +98,7 @@ export class CRUDMarque implements OnInit {
 
     minDate: Date = new Date('2000-01-01');
 
-    selectedProducts: { _id: string, name: string }[] = [];
+    selectedProducts!: UserInterface[] | null;
 
     submitted: boolean = false;
 
@@ -110,7 +110,7 @@ export class CRUDMarque implements OnInit {
 
     cols!: Column[];
 
-    nbMarque: number = 0;
+    nbNonValider: number = 0;
 
     loading: boolean = false;
 
@@ -125,14 +125,13 @@ export class CRUDMarque implements OnInit {
     }
 
     loadData(event: any | null = null): void {
-        var page = 1;
-        if (event) {
-            page = event.first / event.rows;
-        }
-        this.marques = [];
-        this.managerService.getListMarque(page).subscribe(data => {
-            this.marques = data.marques;
-            this.nbMarque = data.nbMarque;
+        const page = event ? event.first / event.rows : 1;
+        this.users = [];
+        this.typeClients = [];
+        this.managerService.getListUserUnvalidate(page).subscribe(data => {
+            this.users = data.user;
+            this.typeClients = data.typeClients;
+            this.nbNonValider = data.nbUser;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
@@ -146,19 +145,11 @@ export class CRUDMarque implements OnInit {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-    openInsertNewMarque() {
-        this.nomMarqueInsert = "";
+    openNew() {
+        this.userCliquer = {};
         this.submitted = false;
-        this.newMarqueDialog = true;
+        this.validerInscriptionDialog = true;
     }
-
-    openUpdateMarque(marque: any) {
-        this.marqueCliquer.idMarque = marque._id;
-        this.marqueCliquer.nom = marque.nom;
-        this.submitted = false;
-        this.updateMarqueDialog = true;
-    }
-
 
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
@@ -168,37 +159,25 @@ export class CRUDMarque implements OnInit {
         this.userCliquer = JSON.parse(JSON.stringify(user));
         this.roleUserCliquer = JSON.parse(JSON.stringify(user.role));
         this.validerUser.typeClient = this.userCliquer.client.typeClient;
-        this.newMarqueDialog = true;
+        this.validerInscriptionDialog = true;
     }
 
-    insertMarque() {
-        if (!this.nomMarqueInsert) {
-            this.errorMessage = "Le nom de la marque est obligatoire";
-        } else {
-            this.managerService.insertMarque(
-                this.nomMarqueInsert
-            ).subscribe({
-                next: (data) => {
-                    this.hideNewMarqueDialog();     // Fermer le dialogue après le succès
-                    this.loadData();       // Recharger les données après le succès
-                },
-                error: (error) => {
-                    console.error('Erreur lors de la connexion:', error);
-                }
-            });
-        }
-    }
+    confirmerValidationInscription() {
+        this.validerUser.idUser = this.userCliquer._id;
 
-    updateMarque() {
-        if (!this.marqueCliquer.idMarque || !this.marqueCliquer.nom) {
-            this.errorMessage = "Veuillez indiquer la marque que vous souhaitez modifier";
+        if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
+            this.errorMessage = "Veuillez entrer le type de client";
+        } else if (this.roleUserCliquer.niveau === 10 && this.validerUser.dateEmbauche === null) {
+            this.errorMessage = "Veuillez entrer la date d'embauche";
         } else {
-            this.managerService.updateMarque(
-                this.marqueCliquer.idMarque,
-                this.marqueCliquer.nom
+            this.managerService.validerInscription(
+                this.validerUser.idUser,
+                this.validerUser.typeClient,
+                this.validerUser.dateEmbauche
             ).subscribe({
                 next: (data) => {
-                    this.hideUpdateMarqueDialog();     // Fermer le dialogue après le succès
+                    console.log(data.message);
+                    this.hideDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
@@ -211,53 +190,42 @@ export class CRUDMarque implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
+            message: 'Are you sure you want to delete the selected products?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                const ids = this.selectedProducts.map(product => product._id);
-                this.managerService.deleteMarque(
-                    ids
-                ).subscribe({
-                    next: (data) => {
-                        console.log(data.message);
-                        // this.hideDialog();     // Fermer le dialogue après le succès
-                        this.loadData();       // Recharger les données après le succès
-                    },
-                    error: (error) => {
-                        alert(error.error.message);
-                        console.error('Erreur lors de la connexion:', error);
-                    }
+                // this.users.set(this.users().filter((val) => !this.selectedProducts?.includes(val)));
+                this.selectedProducts = null;
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    detail: 'Products Deleted',
+                    life: 3000
                 });
             }
         });
     }
 
-    hideNewMarqueDialog() {
-        this.newMarqueDialog = false;
+    hideDialog() {
+        this.validerInscriptionDialog = false;
         this.submitted = false;
     }
 
-    hideUpdateMarqueDialog() {
-        this.updateMarqueDialog = false;
-        this.submitted = false;
-    }
-
-    deleteMarque(marque: any) {
+    deleteProduct(user: any) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer ' + marque.nom + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + user.nom + " " + user.prenom + '?',
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.managerService.deleteMarque(
-                    [marque._id]
+                this.managerService.refuserInscription(
+                    user._id
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
+                        this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
                     },
                     error: (error) => {
-                        alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
                     }
                 });
@@ -273,8 +241,8 @@ export class CRUDMarque implements OnInit {
 
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.marques.length; i++) {
-            if (this.marques[i]["_id"] === id) {
+        for (let i = 0; i < this.users.length; i++) {
+            if (this.users[i]["_id"] === id) {
                 index = i;
                 break;
             }
