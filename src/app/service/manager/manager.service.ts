@@ -35,6 +35,7 @@ export class ManagerService {
     private ajoutFournisseurUrl = environment.baseUrl + "/manager/fournisseur/insert";
     private ajoutMarqueUrl = environment.baseUrl + "/manager/marque/insert";
     private updatePieceUrl = environment.baseUrl + "/manager/piece/update";
+    private updateUserUrl = environment.baseUrl + "/manager/user/update";
     private updateDetailPieceUrl = environment.baseUrl + "/manager/piece/details/update";
     private updateFournisseurUrl = environment.baseUrl + "/manager/fournisseur/update";
     private updateMarqueUrl = environment.baseUrl + "/manager/marque/update";
@@ -152,6 +153,21 @@ export class ManagerService {
         });
 
         return this.http.post(this.updatePieceUrl, { idPiece, nom }, { headers });
+    }
+
+    updateUser(
+        idUser: string,
+        nom: string,
+        prenom: string,
+        email: string,
+        other: { typeClient: string | null, dateEmbauche: Date | null }
+    ): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.updateUserUrl, { idUser, nom, prenom, email, other }, { headers });
     }
 
     updateDetailPiece(idDetailPiece : string, prixAchat: number, prixVente: number): Observable<any> {
