@@ -1,15 +1,7 @@
 <p-toolbar styleClass="mb-6">
-
     <ng-template #start>
-        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2"/>
-        <p-button
-            severity="secondary"
-            label="Delete"
-            icon="pi pi-trash"
-            outlined
-            [disabled]="!selectedProducts || !selectedProducts.length"
-            (onClick)="deleteSelectedProducts()"
-        />
+        <!-- <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2"/> -->
+        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined [disabled]="!selectedProducts || !selectedProducts.length" (onClick)="deleteSelectedProducts()" />
     </ng-template>
 
     <!-- <ng-template #end>
@@ -31,7 +23,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des utilisateurs"
     [showCurrentPageReport]="true"
 >
@@ -84,124 +76,44 @@
     </ng-template>
 </p-table>
 
-<p-dialog
-    [(visible)]="updateDialog"
-    [style]="{ width: '450px'}"
-    [header]="'Modifier '+roleUserCliquer.nom"
-    [modal]="true"
-    *ngIf="roleUserCliquer.niveau==10"
->
+<p-dialog [(visible)]="updateDialog" [style]="{ width: '450px'}" [header]="'Modifier '+roleUserCliquer.nom" [modal]="true" *ngIf="roleUserCliquer.niveau==10">
     <div>
         <label for="nom" class="block font-bold">Nom</label>
-        <input
-            type="text"
-            placeholder="Nom"
-            pInputText
-            id="nom"
-            required
-            autofocus
-            fluid
-            [(ngModel)]="userCliquer.nom"
-        />
+        <input type="text" placeholder="Nom" pInputText id="nom" required autofocus fluid [(ngModel)]="userCliquer.nom" />
     </div>
     <div class="mt-2">
         <label for="prenom" class="block font-bold">Prénom</label>
-        <input
-            type="text"
-            placeholder="Prénom"
-            pInputText
-            id="prenom"
-            required
-            autofocus
-            fluid
-            [(ngModel)]="userCliquer.prenom"
-        />
+        <input type="text" placeholder="Prénom" pInputText id="prenom" required autofocus fluid [(ngModel)]="userCliquer.prenom" />
     </div>
     <div class="mt-2">
         <label for="email" class="block font-bold">Email</label>
-        <input
-            type="email"
-            placeholder="Email"
-            pInputText
-            id="email"
-            required
-            autofocus
-            fluid
-            [(ngModel)]="userCliquer.email"
-        />
+        <input type="email" placeholder="Email" pInputText id="email" required autofocus fluid [(ngModel)]="userCliquer.email" />
     </div>
     <div class="mt-2">
         <label for="price" class="block font-bold">Date d'embauche</label>
-        <p-datepicker
-            [showIcon]="true"
-            [showButtonBar]="true"
-            [appendTo]="'body'"
-            fluid
-            [(ngModel)]="otherDataCliquer.dateEmbauche"
-        />
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid [(ngModel)]="otherDataCliquer.dateEmbauche" />
     </div>
     <ng-template #footer>
         <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
         <p-button label="Confirmer" icon="pi pi-check" (click)="updateUser()" />
     </ng-template>
 </p-dialog>
-<p-dialog
-    [(visible)]="updateDialog"
-    [style]="{ width: '450px' }"
-    [header]="'Modifier '+roleUserCliquer.nom"
-    [modal]="true"
-    #elseBlock
->
+<p-dialog [(visible)]="updateDialog" [style]="{ width: '450px' }" [header]="'Modifier '+roleUserCliquer.nom" [modal]="true" #elseBlock>
     <div>
         <label for="nom" class="block font-bold">Nom</label>
-        <input
-            type="text"
-            placeholder="Nom"
-            pInputText
-            id="nom"
-            required
-            autofocus
-            fluid
-            [(ngModel)]="userCliquer.nom"
-        />
+        <input type="text" placeholder="Nom" pInputText id="nom" required autofocus fluid [(ngModel)]="userCliquer.nom" />
     </div>
     <div class="mt-2">
         <label for="prenom" class="block font-bold">Prénom</label>
-        <input
-            type="text"
-            placeholder="Prénom"
-            pInputText
-            id="prenom"
-            required
-            autofocus
-            fluid
-            [(ngModel)]="userCliquer.prenom"
-        />
+        <input type="text" placeholder="Prénom" pInputText id="prenom" required autofocus fluid [(ngModel)]="userCliquer.prenom" />
     </div>
     <div class="mt-2">
         <label for="email" class="block font-bold">Email</label>
-        <input
-            type="email"
-            placeholder="Email"
-            pInputText
-            id="email"
-            required
-            autofocus
-            fluid
-            [(ngModel)]="userCliquer.email"
-        />
+        <input type="email" placeholder="Email" pInputText id="email" required autofocus fluid [(ngModel)]="userCliquer.email" />
     </div>
     <div class="mt-2">
         <label for="price" class="block font-bold">Type de client</label>
-        <p-select
-            [options]="typeClients"
-            optionValue="_id"
-            optionLabel="nom"
-            placeholder="Type de client"
-            [appendTo]="'body'"
-            fluid
-            [(ngModel)]="otherDataCliquer.typeClient"
-        />
+        <p-select [options]="typeClients" optionValue="_id" optionLabel="nom" placeholder="Type de client" [appendTo]="'body'" fluid [(ngModel)]="otherDataCliquer.typeClient" />
     </div>
     <ng-template #footer>
         <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />

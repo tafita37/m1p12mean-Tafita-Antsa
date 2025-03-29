@@ -166,7 +166,7 @@ export class StockPiece implements OnInit {
     loadData(event: any | null = null): void {
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
         this.listStock = [];
         this.stockService.getListStock(page, this.selectedDate).subscribe(data => {

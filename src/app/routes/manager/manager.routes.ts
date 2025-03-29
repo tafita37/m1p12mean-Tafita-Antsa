@@ -13,5 +13,9 @@ export default [
         path: 'marque',
         loadChildren: () => import('../details/marque.routes')
     },
+    {
+        path: 'service',
+        loadChildren: () => import('../details/service.routes')
+    },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

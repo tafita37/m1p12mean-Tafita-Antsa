@@ -23,7 +23,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des mouvements"
     [showCurrentPageReport]="true"
 >
@@ -32,36 +32,13 @@
             <h5 class="m-0">{{titreAffichage}}</h5>
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-4">
-                    <p-select
-                        [options]="typeSearch"
-                        styleClass="mb-3"
-                        optionValue="value"
-                        optionLabel="label"
-                        placeholder="Type"
-                        [appendTo]="'body'"
-                        fluid
-                        [(ngModel)]="typeMouvement"
-                    />
+                    <p-select [options]="typeSearch" styleClass="mb-3" optionValue="value" optionLabel="label" placeholder="Type" [appendTo]="'body'" fluid [(ngModel)]="typeMouvement" />
                 </div>
                 <div class="col-span-4">
-                    <p-datepicker
-                        [showIcon]="true"
-                        [showButtonBar]="true"
-                        [appendTo]="'body'"
-                        fluid
-                        placeholder="Date"
-                        [(ngModel)]="dateDebut"
-                    />
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
                 </div>
                 <div class="col-span-4">
-                    <p-datepicker
-                        [showIcon]="true"
-                        [showButtonBar]="true"
-                        [appendTo]="'body'"
-                        fluid
-                        placeholder="Date"
-                        [(ngModel)]="dateFin"
-                    />
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
                 </div>
             </div>
         </div>
