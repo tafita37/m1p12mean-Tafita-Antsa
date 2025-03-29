@@ -70,6 +70,11 @@ export class AppSidebarManager {
                         icon: 'pi pi-fw pi-cog',
                         items: [
                             {
+                                label: 'Services',
+                                icon: 'pi pi-fw pi-cog',
+                                routerLink: ['/manager/service/crudService']
+                            },
+                            {
                                 label: 'Sous-services',
                                 icon: 'pi pi-fw pi-wrench',
                                 routerLink: ['/manager/service/crudSousService']

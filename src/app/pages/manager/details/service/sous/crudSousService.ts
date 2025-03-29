@@ -160,7 +160,7 @@ export class CRUDSousService implements OnInit {
     loadData(event: any | null = null): void {
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
         this.sousServices = [];
         this.managerService.getListSousService(page).subscribe(data => {

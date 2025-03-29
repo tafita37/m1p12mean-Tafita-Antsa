@@ -115,7 +115,12 @@
     <p-toast />
 </div>
 <!-- </div> -->
-<p-dialog [(visible)]="newSousServiceDialog" [style]="{ width: '450px' }" header="Nouvelle pièce" [modal]="true" #elseBlock>
+<p-dialog
+    [(visible)]="newSousServiceDialog"
+    [style]="{ width: '450px' }"
+    header="Nouveau sous-service"
+    [modal]="true"
+>
     <div class="mb-3">
         <label for="name" class="block font-bold">Nom</label>
         <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="sousServiceInsert.nom" />

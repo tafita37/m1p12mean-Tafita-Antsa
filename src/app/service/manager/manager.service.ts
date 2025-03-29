@@ -27,13 +27,16 @@ export class ManagerService {
     private validerUserInscriptionUrl = environment.baseUrl + "/manager/validerInscription";
     private refuserUserInscriptionUrl = environment.baseUrl + "/manager/refuserInscription";
     private listPiecePaginateUrl = environment.baseUrl + "/manager/piece/allPiece";
-    private listSousServicePaginateUrl = environment.baseUrl + "/manager/service/allSousServices";
+    private listSousServicePaginateUrl = environment.baseUrl + "/manager/service/sous/allSousServices";
+    private listServicePaginateUrl = environment.baseUrl + "/manager/service/allServices";
     private listDetailPiecePaginateUrl = environment.baseUrl + "/manager/piece/details/allDetailPiece";
     private listFournisseurPaginateUrl = environment.baseUrl + "/manager/fournisseur/allFournisseur";
     private listMarquePaginateUrl = environment.baseUrl + "/manager/marque/allMarque";
     private ajoutPieceUrl = environment.baseUrl + "/manager/piece/insert";
-    private insertSousServiceUrl = environment.baseUrl + "/manager/service/insertSousService";
-    private updateSousServiceUrl = environment.baseUrl + "/manager/service/updateSousService";
+    private insertSousServiceUrl = environment.baseUrl + "/manager/service/sous/insert";
+    private insertServiceUrl = environment.baseUrl + "/manager/service/insert";
+    private updateSousServiceUrl = environment.baseUrl + "/manager/service/sous/update";
+    private updateServiceUrl = environment.baseUrl + "/manager/service/update";
     private ajoutPieceDetailUrl = environment.baseUrl + "/manager/piece/details/insert";
     private ajoutFournisseurUrl = environment.baseUrl + "/manager/fournisseur/insert";
     private ajoutMarqueUrl = environment.baseUrl + "/manager/marque/insert";
@@ -43,8 +46,10 @@ export class ManagerService {
     private updateFournisseurUrl = environment.baseUrl + "/manager/fournisseur/update";
     private updateMarqueUrl = environment.baseUrl + "/manager/marque/update";
     private deletePieceUrl = environment.baseUrl + "/manager/piece/delete";
-    private deleteServiceFromSousUrl = environment.baseUrl + "/manager/service/deleteServiceFromSous";
-    private deleteSousServiceUrl = environment.baseUrl + "/manager/service/deleteSousService";
+    private deletePieceFromSousUrl = environment.baseUrl + "/manager/service/sous/deletePieceFromSous";
+    private deleteSousFromServiceUrl = environment.baseUrl + "/manager/service/deleteSousFromService";
+    private deleteSousServiceUrl = environment.baseUrl + "/manager/service/sous/delete";
+    private deleteServiceUrl = environment.baseUrl + "/manager/service/delete";
     private deleteUserUrl = environment.baseUrl + "/manager/user/delete";
     private deleteDetailPieceUrl = environment.baseUrl + "/manager/piece/details/delete";
     private deleteFournisseurUrl = environment.baseUrl + "/manager/fournisseur/delete";
@@ -71,6 +76,8 @@ export class ManagerService {
     }
 
     getListPiece(numPage: Number): Observable<any> {
+        console.log(numPage, "numPage");
+
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
@@ -86,6 +93,15 @@ export class ManagerService {
         });
 
         return this.http.get(this.listSousServicePaginateUrl + "?page=" + numPage, { headers });
+    }
+
+    getListService(numPage: Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(this.listServicePaginateUrl + "?page=" + numPage, { headers });
     }
 
     getListDetailPiece(numPage: Number): Observable<any> {
@@ -142,6 +158,15 @@ export class ManagerService {
         return this.http.post(this.insertSousServiceUrl, { nom, prix, pieces }, { headers });
     }
 
+    insertService(nom : String, sousServices : any []): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.insertServiceUrl, { nom, sousServices }, { headers });
+    }
+
     updateSousService(idSousService : string, nom : String, prix : number, pieces : any []): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
@@ -149,6 +174,15 @@ export class ManagerService {
         });
 
         return this.http.post(this.updateSousServiceUrl, { idSousService, nom, prix, pieces }, { headers });
+    }
+
+    updateService(idService : string, nom : String, sousServices : any []): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.updateServiceUrl, { idService, nom, sousServices }, { headers });
     }
 
     insertDetailPiece(idPiece : string, idMarque : string, prixAchat : number, prixVente : Number): Observable<any> {
@@ -258,7 +292,17 @@ export class ManagerService {
         });
 
 
-        return this.http.post(this.deleteServiceFromSousUrl, { idSousService, idPiece }, { headers });
+        return this.http.post(this.deletePieceFromSousUrl, { idSousService, idPiece }, { headers });
+    }
+
+    deleteSousFromService(idService : string, idSousService: string): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+
+        return this.http.post(this.deleteSousFromServiceUrl, { idService, idSousService }, { headers });
     }
 
     deleteSousServices(idSousServices: string[]): Observable<any> {
@@ -268,6 +312,15 @@ export class ManagerService {
         });
 
         return this.http.post(this.deleteSousServiceUrl, { idSousServices }, { headers });
+    }
+
+    deleteServices(idServices: string[]): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.deleteServiceUrl, { idServices }, { headers });
     }
 
     deleteUsers(idUsers: string[]): Observable<any> {
