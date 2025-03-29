@@ -1,0 +1,216 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertSousService()" />
+        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="sousServices"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbSousServices"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des sous services"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Liste des sous services</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="nom">
+                Nom
+                <p-sortIcon field="nom" />
+            </th>
+            <th pSortableColumn="prix" style="text-align: right">
+                Prix
+                <p-sortIcon field="prix" />
+            </th>
+            <th pSortableColumn="pieces">Pièces</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-sous>
+        <tr style="cursor: pointer">
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="sous" />
+            </td>
+            <td>{{ sous.nom }}</td>
+            <td style="text-align: right">{{ sous.prix | number:'1.0-2':'fr' }} ar</td>
+            <td>
+                <p-button type="button" label="Pièces" (click)="toggleDataTable(op2, sous, $event)" />
+            </td>
+            <td>
+                <p-button
+                    icon="pi pi-pencil"
+                    class="mr-2"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="openUpdateSous(sous)"
+                />
+                <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="deleteSousService(sous)"
+                />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<!-- <div class="card"> -->
+<div class="flex flex-wrap gap-2">
+    <p-popover #op2 id="overlay_panel" [style]="{ width: '700px' }">
+        <p-table [value]="listPieceCliquer" selectionMode="single" [(selection)]="selectedProduct" dataKey="_id" (onRowSelect)="onProductSelect(op2, $event)">
+            <ng-template #header>
+                <tr>
+                    <th>Nom</th>
+                    <th>Type</th>
+                    <th>Prix de réparation</th>
+                    <th>Prix de remplacement</th>
+                </tr>
+            </ng-template>
+            <ng-template #body let-product>
+                <tr>
+                    <td>{{ product.piece.nom }}</td>
+                    <td>{{ product.etat==11 ? 'A réparer' : 'A remplacer' }}</td>
+                    <td>{{ product.piece.prixReparation ? (product.piece.prixReparation | number:'1.0-2':'fr') + " ar" : "Non-défini" }}</td>
+                    <td>{{ product.piece.prixRemplacement | number:'1.0-2':'fr' }} ar</td>
+                    <td>
+                        <p-button
+                            icon="pi pi-trash"
+                            severity="danger"
+                            [rounded]="true"
+                            [outlined]="true"
+                            (click)="deletePieceFromSous(product)"
+                        />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-popover>
+    <p-toast />
+</div>
+<!-- </div> -->
+<p-dialog [(visible)]="newSousServiceDialog" [style]="{ width: '450px' }" header="Nouvelle pièce" [modal]="true" #elseBlock>
+    <div class="mb-3">
+        <label for="name" class="block font-bold">Nom</label>
+        <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="sousServiceInsert.nom" />
+    </div>
+    <div class="mb-3">
+        <label for="name" class="block font-bold">Prix du service</label>
+        <p-inputnumber id="prixRemplacement" fluid [(ngModel)]="sousServiceInsert.prix" />
+    </div>
+    <div class="font-semibold text-xl">Pièces</div>
+    <p-multiselect [options]="allPieces" [(ngModel)]="piecesSelected" placeholder="Sélectionnez les pièces" optionLabel="nom" optionValue="_id" display="chip" [filter]="true" fluid appendTo="body" (onChange)="onMultiselectChange($event)">
+        <ng-template #selecteditems let-pieces>
+            @for (piece of pieces; track piece.code) {
+            <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast rounded-border mr-2">
+                <div>{{ piece.nom }}</div>
+            </div>
+            }
+        </ng-template>
+        <ng-template #item let-piece>
+            <div class="flex items-center justify-between w-full">
+                <div>{{ piece.nom }}</div>
+                <p-select
+                    id="type"
+                    [options]="typePieces"
+                    optionValue="id"
+                    optionLabel="value"
+                    placeholder="Type"
+                    [appendTo]="'body'"
+                    fluid
+                    [disabled]="!piece.isSelected"
+                    (onClick)="$event.stopPropagation()"
+                    (onChange)="onTypeChange($event, piece)"
+                    [(ngModel)]="typeSelected[piece._id]"
+                />
+            </div>
+        </ng-template>
+    </p-multiselect>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewSousServiceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: '450px' }" header="Modifier" [modal]="true" #elseBlock>
+    <div class="mb-3">
+        <label for="name" class="block font-bold">Nom</label>
+        <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="sousServiceUpdate.nom" />
+    </div>
+    <div class="mb-3">
+        <label for="name" class="block font-bold">Prix du service</label>
+        <p-inputnumber id="prixRemplacement" fluid [(ngModel)]="sousServiceUpdate.prix" />
+    </div>
+    <div class="font-semibold text-xl">Pièces</div>
+    <p-multiselect
+        [options]="allPieceUpdate"
+        [(ngModel)]="piecesSelectedUpdate"
+        placeholder="Sélectionnez les pièces"
+        optionLabel="nom"
+        optionValue="_id"
+        display="chip"
+        [filter]="true"
+        fluid
+        appendTo="body"
+        (onChange)="onMultiselectChangeUpdate($event)"
+    >
+        <ng-template #selecteditems let-pieces>
+            @for (piece of pieces; track piece.code) {
+            <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast rounded-border mr-2">
+                <div>{{ piece.nom }}</div>
+            </div>
+            }
+        </ng-template>
+        <ng-template #item let-piece>
+            <div class="flex items-center justify-between w-full">
+                <div>{{ piece.nom }}</div>
+                <p-select
+                    id="type"
+                    [options]="typePieces"
+                    optionValue="id"
+                    optionLabel="value"
+                    placeholder="Type"
+                    [appendTo]="'body'"
+                    fluid
+                    [disabled]="!piece.isSelected"
+                    (onClick)="$event.stopPropagation()"
+                    (onChange)="onTypeChangeUpdate($event, piece)"
+                    [(ngModel)]="typeSelectedUpdate[piece._id]"
+                />
+            </div>
+        </ng-template>
+    </p-multiselect>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdateSousDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
