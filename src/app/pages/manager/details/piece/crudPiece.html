@@ -82,7 +82,17 @@
     </div>
     <div class="mb-3">
         <label for="type" class="block font-bold">Type</label>
-        <p-select id="type" [options]="typePieces" styleClass="mb-3" optionValue="id" optionLabel="value" placeholder="Type" [appendTo]="'body'" fluid [(ngModel)]="pieceInsert.type" />
+        <p-select
+            id="type"
+            [options]="typePieces"
+            styleClass="mb-3"
+            optionValue="id"
+            optionLabel="value"
+            placeholder="Type"
+            [appendTo]="'body'"
+            fluid
+            [(ngModel)]="pieceInsert.type"
+        />
     </div>
     <div class="mb-3">
         <label for="prixRemplacement" class="block font-bold">Prix de remplacement</label>

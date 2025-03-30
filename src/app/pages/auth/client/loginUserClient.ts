@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,7 +34,7 @@ export class LoginClient {
     errorMessage: string = '';
     sucessMessage: string = '';
 
-    constructor(private loginUserService: LoginUserService) { }
+    constructor(private loginUserService: LoginUserService, private router : Router) { }
 
     loginUser(): void {
         this.errorMessage = "";
@@ -42,6 +42,7 @@ export class LoginClient {
             this.loginUserService.loginUserClient(this.user).subscribe(data => {
                 localStorage.setItem(environment.tokenClientStorage, data.token);
                 this.sucessMessage = "Connecté";
+                this.router.navigate(['/client/voiture/crud']);
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
                 this.errorMessage = error.error.message;
