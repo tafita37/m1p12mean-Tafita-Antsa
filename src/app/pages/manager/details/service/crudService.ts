@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
@@ -20,8 +20,11 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../../service/product.service';
-import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
+import { Product, ProductService } from '../../../service/product.service';
+import { ManagerService } from '../../../../service/manager/manager.service';
+import { Popover, PopoverModule } from 'primeng/popover';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { Country } from '../../../service/customer.service';
 
 interface Column {
     field: string;
@@ -35,7 +38,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-marque',
+    selector: 'app-crud-service',
     standalone: true,
     imports: [
         CommonModule,
@@ -57,19 +60,47 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        PopoverModule,
+        MultiSelectModule
     ],
-    templateUrl: './crudMarque.html',
+    templateUrl: './crudService.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class CRUDMarque implements OnInit {
+export class CRUDService implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
-    newMarqueDialog: boolean = false;
-    updateMarqueDialog: boolean = false;
-    nomMarqueInsert: string = '';
-    marqueCliquer: { nom: string, idMarque: string } = { nom: '', idMarque: '' };
-    marques: [] = [];
+    newServiceDialog: boolean = false;
+    updatePieceDialog: boolean = false;
+    nomPieceInsert: string = '';
+    services: [] = [];
+    listSousCliquer: [] = [];
+    serviceCliquer: any = {};
+    allSousServices : any[] = [];
+    allSousServicesUpdate : any[] = [];
+    products: Product[] = [];
+    sousSelected: any[] = [];
+    sousSelectedUpdate: any[] = [];
+    piecesSelectedUpdate: any[] = [];
+    typeSelected: any[] = [];
+    typeSelectedUpdate: any[] = [];
+    multiselectCountries: Country[] = [
+        { name: 'Australia', code: 'AU' },
+        { name: 'Brazil', code: 'BR' },
+        { name: 'China', code: 'CN' },
+        { name: 'Egypt', code: 'EG' },
+        { name: 'France', code: 'FR' },
+        { name: 'Germany', code: 'DE' },
+        { name: 'India', code: 'IN' },
+        { name: 'Japan', code: 'JP' },
+        { name: 'Spain', code: 'ES' },
+        { name: 'United States', code: 'US' }
+    ];
+    typePieces: [
+        { id: number, value: string }, { id: number, value: string }
+    ] = [{ id: 11, value: 'Réparable' }, { id: 1, value: 'Non réparable' }];
+    serviceInsert: { nom: string } = { nom: ""};
+    serviceUpdate : {id : string, nom:string} = {id : "", nom:""};
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -100,6 +131,8 @@ export class CRUDMarque implements OnInit {
 
     selectedProducts: { _id: string, name: string }[] = [];
 
+    selectedProduct!: Product;
+
     submitted: boolean = false;
 
     statuses!: any[];
@@ -110,14 +143,15 @@ export class CRUDMarque implements OnInit {
 
     cols!: Column[];
 
-    nbMarque: number = 0;
+    nbServices: number = 0;
 
     loading: boolean = false;
 
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private managerService: ManagerService
+        private managerService: ManagerService,
+        private cdRef: ChangeDetectorRef
     ) { }
 
     exportCSV() {
@@ -129,13 +163,29 @@ export class CRUDMarque implements OnInit {
         if (event) {
             page = (event.first / event.rows)+1;
         }
-        this.marques = [];
-        this.managerService.getListMarque(page).subscribe(data => {
-            this.marques = data.marques;
-            this.nbMarque = data.nbMarque;
+        this.services = [];
+        this.managerService.getListService(page).subscribe(data => {
+            this.services = data.listServices;
+            this.nbServices = data.nbServices;
+            this.allSousServices = data.allSousServices;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
+    }
+
+    toggleDataTable(op: Popover, service: any, event: any) {
+        this.serviceCliquer={};
+        this.serviceCliquer = service;
+        console.log(service.sousServices);
+        this.listSousCliquer = service.sousServices;
+        op.toggle(event);
+    }
+
+    onProductSelect(op: Popover, event: any) {
+        op.hide();
+        this.messageService.add(
+            { severity: 'info', summary: 'Product Selected', detail: event?.data.name, life: 3000 }
+        );
     }
 
     ngOnInit(): void {
@@ -146,17 +196,18 @@ export class CRUDMarque implements OnInit {
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-    openInsertNewMarque() {
-        this.nomMarqueInsert = "";
+    openInsertService() {
         this.submitted = false;
-        this.newMarqueDialog = true;
+        this.newServiceDialog = true;
     }
 
-    openUpdateMarque(marque: any) {
-        this.marqueCliquer.idMarque = marque._id;
-        this.marqueCliquer.nom = marque.nom;
+    openUpdateService(sous: any) {
+        this.serviceUpdate = { id: sous._id, nom: sous.nom };
+        this.allSousServicesUpdate = this.allSousServices.filter((piece) => {
+            return !sous.sousServices.some((sousPiece: any) => sousPiece._id === piece._id);
+        });
         this.submitted = false;
-        this.updateMarqueDialog = true;
+        this.updatePieceDialog = true;
     }
 
 
@@ -168,18 +219,64 @@ export class CRUDMarque implements OnInit {
         this.userCliquer = JSON.parse(JSON.stringify(user));
         this.roleUserCliquer = JSON.parse(JSON.stringify(user.role));
         this.validerUser.typeClient = this.userCliquer.client.typeClient;
-        this.newMarqueDialog = true;
+        this.newServiceDialog = true;
     }
 
-    insertMarque() {
-        if (!this.nomMarqueInsert) {
-            this.errorMessage = "Le nom de la marque est obligatoire";
+    onMultiselectChange(event: any) {
+        // 1. Cloner le tableau pour forcer la détection de changement
+        this.allSousServices = [...this.allSousServices];
+
+        // 2. Mettre à jour isSelected en comparant les _id
+        const selectedIds = new Set(this.sousSelected);
+
+        this.allSousServices.forEach(piece => {
+            piece.isSelected = selectedIds.has(piece._id);
+        });
+    }
+
+
+    onMultiselectChangeUpdate(event:any) {
+        // 1. Cloner le tableau pour forcer la détection de changement
+        this.allSousServicesUpdate = [...this.allSousServicesUpdate];
+
+        // 2. Mettre à jour isSelected en comparant les _id
+        const selectedIds = new Set(this.piecesSelectedUpdate);
+
+        this.allSousServicesUpdate.forEach(piece => {
+            piece.isSelected = selectedIds.has(piece._id);
+        });
+    }
+
+    onTypeChange(event: any, piece: any) {
+        if (event?.originalEvent?.stopPropagation) {
+            event.originalEvent.stopPropagation();
+        }
+        this.typeSelected[piece._id] = event.value;
+    }
+
+    onTypeChangeUpdate(event: any, piece: any) {
+        if (event?.originalEvent?.stopPropagation) {
+            event.originalEvent.stopPropagation();
+        }
+        this.typeSelectedUpdate[piece._id] = event.value;
+    }
+
+
+    insertService() {
+        if (
+            !this.serviceInsert ||
+            !this.serviceInsert.nom ||
+            !this.sousSelected ||
+            this.sousSelected.length == 0
+        ) {
+            this.errorMessage = "Les données entrées sont incorrectes";
         } else {
-            this.managerService.insertMarque(
-                this.nomMarqueInsert
+            this.managerService.insertService(
+                this.serviceInsert.nom,
+                this.sousSelected
             ).subscribe({
                 next: (data) => {
-                    this.hideNewMarqueDialog();     // Fermer le dialogue après le succès
+                    this.hideNewServiceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
@@ -189,16 +286,21 @@ export class CRUDMarque implements OnInit {
         }
     }
 
-    updateMarque() {
-        if (!this.marqueCliquer.idMarque || !this.marqueCliquer.nom) {
-            this.errorMessage = "Veuillez indiquer la marque que vous souhaitez modifier";
+    updatePiece() {
+        if (
+            !this.serviceUpdate ||
+            !this.serviceUpdate.id ||
+            !this.serviceUpdate.nom
+        ) {
+            this.errorMessage = "Les données entrées sont incorrectes";
         } else {
-            this.managerService.updateMarque(
-                this.marqueCliquer.idMarque,
-                this.marqueCliquer.nom
+            this.managerService.updateService(
+                this.serviceUpdate.id,
+                this.serviceUpdate.nom,
+                this.sousSelectedUpdate
             ).subscribe({
                 next: (data) => {
-                    this.hideUpdateMarqueDialog();     // Fermer le dialogue après le succès
+                    this.hideUpdateSousDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
@@ -216,7 +318,10 @@ export class CRUDMarque implements OnInit {
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
                 const ids = this.selectedProducts.map(product => product._id);
-                this.managerService.deleteMarque(
+                console.log(ids);
+
+
+                this.managerService.deleteServices(
                     ids
                 ).subscribe({
                     next: (data) => {
@@ -233,24 +338,25 @@ export class CRUDMarque implements OnInit {
         });
     }
 
-    hideNewMarqueDialog() {
-        this.newMarqueDialog = false;
+    hideNewServiceDialog() {
+        this.newServiceDialog = false;
+        this.submitted = false;
+        this.serviceInsert = { nom: "" };
+    }
+
+    hideUpdateSousDialog() {
+        this.updatePieceDialog = false;
         this.submitted = false;
     }
 
-    hideUpdateMarqueDialog() {
-        this.updateMarqueDialog = false;
-        this.submitted = false;
-    }
-
-    deleteMarque(marque: any) {
+    deleteService(service: any) {
         this.confirmationService.confirm({
-            message: 'Êtes-vous sur de vouloir supprimer ' + marque.nom + '?',
+            message: 'Êtes-vous sur de vouloir supprimer ' + service.nom + '?',
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.managerService.deleteMarque(
-                    [marque._id]
+                this.managerService.deleteServices(
+                    [service._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
@@ -271,10 +377,39 @@ export class CRUDMarque implements OnInit {
         });
     }
 
+    deleteSousFromService(sous: any) {
+        this.confirmationService.confirm({
+            message: 'Êtes-vous sur de vouloir supprimer "' + sous.nom + '" de "' + this.serviceCliquer.nom + '"?',
+            header: 'Confirmer',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.managerService.deleteSousFromService(
+                    this.serviceCliquer._id,
+                    sous._id
+                ).subscribe({
+                    next: (data) => {
+                        console.log(data.message);
+                        this.loadData();       // Recharger les données après le succès
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Successful',
+                            detail: 'Product Deleted',
+                            life: 3000
+                        });
+                    },
+                    error: (error) => {
+                        alert(error.error.message);
+                        console.error('Erreur lors de la connexion:', error);
+                    }
+                });
+            }
+        });
+    }
+
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.marques.length; i++) {
-            if (this.marques[i]["_id"] === id) {
+        for (let i = 0; i < this.services.length; i++) {
+            if (this.services[i]["_id"] === id) {
                 index = i;
                 break;
             }

@@ -133,7 +133,7 @@ export class CRUDFournisseur implements OnInit {
     loadData(event: any | null = null): void {
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
         this.fournisseurs = [];
         this.managerService.getListFournisseur(page).subscribe(data => {

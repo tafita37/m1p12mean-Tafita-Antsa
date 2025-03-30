@@ -125,7 +125,7 @@ export class UserNotValider implements OnInit {
     }
 
     loadData(event: any | null = null): void {
-        const page = event ? event.first / event.rows : 1;
+        const page = event ? (event.first / event.rows)+1 : 1;
         this.users = [];
         this.typeClients = [];
         this.managerService.getListUserUnvalidate(page).subscribe(data => {

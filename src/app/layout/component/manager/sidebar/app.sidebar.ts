@@ -44,10 +44,18 @@ export class AppSidebarManager {
                 label: 'Données',
                 items: [
                     {
-                        label: 'Pièces', icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/piece/crud']
-                    },
-                    {
-                        label: 'Détails pièces', icon: 'pi pi-cog pi-wrench', routerLink: ['/manager/piece/crudDetail']
+                        label: 'Pièces', icon: 'pi pi-fw pi-wrench', items: [
+                            {
+                                label: 'Pièces',
+                                icon: 'pi pi-fw pi-wrench',
+                                routerLink: ['/manager/piece/crud']
+                            },
+                            {
+                                label: 'Détails',
+                                icon: 'pi pi-cog pi-wrench',
+                                routerLink: ['/manager/piece/crudDetail']
+                            }
+                        ]
                     },
                     {
                         label: 'Marques', icon: 'pi pi-car pi-wrench', routerLink: ['/manager/marque/crud']
@@ -56,7 +64,23 @@ export class AppSidebarManager {
                         label: 'Fournisseur',
                         icon: 'pi pi-users pi-wrench',
                         routerLink: ['/manager/piece/crudFournisseur']
-                    }
+                    },
+                    {
+                        label: 'Services',
+                        icon: 'pi pi-fw pi-cog',
+                        items: [
+                            {
+                                label: 'Services',
+                                icon: 'pi pi-fw pi-cog',
+                                routerLink: ['/manager/service/crudService']
+                            },
+                            {
+                                label: 'Sous-services',
+                                icon: 'pi pi-fw pi-wrench',
+                                routerLink: ['/manager/service/crudSousService']
+                            }
+                        ]
+                    },
                 ]
             },
             // {

@@ -65,9 +65,11 @@ interface ExportColumn {
 export class CRUDUser implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
-    validerInscriptionDialog: boolean = false;
+    updateDialog: boolean = false;
 
     users: [] = [];
+
+    typeClients: [] = [];
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -80,6 +82,8 @@ export class CRUDUser implements OnInit {
     calendarValue: any = null;
 
     userCliquer: any = {};
+
+    otherDataCliquer: {typeClient : string|null, dateEmbauche : Date|null} = {typeClient : null, dateEmbauche : null};
 
     validerUser: { idUser: string; typeClient: string | null; dateEmbauche: Date | null } = {
         idUser: "",
@@ -123,10 +127,12 @@ export class CRUDUser implements OnInit {
     }
 
     loadData(event: any | null = null): void {
-        const page = event ? event.first / event.rows : 1;
+        const page = event ? (event.first / event.rows)+1 : 1;
         this.users = [];
+        this.typeClients = [];
         this.managerService.getListUser(page).subscribe(data => {
             this.users = data.users;
+            this.typeClients = data.typeClients;
             this.nbUser = data.nbUser;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
@@ -144,32 +150,37 @@ export class CRUDUser implements OnInit {
     openNew() {
         this.userCliquer = {};
         this.submitted = false;
-        this.validerInscriptionDialog = true;
+        this.updateDialog = true;
     }
 
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
     }
 
-    validerInscription(user: any) {
+    openUpdateDialog(user: any) {
         this.userCliquer = JSON.parse(JSON.stringify(user));
         this.roleUserCliquer = JSON.parse(JSON.stringify(user.role));
-        this.validerUser.typeClient = this.userCliquer.client.typeClient;
-        this.validerInscriptionDialog = true;
+        if (this.roleUserCliquer.niveau === 10) {
+            this.otherDataCliquer.dateEmbauche = new Date(this.userCliquer.mecanicien.dateEmbauche);
+        } else {
+            this.otherDataCliquer.typeClient = this.userCliquer.client.typeClient;
+        }
+
+        this.updateDialog = true;
     }
 
-    confirmerValidationInscription() {
-        this.validerUser.idUser = this.userCliquer._id;
-
-        if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
+    updateUser() {
+        if (this.roleUserCliquer.niveau === 1 && this.otherDataCliquer.typeClient === null) {
             this.errorMessage = "Veuillez entrer le type de client";
-        } else if (this.roleUserCliquer.niveau === 10 && this.validerUser.dateEmbauche === null) {
+        } else if (this.roleUserCliquer.niveau === 10 && this.otherDataCliquer.dateEmbauche === null) {
             this.errorMessage = "Veuillez entrer la date d'embauche";
         } else {
-            this.managerService.validerInscription(
-                this.validerUser.idUser,
-                this.validerUser.typeClient,
-                this.validerUser.dateEmbauche
+            this.managerService.updateUser(
+                this.userCliquer._id,
+                this.userCliquer.nom,
+                this.userCliquer.prenom,
+                this.userCliquer.email,
+                this.otherDataCliquer
             ).subscribe({
                 next: (data) => {
                     console.log(data.message);
@@ -209,7 +220,7 @@ export class CRUDUser implements OnInit {
     }
 
     hideDialog() {
-        this.validerInscriptionDialog = false;
+        this.updateDialog = false;
         this.submitted = false;
     }
 
@@ -219,8 +230,8 @@ export class CRUDUser implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.managerService.refuserInscription(
-                    user._id
+                this.managerService.deleteUsers(
+                    [user._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);

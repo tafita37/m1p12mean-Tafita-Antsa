@@ -23,7 +23,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des détails de pièces"
     [showCurrentPageReport]="true"
 >
@@ -87,11 +87,11 @@
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-6">
             <label for="prixAchat" class="block font-bold mb-3">Prix d'achat</label>
-            <p-inputnumber id="prixAchat" fluid  [(ngModel)]="detailInsert.prixAchat"/>
+            <p-inputnumber id="prixAchat" fluid [(ngModel)]="detailInsert.prixAchat" />
         </div>
         <div class="col-span-6">
             <label for="prixVente" class="block font-bold mb-3">Prix de vente</label>
-            <p-inputnumber id="prixVente" fluid  [(ngModel)]="detailInsert.prixVente"/>
+            <p-inputnumber id="prixVente" fluid [(ngModel)]="detailInsert.prixVente" />
         </div>
     </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
@@ -104,11 +104,11 @@
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-6">
             <label for="prixAchat" class="block font-bold mb-3">Prix d'achat</label>
-            <p-inputnumber id="prixAchat" fluid  [(ngModel)]="detailModif.prixAchat"/>
+            <p-inputnumber id="prixAchat" fluid [(ngModel)]="detailModif.prixAchat" />
         </div>
         <div class="col-span-6">
             <label for="prixVente" class="block font-bold mb-3">Prix de vente</label>
-            <p-inputnumber id="prixVente" fluid  [(ngModel)]="detailModif.prixVente"/>
+            <p-inputnumber id="prixVente" fluid [(ngModel)]="detailModif.prixVente" />
         </div>
     </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
