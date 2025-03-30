@@ -5,7 +5,8 @@ import { Documentation } from './app/pages/documentation/documentation';
 import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { AppLayoutManager } from './app/layout/component/manager/layout/app.layout';
-import { authManagerGuard } from './app/guards/authManager.guard';
+import { authClientGuard, authManagerGuard } from './app/guards/authManager.guard';
+import { AppLayoutClient } from './app/layout/component/client/layout/app.layout';
 
 export const appRoutes: Routes = [
     {
@@ -24,6 +25,14 @@ export const appRoutes: Routes = [
         children: [
             { path: "dashboard", component: Dashboard },
             { path: "", loadChildren: () => import('./app/routes/manager/manager.routes') },
+        ]
+    },
+    {
+        path: "client",
+        component: AppLayoutClient,
+        canActivate: [authClientGuard],
+        children: [
+            { path: "", loadChildren: () => import('./app/routes/client/client.routes') },
         ]
     },
     { path: "", component: Landing },
