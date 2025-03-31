@@ -15,6 +15,14 @@ export class AppSidebarClient {
     ngOnInit() {
         this.model = [
             {
+                label: 'Accueil',
+                items: [
+                    {
+                        label: 'Rendez-vous', icon: 'pi pi-calendar pi-wrench', routerLink: ['/client/rdv/rdv']
+                    },
+                ]
+            },
+            {
                 label: 'Données',
                 items: [
                     {

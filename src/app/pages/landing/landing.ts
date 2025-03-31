@@ -7,7 +7,6 @@ import { DividerModule } from 'primeng/divider';
 import { TopbarWidget } from './components/topbar/topbarwidget.component';
 import { HeroWidget } from './components/herowidget/herowidget';
 import { FeaturesWidget } from './components/featureswidget/featureswidget';
-import { PricingWidget } from './components/pricingwidget/pricingwidget';
 import { AppFooter } from '../../layout/component/footer/app.footer';
 import { LandingService } from '../../service/landing/landing.service';
 
@@ -19,7 +18,6 @@ import { LandingService } from '../../service/landing/landing.service';
         TopbarWidget,
         HeroWidget,
         FeaturesWidget,
-        PricingWidget,
         RippleModule,
         StyleClassModule,
         ButtonModule,
