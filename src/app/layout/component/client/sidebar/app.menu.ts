@@ -5,7 +5,7 @@ import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from '../../app.menuitem';
 
 @Component({
-    selector: 'app-menu-manager',
+    selector: 'app-menu-client',
     standalone: true,
     imports: [CommonModule, AppMenuitem, RouterModule],
     templateUrl : "./app.menu.html"

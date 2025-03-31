@@ -165,6 +165,8 @@ export class CRUDSousService implements OnInit {
         this.sousServices = [];
         this.managerService.getListSousService(page).subscribe(data => {
             this.sousServices = data.listSousServices;
+            console.log(data.listSousServices);
+
             this.nbSousServices = data.nbSousServices;
             this.allPieces = data.pieces;
             for (let i = 0; i < this.allPieces.length; i++) {
