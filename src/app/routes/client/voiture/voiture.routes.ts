@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { CRUDVoiture } from '../../pages/client/voiture/crud/crudVoiture';
+import { CRUDVoiture } from '../../../pages/client/voiture/crud/crudVoiture';
 
 export default [
     {

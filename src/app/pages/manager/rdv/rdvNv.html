@@ -1,0 +1,91 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4">Demande de rendez-vous</div>
+    <!-- <p-table
+    [columns]="cols"
+    (onLazyLoad)="loadData($event)"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    currentPageReportTemplate="Liste des marques"
+   ></p-table> -->
+    <p-table
+        #dt1
+        [value]="listDemande"
+        (onLazyLoad)="loadData($event)"
+        dataKey="_id"
+        [rows]="10"
+        [lazy]="true"
+        [loading]="loading"
+        [rowHover]="true"
+        [showGridlines]="true"
+        [totalRecords]="nbRDVNv"
+        [paginator]="true"
+        [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+        responsiveLayout="scroll"
+        currentPageReportTemplate="Rendez-vous non valider"
+    >
+        <!-- <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template> -->
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Propriétaire
+                    </div>
+                </th>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-between items-center">
+                        Numéro d'immatriculation
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Services
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-rdv>
+            <tr>
+                <td>{{ rdv.voiture.client.user.nom+" "+rdv.voiture.client.user.prenom }}</td>
+                <td>{{ rdv.voiture.matricule }}</td>
+                <td>{{ rdv.details.service.nom }}</td>
+                <td>
+                    <p-button
+                        icon="pi pi-check"
+                        class="mr-2"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (click)="router.navigate(['/manager/rdv/validation/', rdv._id])"
+                    />
+                    <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (click)="refuserRDV(rdv)"
+                    />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No customers found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading customers data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-confirmdialog [style]="{ width: '450px' }" />

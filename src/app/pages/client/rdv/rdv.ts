@@ -12,7 +12,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { RdvService } from '../../../service/client/rdv/rdv.service';
+import { RdvService } from '../../../service/rdv/rdv.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -42,7 +42,7 @@ import { CalendarModule } from 'primeng/calendar';
 })
 export class RDV {
     @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
-    allVoitures : any[] = [];
+    allVoitures: any[] = [];
     allServices: any[] = [];
     allSousServices: any[] = [];
     listQuantite: any[] = [];
@@ -51,7 +51,7 @@ export class RDV {
     _idServiceInsert: string = "";
     showSousService: boolean = false;
     selectedDates: Date[] = [];
-    nbDate : number = 1;
+    nbDate: number = 1;
 
     get idServiceInsert(): string {
         return this._idServiceInsert;
@@ -80,10 +80,10 @@ export class RDV {
         this.allSousServices.forEach(sous => {
             sous.isSelected = selectedIds.has(sous._id);
             if (sous.isSelected) {
-                totalDureeMinute+=sous.dureeMinute;
+                totalDureeMinute += sous.dureeMinute;
             }
         });
-        var totalDureeHeure = totalDureeMinute/60;
+        var totalDureeHeure = totalDureeMinute / 60;
         var totalDureeJour = Math.ceil(totalDureeHeure / 24);
         this.nbDate = totalDureeJour;
     }
@@ -99,7 +99,7 @@ export class RDV {
     insertRDV() {
         if (
             !this.idVoitureInsert ||
-            !this.idServiceInsert||
+            !this.idServiceInsert ||
             !this.sousSelected ||
             !this.listQuantite ||
             !this.selectedDates

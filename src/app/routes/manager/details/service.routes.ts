@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { CRUDSousService } from '../../pages/manager/details/service/sous/crudSousService';
-import { CRUDService } from '../../pages/manager/details/service/crudService';
+import { CRUDSousService } from '../../../pages/manager/details/service/sous/crudSousService';
+import { CRUDService } from '../../../pages/manager/details/service/crudService';
 
 export default [
     {
