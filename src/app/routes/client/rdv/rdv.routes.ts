@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { RDV } from '../../pages/client/rdv/rdv';
+import { RDV } from '../../../pages/client/rdv/rdv';
 
 export default [
     {

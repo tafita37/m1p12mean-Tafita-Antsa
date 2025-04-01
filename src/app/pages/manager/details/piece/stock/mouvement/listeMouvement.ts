@@ -191,7 +191,11 @@ export class ListeMouvement implements OnInit {
             page = (event.first / event.rows)+1;
         }
         this.listMouvement = [];
-        this.stockService.getListeMouvement(page, this.dateDebut, this.dateFin, this.idDetailPiece, this.typeMouvement).subscribe(data => {
+        this.stockService.getListeMouvement(
+            page, this.dateDebut, this.dateFin, this.idDetailPiece, this.typeMouvement
+        ).subscribe(data => {
+            console.log(data);
+
             this.titreAffichage = "Mouvements de " + data.detailPiece.piece.nom + " " + data.detailPiece.marque.nom;
             this.listMouvement = data.mouvements;
             console.log(this.listMouvement);

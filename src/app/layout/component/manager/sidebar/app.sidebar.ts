@@ -23,6 +23,11 @@ export class AppSidebarManager {
                     {
                         label: 'Stock', icon: 'pi pi-box pi-wrench', routerLink: ['/manager/piece/stock']
                     },
+                    {
+                        label: 'Rendez-vous à valider',
+                        icon: 'pi pi-calendar pi-wrench',
+                        routerLink: ['/manager/rdv/nonValider']
+                    },
                 ]
             },
             {
