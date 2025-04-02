@@ -13,6 +13,8 @@ export class RdvService {
     private allDataValidationUrl = environment.baseUrl + "/manager/rdv/allDataValidation";
     private validerRDVUrl = environment.baseUrl + "/manager/rdv/validerRDV";
     private refuserRDVUrl = environment.baseUrl + "/manager/rdv/refuserRDV";
+    private planningMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getPlanning";
+    private planningMecanicienUpdateUrl = environment.baseUrl + "/mecanicien/rdv/updatePlanning";
 
     constructor(private http: HttpClient) { }
 
@@ -25,6 +27,15 @@ export class RdvService {
         return this.http.get(this.dataRDVurl, { headers });
     }
 
+    getPlanningMecanicien(numPage:Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenMecanicienStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(this.planningMecanicienUrl + "?page=" + numPage, { headers });
+    }
+
     newRDV(idVoiture: string, idService: string, details: any[], dates: Date[]): Observable<any> {
         const token = localStorage.getItem(environment.tokenClientStorage);
         const headers = new HttpHeaders({
@@ -33,6 +44,15 @@ export class RdvService {
         console.log(details);
 
         return this.http.post(this.newRDVurl, { idVoiture, idService, details, dates }, { headers });
+    }
+
+    updatePlanning(idPlanning: string, tempsPasse : number, resteAFaire : number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenMecanicienStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.planningMecanicienUpdateUrl, { idPlanning, tempsPasse, resteAFaire }, { headers });
     }
 
     validerRDV(idDemande:string|null, planning : any[]): Observable<any> {

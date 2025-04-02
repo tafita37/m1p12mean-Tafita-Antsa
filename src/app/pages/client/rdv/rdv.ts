@@ -181,7 +181,10 @@ export class RDV {
         //     { title: 'Réunion', start: '2025-04-03T10:00:00', end: '2025-04-03T11:00:00' }
         // ],
         dateClick: this.onDateClick.bind(this), // Gère le clic sur un jour
-        eventClick: this.onEventClick.bind(this)
+        eventClick: this.onEventClick.bind(this),
+        eventDidMount: (info) => {
+            info.el.style.fontWeight = 'bold'; // Texte en gras
+        }
     };
 
     constructor(private rdvService: RdvService) { }
@@ -204,7 +207,10 @@ export class RDV {
                                 " " +
                                 allPlanning[i].mecanicien.user.prenom,
                         start: dateHeureDebut.toISOString().replace('Z', ''),
-                        end: dateHeureFin.toISOString().replace('Z', '')
+                        end: dateHeureFin.toISOString().replace('Z', ''),
+                        color: "red",
+                        backgroundColor: "red", // Couleur de fond
+                        textColor: "white"
                     }
                 )
             }
