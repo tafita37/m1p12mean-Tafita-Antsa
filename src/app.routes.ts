@@ -5,8 +5,9 @@ import { Documentation } from './app/pages/documentation/documentation';
 import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { AppLayoutManager } from './app/layout/component/manager/layout/app.layout';
-import { authClientGuard, authManagerGuard } from './app/guards/authManager.guard';
+import { authClientGuard, authManagerGuard, authMecanicienGuard } from './app/guards/authManager.guard';
 import { AppLayoutClient } from './app/layout/component/client/layout/app.layout';
+import { AppLayoutMecanicien } from './app/layout/component/mecanicien/layout/app.layout';
 
 export const appRoutes: Routes = [
     {
@@ -33,6 +34,14 @@ export const appRoutes: Routes = [
         canActivate: [authClientGuard],
         children: [
             { path: "", loadChildren: () => import('./app/routes/client/client.routes') },
+        ]
+    },
+    {
+        path: "mecanicien",
+        component: AppLayoutMecanicien,
+        canActivate: [authMecanicienGuard],
+        children: [
+            { path: "", loadChildren: () => import('./app/routes/mecanicien/mecanicien.routes') },
         ]
     },
     { path: "", component: Landing },
