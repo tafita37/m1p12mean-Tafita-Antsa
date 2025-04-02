@@ -52,6 +52,7 @@ export class RDV {
     showSousService: boolean = false;
     selectedDates: Date[] = [];
     nbDate: number = 1;
+    plannings: any[] = [];
 
     get idServiceInsert(): string {
         return this._idServiceInsert;
@@ -157,7 +158,7 @@ export class RDV {
 
     onEventClick(info: any) {
         if (confirm(`Supprimer l'événement "${info.event.title}" ?`)) {
-            info.event.remove();
+            // info.event.remove();
         }
     }
 
@@ -174,9 +175,11 @@ export class RDV {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         editable: true,
         selectable: true,
-        events: [
-            // { title: 'Réunion', start: '2025-04-01T10:00:00', end: '2025-04-01T11:00:00' }
-        ],
+        timeZone: 'local',
+        // events: this.plannings,
+        // events: [
+        //     { title: 'Réunion', start: '2025-04-03T10:00:00', end: '2025-04-03T11:00:00' }
+        // ],
         dateClick: this.onDateClick.bind(this), // Gère le clic sur un jour
         eventClick: this.onEventClick.bind(this)
     };
@@ -188,6 +191,26 @@ export class RDV {
         this.rdvService.getDataForRDV().subscribe(data => {
             this.allVoitures = data.listVoiture;
             this.allServices = data.allService;
+            let allPlanning = data.allPlanning;
+            for (let i = 0; i < allPlanning.length; i++) {
+                let dateHeureDebut = new Date(allPlanning[i].dateHeureDebut);
+                let dateHeureFin = new Date(dateHeureDebut);
+                dateHeureFin.setMinutes(dateHeureFin.getMinutes() + allPlanning[i].estimationTotal);
+                this.plannings.push(
+                    {
+                        title: allPlanning[i].sousService.nom +
+                                " par " +
+                                allPlanning[i].mecanicien.user.nom +
+                                " " +
+                                allPlanning[i].mecanicien.user.prenom,
+                        start: dateHeureDebut.toISOString().replace('Z', ''),
+                        end: dateHeureFin.toISOString().replace('Z', '')
+                    }
+                )
+            }
+            this.calendarOptions = { ...this.calendarOptions, events: [...this.plannings] };
+            console.log(this.calendarOptions);
+
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
