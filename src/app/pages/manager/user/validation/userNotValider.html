@@ -1,5 +1,4 @@
 <p-toolbar styleClass="mb-6">
-
     <!-- <ng-template #end>
         <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
     </ng-template> -->
@@ -19,7 +18,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des inscriptions non validées"
     [showCurrentPageReport]="true"
 >

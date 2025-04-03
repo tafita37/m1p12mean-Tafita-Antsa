@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { CRUDMarque } from '../../pages/manager/details/marque/crudMarque';
+import { CRUDVoiture } from '../../../pages/client/voiture/crud/crudVoiture';
 
 export default [
     {
         path: 'crud',
-        component: CRUDMarque
+        component: CRUDVoiture
     },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;
