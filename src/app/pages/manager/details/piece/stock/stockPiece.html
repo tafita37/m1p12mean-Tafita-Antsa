@@ -23,7 +23,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des pièces"
     [showCurrentPageReport]="true"
 >
@@ -91,14 +91,7 @@
     </div>
     <div class="mb-3">
         <label for="nb" class="block font-bold">Date de mouvement</label>
-        <p-datepicker
-            [showIcon]="true"
-            [showButtonBar]="true"
-            [appendTo]="'body'"
-            fluid
-            placeholder="Date"
-            [(ngModel)]="mouvementInsert.dateMouvement"
-        />
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
     </div>
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-6">

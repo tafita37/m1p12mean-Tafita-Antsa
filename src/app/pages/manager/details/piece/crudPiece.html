@@ -23,7 +23,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des pièces"
     [showCurrentPageReport]="true"
 >
@@ -41,9 +41,21 @@
             <th style="width: 3rem">
                 <p-tableHeaderCheckbox />
             </th>
-            <th pSortableColumn="name">
+            <th pSortableColumn="nom">
                 Nom
-                <p-sortIcon field="name" />
+                <p-sortIcon field="nom" />
+            </th>
+            <th pSortableColumn="prixRemplacement" style="text-align: right">
+                Prix de remplacement
+                <p-sortIcon field="prixRemplacement" />
+            </th>
+            <th pSortableColumn="prixRemplacement" style="text-align: right">
+                Prix de réparation
+                <p-sortIcon field="prixRemplacement" />
+            </th>
+            <th pSortableColumn="type">
+                Réparable ?
+                <p-sortIcon field="type" />
             </th>
         </tr>
     </ng-template>
@@ -53,6 +65,9 @@
                 <p-tableCheckbox [value]="piece" />
             </td>
             <td>{{ piece.nom }}</td>
+            <td style="text-align: right">{{ piece.prixRemplacement | number:'1.0-2':'fr' }} ar</td>
+            <td style="text-align: right">{{ piece.prixReparation ? (piece.prixReparation | number:'1.0-2':'fr') + " ar" : "Non-défini" }}</td>
+            <td>{{ piece.type==11 ? "Réparable" : "Non-réparable" }}</td>
             <td>
                 <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(piece)" />
                 <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
@@ -60,18 +75,56 @@
         </tr>
     </ng-template>
 </p-table>
-<p-dialog [(visible)]="newPieceDialog" [style]="{ width: 'auto' }" header="Nouvelle pièce" [modal]="true" #elseBlock>
-    <label for="name" class="block font-bold mb-3">Nom</label>
-    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="nomPieceInsert" />
+<p-dialog [(visible)]="newPieceDialog" [style]="{ width: '450px' }" header="Nouvelle pièce" [modal]="true" #elseBlock>
+    <div class="mb-3">
+        <label for="name" class="block font-bold">Nom</label>
+        <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceInsert.nom" />
+    </div>
+    <div class="mb-3">
+        <label for="type" class="block font-bold">Type</label>
+        <p-select
+            id="type"
+            [options]="typePieces"
+            styleClass="mb-3"
+            optionValue="id"
+            optionLabel="value"
+            placeholder="Type"
+            [appendTo]="'body'"
+            fluid
+            [(ngModel)]="pieceInsert.type"
+        />
+    </div>
+    <div class="mb-3">
+        <label for="prixRemplacement" class="block font-bold">Prix de remplacement</label>
+        <p-inputnumber id="prixRemplacement" fluid [(ngModel)]="pieceInsert.prixRemplacement" />
+    </div>
+    <div class="mb-3" *ngIf="pieceInsert.type==11">
+        <label for="prixReparation" class="block font-bold">Prix de réparation</label>
+        <p-inputnumber id="prixReparation" fluid [(ngModel)]="pieceInsert.prixReparation" />
+    </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
     <ng-template #footer>
         <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewPieceDialog()" />
         <p-button label="Enregistrer" icon="pi pi-check" (click)="insertPiece()" />
     </ng-template>
 </p-dialog>
-<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
-    <label for="name" class="block font-bold mb-3">Nom</label>
-    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: '450px' }" header="Modifier" [modal]="true" #elseBlock>
+    <div class="mb-3">
+        <label for="name" class="block font-bold">Nom</label>
+        <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    </div>
+    <div class="mb-3">
+        <label for="type" class="block font-bold">Type</label>
+        <p-select id="type" [options]="typePieces" styleClass="mb-3" optionValue="id" optionLabel="value" placeholder="Type" [appendTo]="'body'" fluid [(ngModel)]="pieceCliquer.type" />
+    </div>
+    <div class="mb-3">
+        <label for="prixRemplacement" class="block font-bold">Prix de remplacement</label>
+        <p-inputnumber id="prixRemplacement" fluid [(ngModel)]="pieceCliquer.prixRemplacement" />
+    </div>
+    <div class="mb-3" *ngIf="pieceCliquer.type==11">
+        <label for="prixReparation" class="block font-bold">Prix de réparation</label>
+        <p-inputnumber id="prixReparation" fluid [(ngModel)]="pieceCliquer.prixReparation" />
+    </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
     <ng-template #footer>
         <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
