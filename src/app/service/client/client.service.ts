@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 })
 export class ClientService {
     private listeVoitureUrl = environment.baseUrl + "/client/voiture/allVoiture";
+    private listeVoitureAvancementUrl = environment.baseUrl + "/client/rdv/voitureEnCours";
     private newVoitureUrl = environment.baseUrl + "/client/voiture/insert";
     private updateVoitureUrl = environment.baseUrl + "/client/voiture/update";
     private deleteVoitureUrl = environment.baseUrl + "/client/voiture/delete";
@@ -21,6 +22,15 @@ export class ClientService {
         });
 
         return this.http.get(this.listeVoitureUrl + "?page=" + numPage, { headers });
+    }
+
+    getListVoitureAvancement(): Observable<any> {
+        const token = localStorage.getItem(environment.tokenClientStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(this.listeVoitureAvancementUrl, { headers });
     }
 
     insertVoiture(marque:string, matricule:string, anneeFabrication:number): Observable<any> {

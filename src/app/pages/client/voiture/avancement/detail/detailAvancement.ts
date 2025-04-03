@@ -16,10 +16,10 @@ import { RippleModule } from 'primeng/ripple';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
-import { Customer, CustomerService, Representative } from '../../service/customer.service';
-import { Product, ProductService } from '../../service/product.service';
-import { RdvService } from '../../../service/rdv/rdv.service';
-import { Router } from '@angular/router';
+import { Customer, CustomerService, Representative } from '../../../../service/customer.service';
+import { Product, ProductService } from '../../../../service/product.service';
+import { RdvService } from '../../../../../service/rdv/rdv.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -29,7 +29,7 @@ interface expandedRows {
 }
 
 @Component({
-    selector: 'app-liste-tache',
+    selector: 'app-detail-avancement',
     standalone: true,
     imports: [
         TableModule,
@@ -52,11 +52,11 @@ interface expandedRows {
         CalendarModule,
         InputNumberModule
     ],
-    templateUrl: "./listeTache.html",
-    styleUrl: "./listeTache.css",
+    templateUrl: "./detailAvancement.html",
+    styleUrl: "./detailAvancement.css",
     providers: [ConfirmationService, MessageService, CustomerService, ProductService]
 })
-export class ListeTache implements OnInit {
+export class DetailDemande implements OnInit {
     customers1: Customer[] = [];
 
     customers2: Customer[] = [];
@@ -87,17 +87,30 @@ export class ListeTache implements OnInit {
     loading: boolean = true;
     nbPlanning: number = 0;
 
+    nbEtoilePlanning: any = {};
+
     @ViewChild('filter') filter!: ElementRef;
 
     etatTacheInsert: any = {};
+
+    idDemande: string | null = "";
 
     constructor(
         private customerService: CustomerService,
         private RDVService: RdvService,
         public router: Router,
         private confirmationService: ConfirmationService,
-        private messageService : MessageService
+        private messageService: MessageService,
+        private route: ActivatedRoute,
     ) { }
+
+    noterPlanning(detail: any) {
+        this.RDVService.noterPlanning(detail._id, this.nbEtoilePlanning[detail._id].nbEtoile).subscribe(data => {
+            this.loadData();
+        }, error => {
+            console.error('Erreur lors de la connexion:', error);
+        });
+    }
 
     updateEtatTache(tache: any) {
         this.RDVService.updatePlanning(
@@ -117,15 +130,19 @@ export class ListeTache implements OnInit {
             page = (event.first / event.rows) + 1;
         }
         this.listPlanning = [];
-        this.RDVService.getPlanningMecanicien(page).subscribe(data => {
-            this.listPlanning = data.listPlanning;
+        this.RDVService.getPlanningOfDemande(this.idDemande).subscribe(data => {
+            this.listPlanning = data.plannings;
             for (let i = 0; i < this.listPlanning.length; i++) {
+                this.nbEtoilePlanning[this.listPlanning[i]._id] = {
+                    idPlanning : this.listPlanning[i]._id,
+                    nbEtoile: this.listPlanning[i].nbEtoile
+                };
                 let dateHeureDebut = new Date(this.listPlanning[i].dateHeureDebut);
                 let dateHeureFin = new Date(dateHeureDebut);
                 dateHeureFin.setMinutes(dateHeureFin.getMinutes() + this.listPlanning[i].estimationTotal);
                 this.listPlanning[i].dateHeureDebut = dateHeureDebut.toISOString().replace('Z', '');
                 this.listPlanning[i].dateHeureFin = dateHeureFin.toISOString().replace('Z', '');
-                this.listPlanning[i].avancement = (this.listPlanning[i].tempsPasse / (this.listPlanning[i].tempsPasse + this.listPlanning[i].resteAFaire))*100;
+                this.listPlanning[i].avancement = (this.listPlanning[i].tempsPasse / (this.listPlanning[i].tempsPasse + this.listPlanning[i].resteAFaire)) * 100;
                 if (this.listPlanning[i].avancement > 100) {
                     this.listPlanning[i].avancement = 100;
                 }
@@ -135,9 +152,7 @@ export class ListeTache implements OnInit {
                     resteAFaire: this.listPlanning[i].resteAFaire
                 };
             }
-            console.log(this.etatTacheInsert);
 
-            this.nbPlanning = data.nbPlanning;
             this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
@@ -145,6 +160,7 @@ export class ListeTache implements OnInit {
     }
 
     ngOnInit() {
+        this.idDemande = this.route.snapshot.paramMap.get('idDemande');
         this.loadData();
     }
 

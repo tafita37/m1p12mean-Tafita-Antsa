@@ -1,5 +1,5 @@
 <div class="card">
-        <div class="font-semibold text-xl mb-4">Liste des tâches à faire</div>
+        <div class="font-semibold text-xl mb-4">Liste des tâches</div>
         <p-table
             #dt1
             [value]="listPlanning"
@@ -30,7 +30,7 @@
                     <th style="min-width: 12rem">
                         <div class="flex justify-between items-center">Sous-service</div>
                     </th>
-                    <th>
+                    <th style="min-width: 8rem">
                         <div class="flex justify-between items-center">Date</div>
                     </th>
                     <th>
@@ -42,11 +42,14 @@
                     <th style="min-width: 12rem">
                         <div class="flex justify-between items-center">Etat</div>
                     </th>
-                    <th>
+                    <th style="min-width: 6rem">
                         <div class="flex justify-between items-center">Temps passé</div>
                     </th>
-                    <th>
+                    <th style="min-width: 6rem">
                         <div class="flex justify-between items-center">Reste</div>
+                    </th>
+                    <th>
+                        <div class="flex justify-between items-center">Appréciation</div>
                     </th>
                 </tr>
             </ng-template>
@@ -67,27 +70,19 @@
                         </div>
                     </td>
                     <td >
-                        <p-inputnumber
-                            fluid
-                            placeholder="Temps passé en minute"
-                            [(ngModel)]="etatTacheInsert[detail._id].tempsPasse"
-                        />
+                        {{detail.tempsPasse}} min
                     </td>
                     <td >
-                        <p-inputnumber
-                            fluid
-                            placeholder="Reste à faire en minute"
-                            [(ngModel)]="etatTacheInsert[detail._id].resteAFaire"
-                        />
+                        {{detail.resteAFaire}} min
                     </td>
                     <td>
-                            <p-button
-                                icon="pi pi-check"
-                                class="mr-2"
-                                [rounded]="true"
-                                [outlined]="true"
-                                (click)="updateEtatTache(detail)"
+                        <div class="flex flex-col gap-4 w-1/2">
+                            <p-rating
+                                [(ngModel)]="nbEtoilePlanning[detail._id].nbEtoile"
+                                (onRate)="noterPlanning(detail)"
+                                [disabled]="detail.avancement!=100||detail.demande.dateValidationTravail!==null"
                             />
+                        </div>
                     </td>
                 </tr>
             </ng-template>

@@ -23,10 +23,13 @@ export class AppSidebarClient {
                 ]
             },
             {
-                label: 'Données',
+                label: 'Voiture',
                 items: [
                     {
                         label: 'Voitures', icon: 'pi pi-car pi-wrench', routerLink: ['/client/voiture/crud']
+                    },
+                    {
+                        label: 'Avancement', icon: 'pi pi-spinner pi-wrench', routerLink: ['/client/voiture/listVoiture']
                     },
                 ]
             },
