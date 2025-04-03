@@ -1,0 +1,105 @@
+<div class="calendar">
+  <div class="calendar-header">
+    <button class="btn primary" (click)="previousWeek()">&lt;</button>
+    <h2>{{ currentWeekLabel }}</h2>
+    <button class="btn primary" (click)="nextWeek()">&gt;</button>
+  </div>
+
+  <div class="mechanics-filter">
+    @for(mechanic of mechanics; track mechanic._id) {
+      <div class="mechanic-toggle">
+        <label [style.color]="mechanic.color">
+          <input
+            type="checkbox"
+            [checked]="selectedMechanics.includes(mechanic._id)"
+            (change)="toggleMechanic(mechanic._id)"
+          >
+          {{ mechanic.nom }} {{ mechanic.prenom }}
+        </label>
+      </div>
+    }
+  </div>
+
+  <div class="calendar-grid">
+    @for(day of weekDays; track day) {
+      <div class="day-column">
+        <div class="day-header">
+          {{ formatDay(day) }}
+        </div>
+
+        @if(hasAppointment(day)) {
+          <ul class="appointments-list">
+            @for(appointment of getAppointments(day); track appointment._id) {
+              <li class="appointment-item">
+                <div class="appointment-bullet" [style.background-color]="getMechanicColor(appointment.mechanicId)"></div>
+                <div class="appointment-content">
+                  <div class="appointment-title">
+                    {{ appointment.appointmentDetails.vehiculeId?.modele || 'Véhicule inconnu' }}
+                    <span class="vehicle-plate">{{ appointment.appointmentDetails.vehiculeId?.matricule || '' }}</span>
+                  </div>
+                  <div class="appointment-details">
+                    <span class="prestations">{{ getPrestationNames(appointment.appointmentDetails.prestations) }}</span>
+                    <span class="mechanic">{{ appointment.mechanicName }}</span>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="no-appointments">Aucun rendez-vous</div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modale -->
+@if(selectedSlot) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Rendez-vous du {{ formatModalDate(selectedSlot.date) }}</h3>
+        <button class="close-button" (click)="closeModal()">&times;</button>
+      </div>
+      <ul class="appointment-list">
+        @for(appointment of getAppointments(selectedSlot.date); track appointment._id) {
+          <li class="appointment-item detailed">
+            <div class="appointment-bullet" [style.background-color]="getMechanicColor(appointment.mechanicId)"></div>
+            <div class="appointment-content">
+              <div class="appointment-header">
+                <h4>{{ appointment.appointmentDetails.vehiculeId?.modele || 'Véhicule inconnu' }}</h4>
+                <span class="vehicle-plate">{{ appointment.appointmentDetails.vehiculeId?.matricule || '' }}</span>
+              </div>
+              
+              <div class="appointment-section">
+                <h5>Informations</h5>
+                <div class="info-grid">
+                  <span class="info-label">Mécanicien:</span>
+                  <span class="info-value">{{ appointment.mechanicName }}</span>
+                  
+                  <span class="info-label">Statut:</span>
+                  <span class="info-value status-{{appointment.status}}">{{ appointment.status }}</span>
+                  
+                  <span class="info-label">Type:</span>
+                  <span class="info-value">{{ appointment.type }}</span>
+                </div>
+              </div>
+              
+              <div class="appointment-section">
+                <h5>Prestations</h5>
+                <ul class="prestations-list">
+                  @for(prestation of appointment.appointmentDetails.prestations; track prestation._id) {
+                    <li>
+                      {{ prestation.prestationId?.nom || 'Prestation inconnue' }}
+                      <span class="prestation-duration">{{ prestation.prestationId?.duree || '?' }} min</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+}

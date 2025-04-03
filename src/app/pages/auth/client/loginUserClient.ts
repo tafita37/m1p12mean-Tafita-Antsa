@@ -34,6 +34,7 @@ export class LoginClient {
     errorMessage: string = '';
     sucessMessage: string = '';
 
+
     constructor(private loginUserService: LoginUserService, private router : Router) { }
 
     loginUser(): void {
@@ -42,6 +43,7 @@ export class LoginClient {
             this.loginUserService.loginUserClient(this.user).subscribe(data => {
                 localStorage.setItem(environment.tokenClientStorage, data.token);
                 this.sucessMessage = "Connecté";
+                this.router.navigate(['/client']);
                 this.router.navigate(['/client/voiture/crud']);
             }, error => {
                 console.error('Erreur lors de la connexion:', error);

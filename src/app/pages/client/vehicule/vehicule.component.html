@@ -1,0 +1,84 @@
+<p-toolbar styleClass="mb-6">
+
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2"/>
+        <p-button
+            severity="secondary"
+            label="Delete"
+            icon="pi pi-trash"
+            outlined
+            [disabled]="!selectedProducts || !selectedProducts.length"
+        />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="vehicules"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadVehiculeUtilisateur($event)"
+    [totalRecords]="nbVehicules"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Liste des vehicules"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Vehicules</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="name" style="min-width: 16rem">
+                Marque
+                <p-sortIcon field="name" />
+            </th>
+            <th pSortableColumn="price" style="min-width: 8rem">
+                Modele
+                <p-sortIcon field="price" />
+            </th>
+            <th pSortableColumn="category" style="min-width: 10rem">
+                Matricule
+                <p-sortIcon field="category" />
+            </th>
+            <th pSortableColumn="category" style="min-width: 10rem">
+                annee
+                <p-sortIcon field="category" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-vehicule>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="vehicule" />
+            </td>
+            <td style="min-width: 16rem">{{ vehicule.marque.nom }}</td>
+            <td>{{ vehicule.modele }}</td>
+            <td>{{ vehicule.matricule }}</td>
+            <td>{{ vehicule.annee }}</td>
+            <!-- <td>
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdateDialog(vehicule)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(vehicule)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>

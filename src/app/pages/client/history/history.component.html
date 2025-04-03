@@ -1,0 +1,90 @@
+<div class="calendar">
+    <div class="calendar-header">
+      <button class="btn primary" (click)="previousWeek()">&lt;</button>
+      <h2>{{ currentWeekLabel }}</h2>
+      <button class="btn primary" (click)="nextWeek()">&gt;</button>
+    </div>
+  
+    <div class="mechanics-filter">
+      @for(mechanic of mechanics; track mechanic) {
+        <div class="mechanic-toggle">
+          <label [style.color]="mechanic.color">
+            <input
+              type="checkbox"
+              [checked]="selectedMechanics.includes(mechanic.id)"
+              (change)="toggleMechanic(mechanic.id)"
+            >
+            {{ mechanic.name }}
+          </label>
+        </div>
+      }
+  
+    </div>
+  
+    <div class="calendar-grid">
+      <div class="time-column">
+        <div class="time-slot-header"></div>
+        @for (hour of hours; track hour) {
+          <div class="time-slot">{{ hour }}:00</div>
+        }
+      </div>
+  
+      @for (day of weekDays; track day) {
+        <div class="day-column">
+          <div class="day-header">
+            {{ formatDay(day) }}
+          </div>
+          @for (hour of hours; track hour) {
+            <div
+              class="time-slot"
+              [class.has-appointment]="hasAppointment(day, hour)"
+              (click)="onSlotClick(day, hour)"
+            >
+              @for (appointment of getAppointments(day, hour); track appointment) {
+                @if(selectedMechanics.includes(appointment.mechanicId)) {
+                  <div
+                  class="appointment"
+                  [style.background-color]="getMechanicColor(appointment.mechanicId)"
+                >
+                  {{ appointment.title }}
+                </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+  
+  @if (selectedSlot) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Rendez-vous du {{ formatModalDate(selectedSlot.date) }} à {{ selectedSlot.hour }}:00</h3>
+          <button class="close-button" (click)="closeModal()">&times;</button>
+        </div>
+        <div class="appointment-list">
+          @if (getAppointments(selectedSlot.date, selectedSlot.hour).length === 0) {
+            <p>Aucun rendez-vous à cette heure.</p>
+          }
+          @for (appointment of getAppointments(selectedSlot.date, selectedSlot.hour); track appointment) {
+            <div class="appointment-item">
+              <div class="mechanic-info">
+                <div
+                  class="mechanic-color"
+                  [style.background-color]="getMechanicColor(appointment.mechanicId)"
+                ></div>
+                <span class="mechanic-name">{{ getMechanicName(appointment.mechanicId) }}</span>
+              </div>
+              <div class="appointment-title">{{ appointment.title }}</div>
+              <div class="appointment-time">
+                {{ formatTime(appointment.start) }} - {{ formatTime(appointment.end) }}
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+  
