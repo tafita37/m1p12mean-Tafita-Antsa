@@ -1,6 +1,11 @@
 import { Routes } from '@angular/router';
+import { ListMecanicien } from '../../pages/manager/rdv/performance/listMecanicien';
 
 export default [
+    {
+        path: 'mecanicienList',
+        component : ListMecanicien
+    },
     {
         path: 'user',
         loadChildren: () => import('./user/user.routes')
