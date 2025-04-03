@@ -3,8 +3,8 @@ import { ListMecanicien } from '../../pages/manager/rdv/performance/listMecanici
 
 export default [
     {
-        path: 'mecanicienList',
-        component : ListMecanicien
+        path: 'mecanicien',
+        loadChildren: () => import('./mecanicien/mecanicien.routes')
     },
     {
         path: 'user',
