@@ -46,16 +46,6 @@ export class AppSidebarManager {
                 ]
             },
             {
-                label: 'Rendez-vous',
-                items: [
-                    {
-                        label: 'En attente',
-                        icon: 'pi pi-fw pi-user',
-                        routerLink: ['/client/appointment']
-                    }
-                ]
-            },
-            {
                 label: 'Données',
                 items: [
                     {
@@ -95,20 +85,6 @@ export class AppSidebarManager {
                                 routerLink: ['/manager/service/crudSousService']
                             }
                         ]
-                    },
-                ]
-            },
-            {
-                label: "Reservation",
-                items: [
-                    {
-                        label: 'Reservation', icon: 'pi pi-fw pi-home', routerLink: ['/client/reservation'],
-                    },
-                    {
-                        label: 'Historique', icon: 'pi pi-fw pi-home', routerLink: ['/client/history']
-                    },
-                    {
-                        label: 'vehicule', icon: 'pi pi-fw pi-home', routerLink: ['/client/vehicule']
                     },
                 ]
             },
