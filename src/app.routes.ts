@@ -7,6 +7,11 @@ import { Notfound } from './app/pages/notfound/notfound';
 import { LoginClient } from './app/pages/auth/client/loginUserClient';
 import { AppLayoutManager } from './app/layout/component/manager/layout/app.layout';
 import { authManagerGuard } from './app/guards/authManager.guard';
+import { ReservationComponent } from './app/pages/client/reservation/reservation.component';
+import { HistoryComponent } from './app/pages/client/history/history.component';
+import { VehiculeComponent } from './app/pages/client/vehicule/vehicule.component';
+import { AppointmentComponent } from './app/pages/manager/appointment/appointment.component';
+import { PlanningComponent } from './app/pages/manager/planning/planning.component';
 
 export const appRoutes: Routes = [
     {
@@ -29,6 +34,17 @@ export const appRoutes: Routes = [
         children: [
             { path: "dashboard", component: Dashboard },
             { path: "", loadChildren: () => import('./app/routes/manager/manager.routes') },
+        ]
+    },
+    {
+        path: "client",
+        component: AppLayoutManager,
+        children: [
+            {path: "reservation", component: ReservationComponent},
+            {path: "history", component: PlanningComponent},
+            {path: "vehicule", component: VehiculeComponent},
+            {path: "appointment", component: AppointmentComponent}
+           
         ]
     },
     { path: 'landing', component: Landing },

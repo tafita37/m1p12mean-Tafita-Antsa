@@ -1,0 +1,138 @@
+<p-table
+    #dt
+    [value]="appointments"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadPendingAppointment()"
+    [totalRecords]="nbrAppointment"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Liste des rendez-vous en attente"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Rendez-vous en attente</h5>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="name" style="min-width: 16rem">
+                Nom
+                <p-sortIcon field="name" />
+            </th>
+            <th pSortableColumn="price" style="min-width: 8rem">
+                Prenom
+                <p-sortIcon field="price" />
+            </th>
+            <th pSortableColumn="category" style="min-width: 10rem">
+                Prestations
+                <p-sortIcon field="category" />
+            </th>
+            <th pSortableColumn="category" style="min-width: 10rem">
+                Date d'envoi
+                <p-sortIcon field="category" />
+            </th>
+            <th style="min-width: 12rem; text-align: center">
+                Actions
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-appointment>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="appointment" />
+            </td>
+            <td>{{ appointment.vehiculeId.proprietaire.nom }}</td>
+            <td>{{ appointment.vehiculeId.proprietaire.prenom }}</td>
+            <td>
+                <ng-container *ngFor="let prestation of appointment.prestations; let last = last">
+                  {{ prestation.prestationId.nom }}<span *ngIf="!last">, </span>
+                </ng-container>
+              </td>
+              <td>{{ appointment.dateRdv | date:'dd/MM/yyyy' }}</td>
+              <td style="text-align: center">
+                <div class="action-buttons">
+                  <button pButton 
+                          pRipple
+                          type="button" 
+                          icon="pi pi-check" 
+                          class="p-button-success p-button-sm"
+                          (click)="openAcceptDialog(appointment)"
+                          tooltip="Accepter le rendez-vous"
+                          tooltipPosition="top"></button>
+                  <button pButton 
+                          pRipple
+                          type="button" 
+                          icon="pi pi-times" 
+                          class="p-button-danger p-button-sm"
+                          (click)="openRejectDialog(appointment)"
+                          tooltip="Rejeter le rendez-vous"
+                          tooltipPosition="top"></button>
+                </div>
+              </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<!-- Ajoutez ceci à la fin de votre template -->
+<p-dialog header="Motif du rejet" [(visible)]="rejectDialog" [style]="{width: '500px'}" [modal]="true">
+    <form [formGroup]="rejectForm">
+      <div class="field">
+        <label for="reason" class="block mb-2">Motif du rejet</label>
+        <textarea pInputTextarea 
+                 id="reason" 
+                 formControlName="reason" 
+                 rows="5" 
+                 autoResize
+                 class="w-full"
+                 required></textarea>
+        <small *ngIf="rejectForm.get('reason')?.invalid && rejectForm.get('reason')?.touched" 
+               class="p-error block mt-1">Veuillez saisir le motif du rejet</small>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple type="button" label="Annuler" icon="pi pi-times" 
+              class="p-button-text" (click)="rejectDialog = false"></button>
+      <button pButton pRipple type="button" label="Valider" icon="pi pi-check" 
+              class="p-button-danger" (click)="confirmReject()" 
+              [disabled]="rejectForm.invalid"></button>
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog header="Assigner un mécanicien" [(visible)]="acceptDialog" [style]="{width: '500px'}" [modal]="true">
+    <form [formGroup]="assignMechanicForm">
+        <div class="field">
+            <label for="mechanic" class="block mb-2">Sélectionnez un mécanicien</label>
+            <p-select 
+    [options]="mecaniciens" 
+    formControlName="mechanic"
+    optionLabel="prenom"
+    placeholder="Choisir un mécanicien"
+    [showClear]="true"
+    class="w-full"
+    (ngModelChange)="onMechanicSelected($event)">
+</p-select>
+
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Annuler" icon="pi pi-times" 
+                class="p-button-text" (click)="acceptDialog = false"></button>
+                <button pButton pRipple type="button" label="Confirmer" icon="pi pi-check" 
+        class="p-button-success" 
+        (click)="confirmAccept()" 
+        [disabled]="!selectedMechanic">
+</button>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,145 @@
+<div class="sakai-container">
+  <h1 class="sakai-title">Réservation de services auto</h1>
+  
+  <div class="sakai-stepper">
+    <div class="stepper-header">
+      <div class="stepper-step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+        <div class="step-number">1</div>
+        <p>Services</p>
+      </div>
+      <div class="stepper-connector" [class.active]="currentStep >= 2"></div>
+      <div class="stepper-step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+        <div class="step-number">2</div>
+        <p>Categories</p>
+      </div>
+      <div class="stepper-connector" [class.active]="currentStep >= 3"></div>
+      <div class="stepper-step" [class.active]="currentStep === 3">
+        <div class="step-number">3</div>
+        <p>Produits</p>
+      </div>
+    </div>
+
+    <div class="stepper-content">
+      <!-- Étape 1 -->
+      @if(currentStep === 1) {
+        <div class="step-content">
+            <div class="form-group">
+                <label>Date du rendez-vous *</label>
+                <input type="date" [(ngModel)]="appointmentDate" [min]="minDate.toISOString().split('T')[0]">
+            </div>
+    
+            <div class="form-group">
+                <label>Choisissez votre véhicule *</label>
+                <select [(ngModel)]="selectedVehicle" class="form-control">
+                    <option *ngFor="let vehicle of vehicles" [value]="vehicle._id">
+                        {{ vehicle.marque.nom }} - {{ vehicle.modele }} ({{ vehicle.matricule }})
+                    </option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label>Sélectionnez les catégories *</label>
+                <div class="category-columns">
+                  @for(service of services; track service; let i = $index) {
+                    @if(i % 2 === 0) {
+                      <div class="category-column">
+                        <div class="modern-checkbox">
+                          <input type="checkbox" 
+                                [id]="'ser-' + service._id"
+                                [(ngModel)]="service.selected"
+                                (change)="updateServices()">
+                          <label [for]="'ser-' + service._id">{{service.nom}}</label>
+                        </div>
+                        @if(services[i+1]) {
+                          <div class="modern-checkbox">
+                            <input type="checkbox" 
+                                  [id]="'ser-' + services[i+1]._id"
+                                  [(ngModel)]="services[i+1].selected"
+                                  (change)="updateServices()">
+                            <label [for]="'ser-' + services[i+1]._id">{{services[i+1].nom}}</label>
+                          </div>
+                        }
+                      </div>
+                    }
+                  }
+                </div>
+            </div>
+        </div>
+      }
+    
+      <!-- Étape 2 -->
+<div *ngIf="currentStep === 2" class="step-content">
+  <div class="form-group">
+    <label>Sélectionnez les prestations *</label>
+    <div *ngFor="let service of filteredServices" class="service-group">
+      <h3>{{ service.nom }}</h3>
+      
+      <div class="category-columns">
+        @for(prestation of service.prestations; track prestation; let i = $index) {
+          @if(i % 2 === 0) {
+            <div class="category-column">
+              <div class="modern-checkbox">
+                <input type="checkbox"
+                      [id]="'prestation-' + prestation._id"
+                      [(ngModel)]="prestation.selected"
+                      (change)="updatePrestations()">
+                <label [for]="'prestation-' + prestation._id">{{prestation.nom}}</label>
+              </div>
+              @if(service.prestations[i+1]) {
+                <div class="modern-checkbox">
+                  <input type="checkbox"
+                        [id]="'prestation-' + service.prestations[i+1]._id"
+                        [(ngModel)]="service.prestations[i+1].selected"
+                        (change)="updatePrestations()">
+                  <label [for]="'prestation-' + service.prestations[i+1]._id">{{service.prestations[i+1].nom}}</label>
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Étape 3 -->
+<div *ngIf="currentStep === 3" class="step-content">
+  <div class="form-group">
+    <label>Sélectionnez les produits *</label>
+    <div class="category-columns">
+      @for(product of filteredProducts; track product; let i = $index) {
+        @if(i % 2 === 0) {
+          <div class="category-column">
+            <div class="modern-checkbox">
+              <input type="checkbox"
+                    [id]="'prod-' + product._id"
+                    [(ngModel)]="product.selected">
+              <label [for]="'prod-' + product._id">
+                {{ product.piece.nom }} - {{ product.marque.nom }}
+              </label>
+            </div>
+            @if(filteredProducts[i+1]) {
+              <div class="modern-checkbox">
+                <input type="checkbox"
+                      [id]="'prod-' + filteredProducts[i+1]._id"
+                      [(ngModel)]="filteredProducts[i+1].selected">
+                <label [for]="'prod-' + filteredProducts[i+1]._id">
+                  {{ filteredProducts[i+1].piece.nom }} - {{ filteredProducts[i+1].marque.nom }}
+                </label>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
+    </div>
+
+    <div class="stepper-actions">
+      <button *ngIf="currentStep > 1" (click)="previousStep()">Retour</button>
+      <button *ngIf="currentStep < 3" (click)="nextStep()" [disabled]="!canProceed()">Suivant</button>
+      <button *ngIf="currentStep === 3" (click)="confirmBooking()" [disabled]="!canSubmit()">Confirmer</button>
+    </div>
+  </div>
+</div>

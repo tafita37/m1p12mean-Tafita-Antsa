@@ -1,0 +1,239 @@
+.sakai-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f9fafb;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Poppins', sans-serif;
+}
+
+.sakai-title {
+  color: #333;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.sakai-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.stepper-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0e7ff;
+  color: #4f46e5;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.stepper-step.active .step-number {
+  background: #4f46e5;
+  color: white;
+  transform: scale(1.1);
+}
+
+.stepper-step.completed .step-number {
+  background: #10b981;
+  color: white;
+}
+
+.stepper-connector {
+  flex: 1;
+  height: 4px;
+  background: #d1d5db;
+  border-radius: 2px;
+  transition: background 0.3s ease;
+}
+
+.stepper-connector.active {
+  background: #4f46e5;
+}
+
+.stepper-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #fff;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+input[type="date"],
+input[type="text"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+input[type="date"]:focus,
+input[type="text"]:focus {
+  border-color: #6366f1;
+}
+
+.category-columns {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.category-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modern-checkbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 28px;
+  min-height: 24px;
+  cursor: pointer;
+  
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    
+    & + label::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border: 2px solid #94a3b8;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    &:checked + label::before {
+      background-color: #4f46e5;
+      border-color: #4f46e5;
+    }
+    
+    &:checked + label::after {
+      content: "✓";
+      position: absolute;
+      left: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-size: 12px;
+    }
+  }
+  
+  label {
+    margin-left: 8px;
+    cursor: pointer;
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  
+  &:hover input[type="checkbox"] + label::before {
+    border-color: #4f46e5;
+  }
+}
+
+.service-group {
+  margin-bottom: 1.5rem;
+  
+  h3 {
+    color: #4f46e5;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stepper-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  background: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
