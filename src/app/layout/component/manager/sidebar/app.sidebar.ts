@@ -36,7 +36,7 @@ export class AppSidebarManager {
                     {
                         label: 'Liste des mécaniciens',
                         icon: 'pi pi-fw pi-cog',
-                        routerLink: ['/manager/mecanicienList']
+                        routerLink: ['/manager/mecanicien/list']
                     },
                 ]
             },

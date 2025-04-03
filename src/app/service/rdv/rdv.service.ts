@@ -14,9 +14,11 @@ export class RdvService {
     private validerRDVUrl = environment.baseUrl + "/manager/rdv/validerRDV";
     private refuserRDVUrl = environment.baseUrl + "/manager/rdv/refuserRDV";
     private planningMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getPlanning";
+    private planningMecanicienAValiderUrl = environment.baseUrl + "/manager/mecanicien/listeTacheAValider";
     private planningOfDemandeUrl = environment.baseUrl + "/client/rdv/planningOfDemande";
     private planningMecanicienUpdateUrl = environment.baseUrl + "/mecanicien/rdv/updatePlanning";
     private noterPlanningUrl = environment.baseUrl + "/client/rdv/noterPlanning";
+    private planningMecanicienValiderUrl = environment.baseUrl + "/manager/mecanicien/validerPlanning";
 
     constructor(private http: HttpClient) { }
 
@@ -36,6 +38,16 @@ export class RdvService {
         });
 
         return this.http.get(this.planningMecanicienUrl + "?page=" + numPage, { headers });
+    }
+
+    getPlanningOfMecanicienAValider(numPage:Number, idMecanicien : string | null): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get(
+            this.planningMecanicienAValiderUrl + "?page=" + numPage + "&idMecanicien=" + idMecanicien, { headers }
+        );
     }
 
     getPlanningOfDemande(idDemande : string|null): Observable<any> {
@@ -64,6 +76,15 @@ export class RdvService {
         });
 
         return this.http.post(this.planningMecanicienUpdateUrl, { idPlanning, tempsPasse, resteAFaire }, { headers });
+    }
+
+    validerPlanning(idPlanning: string, tempsPasse : number, resteAFaire : number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post(this.planningMecanicienValiderUrl, { idPlanning, tempsPasse, resteAFaire }, { headers });
     }
 
     noterPlanning(idPlanning: string, nbEtoile:number): Observable<any> {
