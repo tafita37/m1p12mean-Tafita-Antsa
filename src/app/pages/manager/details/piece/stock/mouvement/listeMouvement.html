@@ -146,6 +146,10 @@
         <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
     </ng-template>
 </p-dialog>
+
+
+
+
 <p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
     <label for="name" class="block font-bold mb-3">Nom</label>
     <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />

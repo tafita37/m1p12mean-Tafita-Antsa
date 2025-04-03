@@ -41,7 +41,7 @@ export class PlanningComponent implements OnInit {
 
   private extractUniqueMechanics(data: any[]): any[] {
     const mechanicsMap = new Map<string, any>();
-
+    
     data.forEach(item => {
       if (item.mechanic && !mechanicsMap.has(item.mechanic._id)) {
         mechanicsMap.set(item.mechanic._id, {
@@ -53,7 +53,7 @@ export class PlanningComponent implements OnInit {
         });
       }
     });
-
+    
     return Array.from(mechanicsMap.values());
   }
 
@@ -63,13 +63,13 @@ export class PlanningComponent implements OnInit {
       const prestationNames = item.appointment.prestations
         ?.map((p: any) => p.prestationId?.nom || 'Prestation inconnue')
         ?.join(', ') || 'Aucune prestation';
-
+      
       // Informations sur le véhicule
       const vehicle = item.appointment.vehiculeId;
-      const vehicleInfo = vehicle
+      const vehicleInfo = vehicle 
         ? `${vehicle.modele} (${vehicle.matricule})`
         : 'Véhicule inconnu';
-
+      
       return {
         _id: item._id,
         mechanicId: item.mechanic._id,
@@ -105,7 +105,7 @@ export class PlanningComponent implements OnInit {
     if (!prestations || prestations.length === 0) {
       return 'Aucune prestation';
     }
-
+    
     return prestations
       .map(p => p.prestationId?.nom || 'Prestation inconnue')
       .join(', ');

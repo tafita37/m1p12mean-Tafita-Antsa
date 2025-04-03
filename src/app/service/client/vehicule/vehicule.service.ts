@@ -9,6 +9,8 @@ import { environment } from '../../../../environments/environment';
 export class VehiculeService {
 
   private listVehiculeUser = environment.baseUrl + "/vehicules/user";
+  private createVehicule = environment.baseUrl + "/vehicules"
+
 
   constructor(private http: HttpClient) { }
 
@@ -28,6 +30,12 @@ export class VehiculeService {
     const id = this.getUserFromToken(token);
     const data = this.http.get<any[]>(this.listVehiculeUser+`/${id}`);
     return data;
+  }
+
+  createNewVehicule(marque:string,matricule:string,modele:string,annee:number) {
+    const token = localStorage.getItem(environment.tokenClientStorage);
+    const id = this.getUserFromToken(token);
+    return this.http.post(this.createVehicule, {marque,matricule,proprietaire: id, modele, annee})
   }
 
   getListVehicleUser(numPage: Number): Observable<any> {

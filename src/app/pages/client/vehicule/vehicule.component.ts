@@ -21,6 +21,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ManagerService } from '../../../service/manager/manager.service';
 
 interface Column {
   field: string;
@@ -77,14 +78,32 @@ export class VehiculeComponent implements OnInit {
 
   vehiculeCliquer: any = {};
 
+  newVehicleDialog: boolean = false;
+
   submitted: boolean = false;
+
+  marques: any[] = [];
+
+  vehiculeInsert: {
+    marque: string,
+    matricule: string,
+    modele: string,
+    annee: number,
+} = {
+        marque: '',
+        matricule: '',
+        modele: '',
+        annee: 0,
+    };
 
   constructor(
     private vehiculeService: VehiculeService,
+    private managerService: ManagerService,
   ) {}
 
   ngOnInit() {
     this.loadVehiculeUtilisateur();
+    this.loadMarque();
     console.log("vehicules",this.vehicules);
   }
 
@@ -100,6 +119,15 @@ export class VehiculeComponent implements OnInit {
     })
   }
 
+  loadMarque() {
+    this.managerService.getListMarque(1).subscribe({
+      next:(data) => {
+        this.marques = data.marques
+      },
+      error:(error) => console.error("error fetching data",error)
+    });
+  }
+
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
@@ -109,9 +137,35 @@ export class VehiculeComponent implements OnInit {
     this.updateDialog = true;
   }
 
-    hideDialog() {
+  hideDialog() {
         this.updateDialog = false;
         this.submitted = false;
-    }
+  }
+
+  hideNewVehicule() {
+    this.newVehicleDialog = false;
+    this.submitted = false;
+  }
+
+  openInsertNewVehicule() {
+    this.submitted = false;
+    this.newVehicleDialog = true;
+  }
+
+  closeFormVehicule() {
+    this.submitted = false;
+    this.newVehicleDialog = false;
+  }
+
+  insertVehicule() {
+    if(!this.vehiculeInsert.marque || !this.vehiculeInsert.matricule || !this.vehiculeInsert.modele || !this.vehiculeInsert.annee) this.errorMessage = "Veuillez completer tous les champs";
+    this.vehiculeService.createNewVehicule(this.vehiculeInsert.marque,this.vehiculeInsert.matricule,this.vehiculeInsert.modele,this.vehiculeInsert.annee).subscribe({
+      next: () => {
+        this.closeFormVehicule();
+        this.loadVehiculeUtilisateur();
+      },
+      error: (err) => console.error("Erreur lors de la creation du vehicule",err)
+    })
+  }
 
 }

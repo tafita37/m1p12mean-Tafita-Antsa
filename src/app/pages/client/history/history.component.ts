@@ -6,7 +6,7 @@ import { fr } from 'date-fns/locale';
 @Component({
   selector: 'app-history',
   imports: [
-
+    
   ],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss'
