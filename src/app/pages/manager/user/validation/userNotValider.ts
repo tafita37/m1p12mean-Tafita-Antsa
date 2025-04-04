@@ -172,8 +172,10 @@ export class UserNotValider implements OnInit {
 
         if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
             this.errorMessage = "Veuillez entrer le type de client";
+            this.isLoading = false;
         } else if (this.roleUserCliquer.niveau === 10 && this.validerUser.dateEmbauche === null) {
             this.errorMessage = "Veuillez entrer la date d'embauche";
+            this.isLoading = false;
         } else {
             this.managerService.validerInscription(
                 this.validerUser.idUser,
@@ -184,12 +186,14 @@ export class UserNotValider implements OnInit {
                     console.log(data.message);
                     this.hideDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
-        } this.isLoading = false;
+        }
     }
 
 
