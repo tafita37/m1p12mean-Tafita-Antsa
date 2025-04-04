@@ -42,6 +42,7 @@ export class SignUpMecanicien {
     signUpUser(): void {
         this.isLoading = true;
         this.errorMessage = "";
+        this.sucessMessage = "";
         if (this.user.nom && this.user.prenom && this.user.email && this.user.mdp) {
             this.loginUserService.signUpUserMecanicien(this.user).subscribe(data => {
                 this.sucessMessage = data.message;
@@ -55,6 +56,8 @@ export class SignUpMecanicien {
             this.errorMessage = "Vous n'avez pas remplis certains champs";
             this.isLoading = false;
         }
+        this.sucessMessage = "";
+        this.user = { nom: "", prenom: "", email: "", mdp: "" };
     }
 
 }
