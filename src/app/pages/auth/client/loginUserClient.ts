@@ -11,6 +11,8 @@ import { MessageModule } from 'primeng/message';
 import { LoginUserService } from '../../../service/login/user/login-user.service';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../../environments/environment';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-login-user-client',
@@ -25,7 +27,8 @@ import { environment } from '../../../../environments/environment';
         FormsModule,
         RouterModule,
         RippleModule,
-        // AppFloatingConfigurator
+        DialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl : "./loginUserClient.html"
 })
@@ -33,22 +36,27 @@ export class LoginClient {
     user = { email: "client@gmail.com", mdp : "0000"}
     errorMessage: string = '';
     sucessMessage: string = '';
+    isLoading: boolean = false;
 
     constructor(private loginUserService: LoginUserService, private router : Router) { }
 
     loginUser(): void {
+        this.isLoading = true;
         this.errorMessage = "";
         if (this.user.email && this.user.mdp) {
             this.loginUserService.loginUserClient(this.user).subscribe(data => {
                 localStorage.setItem(environment.tokenClientStorage, data.token);
                 this.sucessMessage = "Connecté";
                 this.router.navigate(['/client/voiture/crud']);
+                this.isLoading = false;
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
                 this.errorMessage = error.error.message;
+                this.isLoading = false;
             });
         } else {
             this.errorMessage = "Email ou mot de passe manquant";
+            this.isLoading = false;
         }
     }
 
