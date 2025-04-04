@@ -47,17 +47,19 @@ export class SignUpMecanicien {
             this.loginUserService.signUpUserMecanicien(this.user).subscribe(data => {
                 this.sucessMessage = data.message;
                 this.isLoading = false;
+                this.user = { nom: "", prenom: "", email: "", mdp: "" };
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
                 this.errorMessage = error.error.message;
                 this.isLoading = false;
+                this.user = { nom: "", prenom: "", email: "", mdp: "" };
             });
         } else {
             this.errorMessage = "Vous n'avez pas remplis certains champs";
             this.isLoading = false;
+            this.user = { nom: "", prenom: "", email: "", mdp: "" };
         }
         this.sucessMessage = "";
-        this.user = { nom: "", prenom: "", email: "", mdp: "" };
     }
 
 }

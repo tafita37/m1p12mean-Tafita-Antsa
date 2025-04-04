@@ -187,10 +187,20 @@ export class UserNotValider implements OnInit {
                     this.hideDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
                     this.isLoading = false;
+                    this.validerUser= {
+                        idUser: "",
+                        typeClient: null,
+                        dateEmbauche: null
+                    };
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
                     this.isLoading = false;
+                    this.validerUser = {
+                        idUser: "",
+                        typeClient: null,
+                        dateEmbauche: null
+                    };
                 }
             });
         }
@@ -221,6 +231,7 @@ export class UserNotValider implements OnInit {
     }
 
     deleteProduct(user: any) {
+        this.isLoading = true;
         this.confirmationService.confirm({
             message: 'Êtes-vous sur de vouloir supprimer ' + user.nom + " " + user.prenom + '?',
             header: 'Confirmer',
@@ -233,9 +244,11 @@ export class UserNotValider implements OnInit {
                         console.log(data.message);
                         this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({
