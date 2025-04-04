@@ -139,7 +139,6 @@ export class HistoriqueVoiture implements OnInit {
     exportCSV() {
         this.dt.exportCSV();
     }
-
     exportPdf(demande: any) {
         this.factureService.getFactureOfDemande(demande._id).subscribe({
             next: (pdfBlob: Blob) => {

@@ -60,6 +60,10 @@
                 Année de fabrication
                 <p-sortIcon field="anneeFabrication" />
             </th>
+            <th pSortableColumn="historique">
+                Historique des services souscris
+                <p-sortIcon field="historique" />
+            </th>
         </tr>
     </ng-template>
     <ng-template #body let-voiture>
@@ -70,6 +74,16 @@
             <td>{{ voiture.matricule }}</td>
             <td>{{ voiture.marque.nom }}</td>
             <td>{{ voiture.anneeFabrication }}</td>
+            <td>
+                <p-button
+                    icon="pi pi-history"
+                    class="mr-2"
+                    [rounded]="true"
+                    [outlined]="true"
+                    label="Historique"
+                    (click)="router.navigate(['/client/voiture/historique', voiture._id])"
+                />
+            </td>
             <td>
                 <p-button
                     icon="pi pi-pencil"

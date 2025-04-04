@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../service/product.service';
 import { ClientService } from '../../../../service/client/client.service';
+import { Router } from '@angular/router';
 
 interface Column {
     field: string;
@@ -127,7 +128,8 @@ export class CRUDVoiture implements OnInit {
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private clientService : ClientService
+        private clientService: ClientService,
+        public router : Router
     ) { }
 
     exportCSV() {
