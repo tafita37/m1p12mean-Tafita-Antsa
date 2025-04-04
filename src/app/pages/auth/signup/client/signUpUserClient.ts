@@ -31,20 +31,25 @@ export class SignUpClient {
     user = { nom: "RAZAFINDRAKOTO", prenom: "Lalao", email: "lalao.razafin@gmail.com", mdp: "0000" }
     errorMessage: string = '';
     sucessMessage: string = '';
+    isLoading : boolean = false;
 
     constructor(private loginUserService: LoginUserService) { }
 
     signUpUser(): void {
+        this.isLoading = true;
         this.errorMessage = "";
         if (this.user.nom && this.user.prenom && this.user.email && this.user.mdp) {
             this.loginUserService.signUpUserClient(this.user).subscribe(data => {
                 this.sucessMessage = data.message;
+                this.isLoading = false;
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
                 this.errorMessage = error.error.message;
+                this.isLoading = false;
             });
         } else {
             this.errorMessage = "Vous n'avez pas remplis certains champs";
+            this.isLoading = false;
         }
     }
 
