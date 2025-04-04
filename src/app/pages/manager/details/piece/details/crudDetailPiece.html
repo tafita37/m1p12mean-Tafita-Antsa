@@ -89,37 +89,10 @@
         <label for="marque" class="block font-bold">Marque</label>
         <p-select [(ngModel)]="detailInsert.idMarque" [options]="allMarques" optionValue="_id" styleClass="mb-3" optionLabel="nom" placeholder="Marque" [appendTo]="'body'" fluid />
     </div>
-    <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-            <label for="prixAchat" class="block font-bold mb-3">Prix d'achat</label>
-            <p-inputnumber id="prixAchat" fluid [(ngModel)]="detailInsert.prixAchat" />
-        </div>
-        <div class="col-span-6">
-            <label for="prixVente" class="block font-bold mb-3">Prix de vente</label>
-            <p-inputnumber id="prixVente" fluid [(ngModel)]="detailInsert.prixVente" />
-        </div>
-    </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
     <ng-template #footer>
         <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewPieceDetailDialog()" />
         <p-button label="Enregistrer" icon="pi pi-check" (click)="insertDetailPiece()" />
-    </ng-template>
-</p-dialog>
-<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: '450px' }" header="Modifier" [modal]="true">
-    <div class="grid grid-cols-12 gap-4">
-        <div class="col-span-6">
-            <label for="prixAchat" class="block font-bold mb-3">Prix d'achat</label>
-            <p-inputnumber id="prixAchat" fluid [(ngModel)]="detailModif.prixAchat" />
-        </div>
-        <div class="col-span-6">
-            <label for="prixVente" class="block font-bold mb-3">Prix de vente</label>
-            <p-inputnumber id="prixVente" fluid [(ngModel)]="detailModif.prixVente" />
-        </div>
-    </div>
-    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
-    <ng-template #footer>
-        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdateDetailPieceDialog()" />
-        <p-button label="Modifier" icon="pi pi-check" (click)="updateDetailPiece()" />
     </ng-template>
 </p-dialog>
 

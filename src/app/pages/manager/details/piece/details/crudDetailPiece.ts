@@ -198,8 +198,6 @@ export class CRUDDetailsPiece implements OnInit {
             this.managerService.insertDetailPiece(
                 this.detailInsert.idPiece,
                 this.detailInsert.idMarque,
-                this.detailInsert.prixAchat,
-                this.detailInsert.prixVente,
             ).subscribe({
                 next: (data) => {
                     this.hideNewPieceDetailDialog();     // Fermer le dialogue après le succès
