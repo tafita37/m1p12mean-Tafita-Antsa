@@ -9,6 +9,8 @@ import { RippleModule } from 'primeng/ripple';
 import { MessageModule } from 'primeng/message';
 import { LoginUserService } from '../../../../service/login/user/login-user.service';
 import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-sign-up-user-client',
@@ -23,6 +25,8 @@ import { CommonModule } from '@angular/common';
         FormsModule,
         RouterModule,
         RippleModule,
+        DialogModule,
+        ProgressSpinnerModule
         // AppFloatingConfigurator
     ],
     templateUrl: "./signUpUserClient.html"
