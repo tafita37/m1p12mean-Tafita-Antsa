@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../service/product.service';
 import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -57,7 +58,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './userNotValider.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -78,6 +80,8 @@ export class UserNotValider implements OnInit {
         { name: 'Istanbul', code: 'IST' },
         { name: 'Paris', code: 'PRS' }
     ];
+
+    isLoading: boolean = false;
 
     calendarValue: any = null;
 
@@ -163,6 +167,7 @@ export class UserNotValider implements OnInit {
     }
 
     confirmerValidationInscription() {
+        this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
 
         if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
@@ -184,7 +189,7 @@ export class UserNotValider implements OnInit {
                     console.error('Erreur lors de la connexion:', error);
                 }
             });
-        }
+        } this.isLoading = false;
     }
 
 

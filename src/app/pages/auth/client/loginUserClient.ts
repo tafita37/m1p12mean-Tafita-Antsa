@@ -33,7 +33,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     templateUrl : "./loginUserClient.html"
 })
 export class LoginClient {
-    user = { email: "client@gmail.com", mdp : "0000"}
+    user = { email: "herilala.rakoto@gmail.com", mdp : "0000"}
     errorMessage: string = '';
     sucessMessage: string = '';
     isLoading: boolean = false;
