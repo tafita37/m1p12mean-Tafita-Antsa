@@ -18,25 +18,25 @@
 
 <p-table
     #dt
-    [value]="voitures"
+    [value]="listeDemande"
     [rows]="10"
     [columns]="cols"
     [lazy]="true"
     [loading]="loading"
     (onLazyLoad)="loadData($event)"
-    [totalRecords]="nbVoiture"
+    [totalRecords]="nbHistorique"
     [paginator]="true"
     [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
     dataKey="_id"
-    currentPageReportTemplate="Liste des voitures"
+    currentPageReportTemplate="Liste des services"
     [showCurrentPageReport]="true"
 >
     <ng-template #caption>
         <div class="flex items-center justify-between">
-            <h5 class="m-0">Vos voitures</h5>
+            <h5 class="m-0">Historique des services souscris pour la voiture numéro {{voitureConcerner.matricule}}</h5>
             <!-- <p-iconfield>
                 <p-inputicon styleClass="pi pi-search" />
                 <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
@@ -49,55 +49,29 @@
                 <p-tableHeaderCheckbox />
             </th>
             <th pSortableColumn="matricule">
-                Matricule
+                Service
                 <p-sortIcon field="matricule" />
             </th>
             <th pSortableColumn="marque">
-                Marque
+                Statut
                 <p-sortIcon field="marque" />
-            </th>
-            <th pSortableColumn="anneeFabrication">
-                Année de fabrication
-                <p-sortIcon field="anneeFabrication" />
-            </th>
-            <th pSortableColumn="historique">
-                Historique des services souscris
-                <p-sortIcon field="historique" />
             </th>
         </tr>
     </ng-template>
-    <ng-template #body let-voiture>
+    <ng-template #body let-demande>
         <tr>
             <td style="width: 3rem">
-                <p-tableCheckbox [value]="voiture" />
+                <p-tableCheckbox [value]="demande" />
             </td>
-            <td>{{ voiture.matricule }}</td>
-            <td>{{ voiture.marque.nom }}</td>
-            <td>{{ voiture.anneeFabrication }}</td>
+            <td>{{ demande.details.service.nom }}</td>
+            <td>{{ demande.dateValidationTravail == null ? 'En cours' : 'Valide'}}</td>
             <td>
                 <p-button
-                    icon="pi pi-history"
+                    icon="pi pi-file-pdf"
                     class="mr-2"
                     [rounded]="true"
                     [outlined]="true"
-                    label="Historique"
-                    (click)="router.navigate(['/client/voiture/historique', voiture._id])"
-                />
-            </td>
-            <td>
-                <p-button
-                    icon="pi pi-pencil"
-                    class="mr-2"
-                    [rounded]="true"
-                    [outlined]="true"
-                    (click)="openUpdateDialog(voiture)"
-                />
-                <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [rounded]="true"
-                    [outlined]="true"
-                    (click)="deleteProduct(voiture)"
+                    label="Facture"
                 />
             </td>
         </tr>
