@@ -75,8 +75,8 @@ export class CRUDDetailsPiece implements OnInit {
     allMarques: [] = [];
     allPieces: [] = [];
     detailInsert: {
-        idMarque: string, idPiece: string, prixAchat: number, prixVente: number
-    } = { idMarque: '', idPiece: '', prixAchat: 0, prixVente: 0 };
+        idMarque: string, idPiece: string
+    } = { idMarque: '', idPiece: '' };
     detailModif: {
         idDetailPiece : string, prixAchat: number, prixVente: number
     } = { idDetailPiece: '', prixAchat: 0, prixVente: 0 };
@@ -191,7 +191,7 @@ export class CRUDDetailsPiece implements OnInit {
         this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
 
-        if (!this.detailInsert.idPiece || !this.detailInsert.idMarque || !this.detailInsert.prixAchat || !this.detailInsert.prixVente || this.detailInsert.prixAchat==0 || this.detailInsert.prixVente==0) {
+        if (!this.detailInsert.idPiece || !this.detailInsert.idMarque ) {
             this.errorMessage = "Veuillez entrer les données corrects";
             this.isLoading = false;
         } else {
