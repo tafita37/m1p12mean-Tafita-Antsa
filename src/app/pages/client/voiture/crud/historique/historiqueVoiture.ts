@@ -20,9 +20,9 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../../service/product.service';
-import { ClientService } from '../../../../service/client/client.service';
-import { Router } from '@angular/router';
+import { ProductService } from '../../../../service/product.service';
+import { ClientService } from '../../../../../service/client/client.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface Column {
     field: string;
@@ -36,7 +36,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-voiture',
+    selector: 'app-historique-voiture',
     standalone: true,
     imports: [
         CommonModule,
@@ -60,16 +60,16 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './crudVoiture.html',
+    templateUrl: './historiqueVoiture.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class CRUDVoiture implements OnInit {
+export class HistoriqueVoiture implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
     updateDialog: boolean = false;
     insertDialog: boolean = false;
-
-    voitures: [] = [];
+    idVoiture: string | null = "";
+    listeDemande: [] = [];
     allMarques: [] = [];
 
     voitureInsert: {
@@ -121,15 +121,17 @@ export class CRUDVoiture implements OnInit {
 
     cols!: Column[];
 
-    nbVoiture: number = 0;
+    nbHistorique: number = 0;
 
     loading: boolean = false;
+
+    voitureConcerner : any = {};
 
     constructor(
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         private clientService: ClientService,
-        public router : Router
+        private route : ActivatedRoute
     ) { }
 
     exportCSV() {
@@ -138,18 +140,20 @@ export class CRUDVoiture implements OnInit {
 
     loadData(event: any | null = null): void {
         const page = event ? (event.first / event.rows)+1 : 1;
-        this.voitures = [];
+        this.listeDemande = [];
         this.typeClients = [];
-        this.clientService.getListeVoiturePaginate(page).subscribe(data => {
-            this.voitures = data.voitures;
-            this.nbVoiture = data.nbVoiture;
-            this.allMarques = data.allMarques;
+        this.clientService.getHistoriqueVoiturePaginate(page, this.idVoiture).subscribe(data => {
+            console.log(data);
+            this.voitureConcerner=data.voiture;
+            this.listeDemande =data.demandes;
+            this.nbHistorique = data.nbHistorique;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
     }
 
     ngOnInit(): void {
+        this.idVoiture=this.route.snapshot.paramMap.get('idVoiture');
         this.loadData();
     }
 
@@ -293,8 +297,8 @@ export class CRUDVoiture implements OnInit {
 
     findIndexById(id: string): number {
         let index = -1;
-        for (let i = 0; i < this.voitures.length; i++) {
-            if (this.voitures[i]["_id"] === id) {
+        for (let i = 0; i < this.listeDemande.length; i++) {
+            if (this.listeDemande[i]["_id"] === id) {
                 index = i;
                 break;
             }
