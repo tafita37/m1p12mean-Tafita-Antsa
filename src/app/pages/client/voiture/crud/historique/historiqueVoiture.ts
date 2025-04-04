@@ -134,6 +134,7 @@ export class HistoriqueVoiture implements OnInit {
         private clientService: ClientService,
         private route: ActivatedRoute,
         private factureService : FactureService
+        private route : ActivatedRoute
     ) { }
 
     exportCSV() {
