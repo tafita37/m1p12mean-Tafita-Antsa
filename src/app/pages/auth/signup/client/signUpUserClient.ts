@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
     templateUrl: "./signUpUserClient.html"
 })
 export class SignUpClient {
-    user = { nom: "RAKOTONIRINA", prenom: "Jean", email: "client@gmail.com", mdp: "0000" }
+    user = { nom: "RAZAFINDRAKOTO", prenom: "Lalao", email: "lalao.razafin@gmail.com", mdp: "0000" }
     errorMessage: string = '';
     sucessMessage: string = '';
 
