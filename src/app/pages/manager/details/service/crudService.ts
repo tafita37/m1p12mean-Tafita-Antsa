@@ -25,6 +25,7 @@ import { ManagerService } from '../../../../service/manager/manager.service';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Country } from '../../../service/customer.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -62,7 +63,8 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule,
         PopoverModule,
-        MultiSelectModule
+        MultiSelectModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudService.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -100,8 +102,8 @@ export class CRUDService implements OnInit {
         { id: number, value: string }, { id: number, value: string }
     ] = [{ id: 11, value: 'Réparable' }, { id: 1, value: 'Non réparable' }];
     serviceInsert: { nom: string } = { nom: ""};
-    serviceUpdate : {id : string, nom:string} = {id : "", nom:""};
-
+    serviceUpdate: { id: string, nom: string } = { id: "", nom: "" };
+    isLoading: boolean = false;
     dropdownValues = [
         { name: 'New York', code: 'NY' },
         { name: 'Rome', code: 'RM' },
@@ -263,6 +265,7 @@ export class CRUDService implements OnInit {
 
 
     insertService() {
+        this.isLoading = true;
         if (
             !this.serviceInsert ||
             !this.serviceInsert.nom ||
@@ -278,15 +281,18 @@ export class CRUDService implements OnInit {
                 next: (data) => {
                     this.hideNewServiceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
     }
 
     updatePiece() {
+        this.isLoading = true;
         if (
             !this.serviceUpdate ||
             !this.serviceUpdate.id ||
@@ -302,9 +308,11 @@ export class CRUDService implements OnInit {
                 next: (data) => {
                     this.hideUpdateSousDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
@@ -317,6 +325,7 @@ export class CRUDService implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 const ids = this.selectedProducts.map(product => product._id);
                 console.log(ids);
 
@@ -328,10 +337,12 @@ export class CRUDService implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }
@@ -355,16 +366,19 @@ export class CRUDService implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deleteServices(
                     [service._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({
@@ -383,6 +397,7 @@ export class CRUDService implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deleteSousFromService(
                     this.serviceCliquer._id,
                     sous._id
@@ -396,10 +411,12 @@ export class CRUDService implements OnInit {
                             detail: 'Product Deleted',
                             life: 3000
                         });
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }

@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../service/product.service';
 import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -57,7 +58,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudMarque.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -88,6 +90,8 @@ export class CRUDMarque implements OnInit {
         typeClient: null,
         dateEmbauche: null
     };
+
+    isLoading: boolean = false;
 
 
     roleUserCliquer: any = {};
@@ -172,8 +176,10 @@ export class CRUDMarque implements OnInit {
     }
 
     insertMarque() {
+        this.isLoading = true;
         if (!this.nomMarqueInsert) {
             this.errorMessage = "Le nom de la marque est obligatoire";
+            this.isLoading = false;
         } else {
             this.managerService.insertMarque(
                 this.nomMarqueInsert
@@ -181,17 +187,21 @@ export class CRUDMarque implements OnInit {
                 next: (data) => {
                     this.hideNewMarqueDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
     }
 
     updateMarque() {
+        this.isLoading = true;
         if (!this.marqueCliquer.idMarque || !this.marqueCliquer.nom) {
             this.errorMessage = "Veuillez indiquer la marque que vous souhaitez modifier";
+            this.isLoading = false;
         } else {
             this.managerService.updateMarque(
                 this.marqueCliquer.idMarque,
@@ -200,9 +210,11 @@ export class CRUDMarque implements OnInit {
                 next: (data) => {
                     this.hideUpdateMarqueDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
@@ -215,6 +227,7 @@ export class CRUDMarque implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 const ids = this.selectedProducts.map(product => product._id);
                 this.managerService.deleteMarque(
                     ids
@@ -223,10 +236,12 @@ export class CRUDMarque implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }
@@ -249,16 +264,19 @@ export class CRUDMarque implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deleteMarque(
                     [marque._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({
