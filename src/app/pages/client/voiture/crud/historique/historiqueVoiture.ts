@@ -23,6 +23,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../../service/product.service';
 import { ClientService } from '../../../../../service/client/client.service';
 import { ActivatedRoute } from '@angular/router';
+import { FactureService } from '../../../../../service/client/facture/facture.service';
 
 interface Column {
     field: string;
@@ -131,12 +132,39 @@ export class HistoriqueVoiture implements OnInit {
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
         private clientService: ClientService,
+        private route: ActivatedRoute,
+        private factureService : FactureService
         private route : ActivatedRoute
     ) { }
 
     exportCSV() {
         this.dt.exportCSV();
     }
+
+    exportPdf(demande: any) {
+        this.factureService.getFactureOfDemande(demande._id).subscribe({
+            next: (pdfBlob: Blob) => {
+                // Créer un lien de téléchargement
+                const url = window.URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `facture-${demande._id}.pdf`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            },
+            error: (err) => {
+                console.error(err);
+            }
+        });
+    }
+
+    // exportPdf(demande : any) {
+    //     this.factureService.getFactureOfDemande(demande._id).subscribe(data => {
+    //         console.log(data);
+    //     }, error => {
+    //         console.error('Erreur lors de la connexion:', error);
+    //     });
+    // }
 
     loadData(event: any | null = null): void {
         const page = event ? (event.first / event.rows)+1 : 1;
