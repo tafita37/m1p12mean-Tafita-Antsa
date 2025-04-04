@@ -53,7 +53,8 @@
                             optionLabel="fullName"
                             placeholder="Mécanicien"
                             [appendTo]="'body'"
-                            [(ngModel)]="validationInsert[detail.sousService._id].idMecanicien" fluid />
+                            [(ngModel)]="validationInsert[detail.sousService._id].idMecanicien" fluid
+                        />
                     </td>
                     <td class="flex items-center space-x-4">
                         <p-select
@@ -93,8 +94,29 @@
             </ng-template>
         </p-table>
     </div>
-    <button pButton label="Valider" (click)="validerRDV()" > </button>
+    <button pButton label="Valider" (click)="openVenteDialog()" > </button>
 </div>
+
+<p-dialog
+    [(visible)]="venteDialog"
+    [style]="{ width: '450px'}"
+    header="Indiquez le prix de vente des pièces suivantes"
+    [modal]="true"
+>
+    <div *ngFor="let piece of listeAVendre" class="mb-3">
+        <label for="nom" class="block font-bold">{{piece.piece.nom}}</label>
+        <p-inputnumber
+            id="anneeFabrication"
+            fluid
+            [placeholder]="piece.piece.nom"
+            [(ngModel)]="piece.prix"
+        />
+    </div>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="closeVenteDialog()" />
+        <p-button label="Confirmer" icon="pi pi-check" (click)="validerRDV()" />
+    </ng-template>
+</p-dialog>
 
 <div class="card" *ngIf="nbListPieceAcheter!=0">
     <div class="font-semibold text-xl mb-4">Veuillez d'abord acheter les pièces suivantes</div>
@@ -186,6 +208,19 @@
                 [appendTo]="'body'"
                 fluid
                 [(ngModel)]="formAchatPiece.idFournisseur"
+            />
+        </div>
+        <div class="mt-3">
+            <label for="mecanicien" class="block font-bold">Mécanicien</label>
+            <p-select
+                class="flex-grow"
+                [options]="allMecanicien"
+                optionValue="idUser"
+                optionLabel="fullName"
+                placeholder="Mécanicien"
+                [appendTo]="'body'"
+                [(ngModel)]="formAchatPiece.idUser"
+                fluid
             />
         </div>
         <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>

@@ -96,13 +96,13 @@ export class RdvService {
         return this.http.post(this.noterPlanningUrl, { idPlanning, nbEtoile }, { headers });
     }
 
-    validerRDV(idDemande:string|null, planning : any[]): Observable<any> {
+    validerRDV(idDemande: string | null, planning: any[], listeAVendre : any): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post(this.validerRDVUrl, { idDemande, planning }, { headers });
+        return this.http.post(this.validerRDVUrl, { idDemande, planning, listeAVendre }, { headers });
     }
 
     refuserRDV(idDemande:string|null): Observable<any> {

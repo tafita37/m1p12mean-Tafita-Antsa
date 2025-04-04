@@ -76,11 +76,14 @@ export class ValidationRDV implements OnInit {
 
     achatPieceDialog: boolean = false;
 
+    venteDialog : boolean = false;
+
     errorMessage: string = "";
 
     statuses: any[] = [];
     listDemande: any[] = [];
     allFournisseur: any[] = [];
+    listeAVendre: any[] = [];
 
     products: Product[] = [];
 
@@ -151,11 +154,18 @@ export class ValidationRDV implements OnInit {
         }
         this.formAchatPiece.idPiece = piece.piece._id;
         this.formAchatPiece.idMarque = this.demande.voiture.marque;
-        this.formAchatPiece.idUser = this.demande.voiture.client.user;
+        // this.formAchatPiece.idUser = this.demande.voiture.client.user;
         this.formAchatPiece.quantite = piece.quantite;
-        console.log(this.demande.voiture.client.user);
         this.nomAchat=piece.piece.nom;
         this.achatPieceDialog = true;
+    }
+
+    openVenteDialog() {
+        this.venteDialog = true;
+    }
+
+    closeVenteDialog() {
+        this.venteDialog = false;
     }
 
     hideNewAchatPieceDialog() {
@@ -163,8 +173,6 @@ export class ValidationRDV implements OnInit {
     }
 
     acheterPiece() {
-        console.log(this.formAchatPiece);
-
         this.stockService.newMouvementStock(
             this.formAchatPiece.idPiece,
             this.formAchatPiece.idMarque,
@@ -205,9 +213,29 @@ export class ValidationRDV implements OnInit {
                 dateHeureDebut: dateHeureDebut
             });
         }
+        for (let i = 0; i < this.listeAVendre.length; i++) {
+            console.log(this.listeAVendre[i].quantite);
+            this.listeAVendre[i].dateMouvement = new Date();
+            this.stockService.newMouvementStock(
+                this.listeAVendre[i].piece._id,
+                this.demande.voiture.marque,
+                this.demande.voiture.client.user,
+                null,
+                this.listeAVendre[i].prix,
+                this.listeAVendre[i].quantite,
+                false,
+                this.listeAVendre[i].dateMouvement
+            ).subscribe(data => {
+                this.closeVenteDialog();
+                this.loadData();
+            }, error => {
+                console.error('Erreur lors de la connexion:', error);
+            });
+        }
         this.rdvService.validerRDV(
             this.idDemande,
-            planning
+            planning,
+            this.listeAVendre
         ).subscribe(data => {
             this.router.navigate(['/manager/rdv/nonValider']);
         }, error => {
@@ -223,6 +251,8 @@ export class ValidationRDV implements OnInit {
         }
         // this.marques = [];
         this.rdvService.getAllDataForValidation(this.idDemande).subscribe(data => {
+            console.log(data.listeAVendre);
+            this.listeAVendre=data.listeAVendre;
             this.allFournisseur = data.allFournisseur;
             this.demande = data.demande;
             this.details = data.demande.details.details;
@@ -238,7 +268,8 @@ export class ValidationRDV implements OnInit {
 
             this.allMecanicien = data.allMecanicien.map((m: any) => ({
                 ...m,
-                fullName: `${m.user.nom} ${m.user.prenom}`
+                fullName: `${m.user.nom} ${m.user.prenom}`,
+                idUser : m.user._id
             }));
             this.datePropose = data.demande.date.map((d: string) => {
                 // Formatter chaque date de string en 'yyyy-MM-dd'
