@@ -134,13 +134,12 @@ export class HistoriqueVoiture implements OnInit {
         private clientService: ClientService,
         private route: ActivatedRoute,
         private factureService : FactureService
-        private route : ActivatedRoute
     ) { }
 
     exportCSV() {
         this.dt.exportCSV();
     }
-
+    
     exportPdf(demande: any) {
         this.factureService.getFactureOfDemande(demande._id).subscribe({
             next: (pdfBlob: Blob) => {
