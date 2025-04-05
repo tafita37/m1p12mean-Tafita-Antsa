@@ -129,6 +129,7 @@ export class CRUDMarque implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -137,8 +138,10 @@ export class CRUDMarque implements OnInit {
         this.managerService.getListMarque(page).subscribe(data => {
             this.marques = data.marques;
             this.nbMarque = data.nbMarque;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 

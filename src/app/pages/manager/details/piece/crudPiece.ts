@@ -134,6 +134,7 @@ export class CRUDPiece implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -144,8 +145,10 @@ export class CRUDPiece implements OnInit {
         this.managerService.getListPiece(page).subscribe(data => {
             this.pieces = data.pieces;
             this.nbPiece = data.nbPiece;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 

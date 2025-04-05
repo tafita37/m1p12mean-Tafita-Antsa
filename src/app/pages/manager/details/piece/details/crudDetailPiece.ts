@@ -135,6 +135,7 @@ export class CRUDDetailsPiece implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -145,9 +146,10 @@ export class CRUDDetailsPiece implements OnInit {
             this.nbDetailPiece = data.nbDetailsPiece;
             this.allMarques = data.marques;
             this.allPieces = data.pieces;
-
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 

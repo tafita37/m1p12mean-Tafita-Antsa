@@ -127,6 +127,7 @@ export class CRUDUser implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         const page = event ? (event.first / event.rows)+1 : 1;
         this.users = [];
         this.typeClients = [];
@@ -134,8 +135,10 @@ export class CRUDUser implements OnInit {
             this.users = data.users;
             this.typeClients = data.typeClients;
             this.nbUser = data.nbUser;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 

@@ -135,6 +135,7 @@ export class CRUDFournisseur implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -143,8 +144,10 @@ export class CRUDFournisseur implements OnInit {
         this.managerService.getListFournisseur(page).subscribe(data => {
             this.fournisseurs = data.fournisseur;
             this.nbFournisseur = data.nbFournisseur;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 

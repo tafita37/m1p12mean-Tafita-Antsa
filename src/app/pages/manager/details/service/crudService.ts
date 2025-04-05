@@ -161,6 +161,7 @@ export class CRUDService implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -170,8 +171,10 @@ export class CRUDService implements OnInit {
             this.services = data.listServices;
             this.nbServices = data.nbServices;
             this.allSousServices = data.allSousServices;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 

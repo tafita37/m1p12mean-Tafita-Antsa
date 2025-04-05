@@ -160,6 +160,7 @@ export class CRUDSousService implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -174,8 +175,10 @@ export class CRUDSousService implements OnInit {
             for (let i = 0; i < this.allPieces.length; i++) {
                 this.allPieces[i].isSelected = false;
             }
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 
