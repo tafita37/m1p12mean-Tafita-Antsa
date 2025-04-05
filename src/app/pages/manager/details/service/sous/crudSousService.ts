@@ -210,10 +210,11 @@ export class CRUDSousService implements OnInit {
     }
 
     openInsertSousService() {
+        this.sousServiceInsert = { nom: "", prix: 0, dureeMinute: 0, pieces: [] };
+        this.piecesSelected = [];
         this.nomPieceInsert = "";
         this.submitted = false;
         this.newSousServiceDialog = true;
-        this.sousServiceInsert = { nom: "", prix: 0, dureeMinute: 0, pieces: [] };
     }
 
     openUpdateSous(sous: any) {
@@ -396,7 +397,8 @@ export class CRUDSousService implements OnInit {
     hideNewSousServiceDialog() {
         this.newSousServiceDialog = false;
         this.submitted = false;
-        this.sousServiceInsert = { nom: "", prix: 0, dureeMinute : 0, pieces: [] };
+        this.sousServiceInsert = { nom: "", prix: 0, dureeMinute: 0, pieces: [] };
+        this.piecesSelected = [];
     }
 
     hideUpdateSousDialog() {

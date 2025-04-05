@@ -204,6 +204,8 @@ export class CRUDService implements OnInit {
     openInsertService() {
         this.submitted = false;
         this.newServiceDialog = true;
+        this.serviceInsert = { nom: "" };
+        this.sousSelected = [];
     }
 
     openUpdateService(sous: any) {
@@ -356,6 +358,7 @@ export class CRUDService implements OnInit {
         this.newServiceDialog = false;
         this.submitted = false;
         this.serviceInsert = { nom: "" };
+        this.sousSelected = [];
     }
 
     hideUpdateSousDialog() {
