@@ -78,9 +78,10 @@ export class CRUDDetailsPiece implements OnInit {
         idMarque: string, idPiece: string
     } = { idMarque: '', idPiece: '' };
     detailModif: {
-        idDetailPiece : string, prixAchat: number, prixVente: number
-    } = { idDetailPiece: '', prixAchat: 0, prixVente: 0 };
+        idDetailPiece : string
+    } = { idDetailPiece: '' };
     isLoading: boolean = false;
+
     dropdownValues = [
         { name: 'New York', code: 'NY' },
         { name: 'Rome', code: 'RM' },
@@ -171,8 +172,6 @@ export class CRUDDetailsPiece implements OnInit {
     openUpdateDetailPiece(piece: any) {
         this.errorMessage = "";
         this.detailModif.idDetailPiece = piece._id;
-        this.detailModif.prixAchat = piece.prixAchat;
-        this.detailModif.prixVente = piece.prixVente;
         this.submitted = false;
         this.updatePieceDialog = true;
     }
@@ -192,6 +191,7 @@ export class CRUDDetailsPiece implements OnInit {
     insertDetailPiece() {
         this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
+
 
         if (!this.detailInsert.idPiece || !this.detailInsert.idMarque ) {
             this.errorMessage = "Veuillez entrer les données corrects";
@@ -214,37 +214,6 @@ export class CRUDDetailsPiece implements OnInit {
             });
         }
     }
-
-    updateDetailPiece() {
-        this.isLoading = true;
-        if (
-            !this.detailModif.idDetailPiece ||
-            !this.detailModif.prixAchat ||
-            !this.detailModif.prixVente ||
-            this.detailModif.prixAchat == 0 ||
-            this.detailModif.prixVente == 0
-        ) {
-            this.errorMessage = "Veuillez entrer les données corrects";
-            this.isLoading = false;
-        } else {
-            this.managerService.updateDetailPiece(
-                this.detailModif.idDetailPiece,
-                this.detailModif.prixAchat,
-                this.detailModif.prixVente
-            ).subscribe({
-                next: (data) => {
-                    this.hideUpdateDetailPieceDialog();     // Fermer le dialogue après le succès
-                    this.loadData();       // Recharger les données après le succès
-                    this.isLoading = false;
-                },
-                error: (error) => {
-                    console.error('Erreur lors de la connexion:', error);
-                    this.isLoading = false;
-                }
-            });
-        }
-    }
-
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
@@ -277,6 +246,7 @@ export class CRUDDetailsPiece implements OnInit {
     hideNewPieceDetailDialog() {
         this.newPieceDetailDialog = false;
         this.submitted = false;
+        this.detailInsert = { idMarque: '', idPiece: '' };
     }
 
     hideUpdateDetailPieceDialog() {
