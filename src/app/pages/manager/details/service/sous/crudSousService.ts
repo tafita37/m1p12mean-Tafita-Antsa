@@ -206,6 +206,7 @@ export class CRUDSousService implements OnInit {
         this.nomPieceInsert = "";
         this.submitted = false;
         this.newSousServiceDialog = true;
+        this.sousServiceInsert = { nom: "", prix: 0, dureeMinute: 0, pieces: [] };
     }
 
     openUpdateSous(sous: any) {
