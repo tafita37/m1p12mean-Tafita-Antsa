@@ -195,7 +195,7 @@ export class ManagerService {
             'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque}, { headers });
+        return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque }, { headers });
     }
 
     insertFournisseur(nom : string, contact : string, email : string): Observable<any> {

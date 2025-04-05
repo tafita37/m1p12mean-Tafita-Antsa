@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { CRUDMarque } from '../../pages/manager/details/marque/crudMarque';
+import { CRUDMarque } from '../../../pages/manager/details/marque/crudMarque';
 
 export default [
     {

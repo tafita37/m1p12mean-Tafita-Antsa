@@ -1,3 +1,7 @@
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
 <p-toolbar styleClass="mb-6">
     <ng-template #start>
         <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertSousService()" />
@@ -139,7 +143,18 @@
         <p-inputnumber id="dureeService" fluid [(ngModel)]="sousServiceInsert.dureeMinute" />
     </div>
     <div class="font-semibold text-xl">Pièces</div>
-    <p-multiselect [options]="allPieces" [(ngModel)]="piecesSelected" placeholder="Sélectionnez les pièces" optionLabel="nom" optionValue="_id" display="chip" [filter]="true" fluid appendTo="body" (onChange)="onMultiselectChange($event)">
+    <p-multiselect
+        [options]="allPieces"
+        [(ngModel)]="piecesSelected"
+        placeholder="Sélectionnez les pièces"
+        optionLabel="nom"
+        optionValue="_id"
+        display="chip"
+        [filter]="true"
+        fluid
+        appendTo="body"
+        (onChange)="onMultiselectChange($event)"
+    >
         <ng-template #selecteditems let-pieces>
             @for (piece of pieces; track piece.code) {
             <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast rounded-border mr-2">
