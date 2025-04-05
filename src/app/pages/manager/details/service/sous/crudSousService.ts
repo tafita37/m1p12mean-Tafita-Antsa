@@ -98,9 +98,13 @@ export class CRUDSousService implements OnInit {
     typePieces: [
         { id: number, value: string }, { id: number, value: string }
     ] = [{ id: 11, value: 'Réparable' }, { id: 1, value: 'Non réparable' }];
-    sousServiceInsert : {nom:string, prix:number, pieces: any[]} = {nom:"", prix:0, pieces:[]};
-    sousServiceUpdate : {id : string, nom:string, prix:number, pieces: any[]} = {id : "", nom:"", prix:0, pieces:[]};
-
+    sousServiceInsert: {
+        nom: string, prix: number, dureeMinute: number, pieces: any[]
+    } = { nom: "", prix: 0, dureeMinute: 0, pieces: [] };
+    sousServiceUpdate: {
+        id: string, nom: string, prix: number, dureeMinute : number, pieces: any[]
+    } = { id: "", nom: "", prix: 0, dureeMinute: 0, pieces: [] };
+    isLoading: boolean = false;
     dropdownValues = [
         { name: 'New York', code: 'NY' },
         { name: 'Rome', code: 'RM' },
@@ -205,7 +209,9 @@ export class CRUDSousService implements OnInit {
     }
 
     openUpdateSous(sous: any) {
-        this.sousServiceUpdate = { id: sous._id, nom: sous.nom, prix: sous.prix, pieces: [] };
+        this.sousServiceUpdate = {
+            id: sous._id, nom: sous.nom, prix: sous.prix, dureeMinute: sous.dureeMinute, pieces: []
+        };
         // allPieceUpdate filtre allPiece where allPiece._id n'est pas dans sous.pieces._id
         this.allPieceUpdate = this.allPieces.filter((piece) => {
             return !sous.pieces.some((sousPiece: any) => sousPiece.piece._id === piece._id);
@@ -265,13 +271,15 @@ export class CRUDSousService implements OnInit {
         this.typeSelectedUpdate[piece._id] = event.value;
     }
 
-
-    insertPiece() {
+    insertSous() {
+        this.isLoading = true;
         if (
             !this.sousServiceInsert ||
             !this.sousServiceInsert.nom ||
             !this.sousServiceInsert.prix ||
             this.sousServiceInsert.prix == 0 ||
+            !this.sousServiceInsert.dureeMinute ||
+            this.sousServiceInsert.dureeMinute == 0 ||
             this.typeSelected.length == this.piecesSelected.length
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
@@ -286,6 +294,7 @@ export class CRUDSousService implements OnInit {
             this.managerService.insertSousService(
                 this.sousServiceInsert.nom,
                 this.sousServiceInsert.prix,
+                this.sousServiceInsert.dureeMinute,
                 this.sousServiceInsert.pieces
             ).subscribe({
                 next: (data) => {
@@ -306,6 +315,8 @@ export class CRUDSousService implements OnInit {
             !this.sousServiceUpdate.nom ||
             !this.sousServiceUpdate.prix ||
             this.sousServiceUpdate.prix == 0 ||
+            !this.sousServiceUpdate.dureeMinute ||
+            this.sousServiceUpdate.dureeMinute == 0 ||
             this.typeSelectedUpdate.length == this.piecesSelectedUpdate.length
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
@@ -322,6 +333,7 @@ export class CRUDSousService implements OnInit {
                 this.sousServiceUpdate.id,
                 this.sousServiceUpdate.nom,
                 this.sousServiceUpdate.prix,
+                this.sousServiceUpdate.dureeMinute,
                 this.sousServiceUpdate.pieces
             ).subscribe({
                 next: (data) => {
@@ -366,7 +378,7 @@ export class CRUDSousService implements OnInit {
     hideNewSousServiceDialog() {
         this.newSousServiceDialog = false;
         this.submitted = false;
-        this.sousServiceInsert = { nom: "", prix: 0, pieces: [] };
+        this.sousServiceInsert = { nom: "", prix: 0, dureeMinute : 0, pieces: [] };
     }
 
     hideUpdateSousDialog() {

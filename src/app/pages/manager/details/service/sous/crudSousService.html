@@ -49,6 +49,10 @@
                 Prix
                 <p-sortIcon field="prix" />
             </th>
+            <th pSortableColumn="dureeMinute" style="text-align: right">
+                Durée du service
+                <p-sortIcon field="dureeMinute" />
+            </th>
             <th pSortableColumn="pieces">Pièces</th>
         </tr>
     </ng-template>
@@ -59,6 +63,7 @@
             </td>
             <td>{{ sous.nom }}</td>
             <td style="text-align: right">{{ sous.prix | number:'1.0-2':'fr' }} ar</td>
+            <td style="text-align: right">{{ sous.dureeMinute | number:'1.0-2':'fr' }} min</td>
             <td>
                 <p-button type="button" label="Pièces" (click)="toggleDataTable(op2, sous, $event)" />
             </td>
@@ -126,8 +131,12 @@
         <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="sousServiceInsert.nom" />
     </div>
     <div class="mb-3">
-        <label for="name" class="block font-bold">Prix du service</label>
+        <label for="prixRemplacement" class="block font-bold">Prix du service</label>
         <p-inputnumber id="prixRemplacement" fluid [(ngModel)]="sousServiceInsert.prix" />
+    </div>
+    <div class="mb-3">
+        <label for="dureeService" class="block font-bold">Durée du service</label>
+        <p-inputnumber id="dureeService" fluid [(ngModel)]="sousServiceInsert.dureeMinute" />
     </div>
     <div class="font-semibold text-xl">Pièces</div>
     <p-multiselect [options]="allPieces" [(ngModel)]="piecesSelected" placeholder="Sélectionnez les pièces" optionLabel="nom" optionValue="_id" display="chip" [filter]="true" fluid appendTo="body" (onChange)="onMultiselectChange($event)">
@@ -160,7 +169,7 @@
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
     <ng-template #footer>
         <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewSousServiceDialog()" />
-        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertPiece()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertSous()" />
     </ng-template>
 </p-dialog>
 <p-dialog [(visible)]="updatePieceDialog" [style]="{ width: '450px' }" header="Modifier" [modal]="true" #elseBlock>
@@ -169,8 +178,12 @@
         <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="sousServiceUpdate.nom" />
     </div>
     <div class="mb-3">
-        <label for="name" class="block font-bold">Prix du service</label>
+        <label for="prixRemplacement" class="block font-bold">Prix du service</label>
         <p-inputnumber id="prixRemplacement" fluid [(ngModel)]="sousServiceUpdate.prix" />
+    </div>
+    <div class="mb-3">
+        <label for="dureeMinute" class="block font-bold">Durée du service</label>
+        <p-inputnumber id="dureeMinute" fluid [(ngModel)]="sousServiceUpdate.dureeMinute" />
     </div>
     <div class="font-semibold text-xl">Pièces</div>
     <p-multiselect
