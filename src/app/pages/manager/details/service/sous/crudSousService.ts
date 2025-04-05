@@ -288,8 +288,8 @@ export class CRUDSousService implements OnInit {
             !this.sousServiceInsert.prix ||
             this.sousServiceInsert.prix == 0 ||
             !this.sousServiceInsert.dureeMinute ||
-            this.sousServiceInsert.dureeMinute == 0 ||
-            this.typeSelected.length == this.piecesSelected.length
+            this.sousServiceInsert.dureeMinute == 0 
+            // this.typeSelected.length == this.piecesSelected.length
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
             this.isLoading = false;
@@ -329,8 +329,8 @@ export class CRUDSousService implements OnInit {
             !this.sousServiceUpdate.prix ||
             this.sousServiceUpdate.prix == 0 ||
             !this.sousServiceUpdate.dureeMinute ||
-            this.sousServiceUpdate.dureeMinute == 0 ||
-            this.typeSelectedUpdate.length == this.piecesSelectedUpdate.length
+            this.sousServiceUpdate.dureeMinute == 0
+            // this.typeSelectedUpdate.length == this.piecesSelectedUpdate.length
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
             this.isLoading = false;
