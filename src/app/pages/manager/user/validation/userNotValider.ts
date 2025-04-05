@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../service/product.service';
 import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -57,7 +58,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './userNotValider.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -78,6 +80,8 @@ export class UserNotValider implements OnInit {
         { name: 'Istanbul', code: 'IST' },
         { name: 'Paris', code: 'PRS' }
     ];
+
+    isLoading: boolean = false;
 
     calendarValue: any = null;
 
@@ -163,12 +167,15 @@ export class UserNotValider implements OnInit {
     }
 
     confirmerValidationInscription() {
+        this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
 
         if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
             this.errorMessage = "Veuillez entrer le type de client";
+            this.isLoading = false;
         } else if (this.roleUserCliquer.niveau === 10 && this.validerUser.dateEmbauche === null) {
             this.errorMessage = "Veuillez entrer la date d'embauche";
+            this.isLoading = false;
         } else {
             this.managerService.validerInscription(
                 this.validerUser.idUser,
@@ -179,9 +186,21 @@ export class UserNotValider implements OnInit {
                     console.log(data.message);
                     this.hideDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
+                    this.validerUser= {
+                        idUser: "",
+                        typeClient: null,
+                        dateEmbauche: null
+                    };
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
+                    this.validerUser = {
+                        idUser: "",
+                        typeClient: null,
+                        dateEmbauche: null
+                    };
                 }
             });
         }
@@ -212,6 +231,7 @@ export class UserNotValider implements OnInit {
     }
 
     deleteProduct(user: any) {
+        this.isLoading = true;
         this.confirmationService.confirm({
             message: 'Êtes-vous sur de vouloir supprimer ' + user.nom + " " + user.prenom + '?',
             header: 'Confirmer',
@@ -224,9 +244,11 @@ export class UserNotValider implements OnInit {
                         console.log(data.message);
                         this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({

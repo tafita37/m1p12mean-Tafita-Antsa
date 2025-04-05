@@ -1,0 +1,189 @@
+<!-- <p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertDialog()"/>
+        <p-button
+            severity="secondary"
+            label="Delete"
+            icon="pi pi-trash"
+            outlined
+            [disabled]="!selectedProducts || !selectedProducts.length"
+            (onClick)="deleteSelectedProducts()"
+        />
+    </ng-template>
+</p-toolbar> -->
+
+<p-table
+    #dt
+    [value]="voitures"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbVoiture"
+    [paginator]="false"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des voitures"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Avancement de vos voitures</h5>
+            <!-- <p-iconfield>
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+            </p-iconfield> -->
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th>
+            <th pSortableColumn="matricule">
+                Matricule
+                <p-sortIcon field="matricule" />
+            </th>
+            <th pSortableColumn="anneeFabrication">
+                Année de fabrication
+                <p-sortIcon field="anneeFabrication" />
+            </th>
+            <th pSortableColumn="avancement">
+                Avancement
+                <p-sortIcon field="avancement" />
+            </th>
+            <th pSortableColumn="details">
+                Détails
+                <p-sortIcon field="details" />
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-voiture>
+        <tr>
+            <td style="width: 3rem">
+                <p-tableCheckbox [value]="voiture" />
+            </td>
+            <td>{{ voiture.voiture.matricule }}</td>
+            <td>{{ voiture.voiture.anneeFabrication }}</td>
+            <td>
+                <div class="progress-with-label">
+                    <label>Avancement : {{ voiture.progression * 100 | number:'1.0-2' }}%</label>
+
+                    <p-progressbar
+                        [value]="voiture.progression*100"
+                        [showValue]="false"
+                        [style]="{ height: '0.5rem' }"
+                    />
+                </div>
+            </td>
+            <td>
+                <p-button
+                    icon="pi pi-bars"
+                    label="Détails"
+                    class="mr-2"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="router.navigate(['/client/voiture/avancement/', voiture.demandeId])"
+                />
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="insertDialog" [style]="{ width: '450px'}" header="Nouvelle voiture" [modal]="true" >
+    <div>
+        <label for="matricule" class="block font-bold">Matricule</label>
+        <input
+            type="text"
+            placeholder="Matricule"
+            pInputText
+            id="matricule"
+            required
+            autofocus
+            fluid
+            [(ngModel)]="voitureInsert.matricule"
+        />
+    </div>
+    <div class="mt-2">
+        <label for="marque" class="block font-bold">Marque</label>
+        <p-select
+            id="marque"
+            [options]="allMarques"
+            styleClass="mb-3"
+            optionValue="_id"
+            optionLabel="nom"
+            placeholder="Marque"
+            [appendTo]="'body'"
+            fluid
+            [(ngModel)]="voitureInsert.marque"
+        />
+    </div>
+    <div class="mt-2">
+        <label for="anneeFabrication" class="block font-bold">Année de fabrication</label>
+        <p-inputnumber
+            id="anneeFabrication"
+            fluid
+            placeholder="Année de fabrication"
+            [(ngModel)]="voitureInsert.anneeFabrication"
+        />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewVoitureDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertVoiture()" />
+    </ng-template>
+</p-dialog>
+<p-dialog
+    [(visible)]="updateDialog"
+    [style]="{ width: '450px' }"
+    [header]="'Modifier '+voitureUpdate.matricule"
+    [modal]="true"
+>
+    <div>
+        <label for="matricule" class="block font-bold">Matricule</label>
+        <input
+            type="text"
+            placeholder="Matricule"
+            pInputText
+            id="matricule"
+            required
+            autofocus
+            fluid
+            [(ngModel)]="voitureUpdate.matricule"
+        />
+    </div>
+    <div class="mt-2">
+        <label for="marque" class="block font-bold">Marque</label>
+        <p-select
+            id="marque"
+            [options]="allMarques"
+            styleClass="mb-3"
+            optionValue="_id"
+            optionLabel="nom"
+            placeholder="Marque"
+            [appendTo]="'body'"
+            fluid
+            [(ngModel)]="voitureUpdate.marque"
+        />
+    </div>
+    <div class="mt-2">
+        <label for="anneeFabrication" class="block font-bold">Année de fabrication</label>
+        <p-inputnumber
+            id="anneeFabrication"
+            fluid
+            placeholder="Année de fabrication"
+            [(ngModel)]="voitureUpdate.anneeFabrication"
+        />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button label="Confirmer" icon="pi pi-check" (click)="updateVoiture()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />

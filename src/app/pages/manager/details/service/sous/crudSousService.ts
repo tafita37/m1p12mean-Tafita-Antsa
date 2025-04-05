@@ -25,6 +25,7 @@ import { ManagerService, UserInterface } from '../../../../../service/manager/ma
 import { Popover, PopoverModule } from 'primeng/popover';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Country } from '../../../../service/customer.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -62,7 +63,8 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule,
         PopoverModule,
-        MultiSelectModule
+        MultiSelectModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudSousService.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -162,6 +164,7 @@ export class CRUDSousService implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -169,13 +172,17 @@ export class CRUDSousService implements OnInit {
         this.sousServices = [];
         this.managerService.getListSousService(page).subscribe(data => {
             this.sousServices = data.listSousServices;
+            console.log(data.listSousServices);
+
             this.nbSousServices = data.nbSousServices;
             this.allPieces = data.pieces;
             for (let i = 0; i < this.allPieces.length; i++) {
                 this.allPieces[i].isSelected = false;
             }
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 
@@ -283,6 +290,7 @@ export class CRUDSousService implements OnInit {
             this.typeSelected.length == this.piecesSelected.length
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
+            this.isLoading = false;
         } else {
             this.sousServiceInsert.pieces=[];
             for (let i = 0; i < this.piecesSelected.length; i++) {
@@ -300,15 +308,18 @@ export class CRUDSousService implements OnInit {
                 next: (data) => {
                     this.hideNewSousServiceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
     }
 
     updatePiece() {
+        this.isLoading = true;
         if (
             !this.sousServiceUpdate ||
             !this.sousServiceUpdate.id ||
@@ -320,6 +331,7 @@ export class CRUDSousService implements OnInit {
             this.typeSelectedUpdate.length == this.piecesSelectedUpdate.length
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
+            this.isLoading = false;
         } else {
 
             this.sousServiceInsert.pieces = [];
@@ -339,9 +351,11 @@ export class CRUDSousService implements OnInit {
                 next: (data) => {
                     this.hideUpdateSousDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
@@ -354,6 +368,7 @@ export class CRUDSousService implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 const ids = this.selectedProducts.map(product => product._id);
                 console.log(ids);
 
@@ -365,10 +380,12 @@ export class CRUDSousService implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }
@@ -392,16 +409,19 @@ export class CRUDSousService implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deleteSousServices(
                     [sous._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({
@@ -422,6 +442,7 @@ export class CRUDSousService implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deletePieceFromSous(
                     this.sousCliquer._id,
                     piece.piece._id
@@ -435,10 +456,12 @@ export class CRUDSousService implements OnInit {
                             detail: 'Product Deleted',
                             life: 3000
                         });
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }
