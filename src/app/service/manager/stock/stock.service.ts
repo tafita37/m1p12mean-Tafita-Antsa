@@ -58,10 +58,10 @@ export class StockService {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-
+        const dateString=dateMouvement.toISOString().split("T")[0];
         return this.http.post(
             this.newMouvementStockUrl,
-            { idPiece, idMarque, idUser, idFournisseur, prix, nb, isEntree, dateMouvement },
+            { idPiece, idMarque, idUser, idFournisseur, prix, nb, isEntree, dateMouvement : dateString },
             { headers }
         );
     }
