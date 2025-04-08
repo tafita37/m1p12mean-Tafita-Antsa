@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../../service/product.service';
 import { ManagerService } from '../../../../../service/manager/manager.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -57,7 +58,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudFournisseur.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -76,6 +78,8 @@ export class CRUDFournisseur implements OnInit {
     fournisseurModif: {
         idFournisseur: string, nom: string, email: string, contact: string
     } = { idFournisseur: "", nom: '', email: '', contact: '' };
+
+    isLoading: boolean = false;
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -131,16 +135,19 @@ export class CRUDFournisseur implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
         this.fournisseurs = [];
         this.managerService.getListFournisseur(page).subscribe(data => {
             this.fournisseurs = data.fournisseur;
             this.nbFournisseur = data.nbFournisseur;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 
@@ -182,8 +189,10 @@ export class CRUDFournisseur implements OnInit {
     }
 
     insertFournisseur() {
+        this.isLoading = true;
         if (!this.fournisseurInsert.nom || !this.fournisseurInsert.email || !this.fournisseurInsert.contact) {
             this.errorMessage = "Vous n'avez pas remplis certains champs";
+            this.isLoading = false;
         } else {
             this.managerService.insertFournisseur(
                 this.fournisseurInsert.nom,
@@ -193,16 +202,19 @@ export class CRUDFournisseur implements OnInit {
                 next: (data) => {
                     this.hideNewFournisseurDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     this.errorMessage = error.error.message;
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
     }
 
     updateFournisseur() {
+        this.isLoading = true;
         if (!this.fournisseurModif.idFournisseur || !this.fournisseurModif.nom || !this.fournisseurModif.email || !this.fournisseurModif.contact) {
             this.errorMessage = "Veuillez entrer les données corrects";
         } else {
@@ -215,9 +227,11 @@ export class CRUDFournisseur implements OnInit {
                 next: (data) => {
                     this.hideUpdateDetailPieceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
@@ -230,6 +244,7 @@ export class CRUDFournisseur implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 const ids = this.selectedProducts.map(product => product._id);
                 this.managerService.deleteFournisseur(
                     ids
@@ -238,9 +253,11 @@ export class CRUDFournisseur implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }
@@ -266,15 +283,18 @@ export class CRUDFournisseur implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deleteFournisseur(
                     [fournisseur._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({

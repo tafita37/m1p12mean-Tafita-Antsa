@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../service/product.service';
 import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -35,7 +36,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-crud-piece',
     standalone: true,
     imports: [
         CommonModule,
@@ -57,7 +58,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudPiece.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -67,9 +69,16 @@ export class CRUDPiece implements OnInit {
     sucessMessage: string = '';
     newPieceDialog: boolean = false;
     updatePieceDialog: boolean = false;
-    nomPieceInsert: string = '';
-    pieceCliquer: { nom: string, idPiece: string } = { nom: '', idPiece: '' };
+    pieceInsert: {
+        nom: string, type: number, prixReparation: number | null, prixRemplacement: number
+    } = { nom: '', type: 11, prixReparation: null, prixRemplacement: 0 };
+    pieceCliquer: {
+        nom: string, type: number, prixReparation: number | null, prixRemplacement: number, idPiece: string
+    } = { nom: '', type: 11, prixReparation: null, prixRemplacement: 0, idPiece: '' };
     pieces: [] = [];
+    typePieces: [
+        { id: number, value: string }, { id: number, value: string }
+    ] = [{ id: 11, value: 'Réparable' }, { id: 1, value: 'Non réparable' }];
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -78,7 +87,7 @@ export class CRUDPiece implements OnInit {
         { name: 'Istanbul', code: 'IST' },
         { name: 'Paris', code: 'PRS' }
     ];
-
+    isLoading: boolean = false;
     calendarValue: any = null;
 
     userCliquer: any = {};
@@ -125,16 +134,21 @@ export class CRUDPiece implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
+
+
         this.pieces = [];
         this.managerService.getListPiece(page).subscribe(data => {
             this.pieces = data.pieces;
             this.nbPiece = data.nbPiece;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 
@@ -147,7 +161,7 @@ export class CRUDPiece implements OnInit {
     }
 
     openInsertNewPiece() {
-        this.nomPieceInsert = "";
+        this.pieceInsert = { nom: '', type: 11, prixReparation: null, prixRemplacement: 0 };
         this.submitted = false;
         this.newPieceDialog = true;
     }
@@ -155,6 +169,9 @@ export class CRUDPiece implements OnInit {
     openUpdatePiece(piece: any) {
         this.pieceCliquer.idPiece = piece._id;
         this.pieceCliquer.nom = piece.nom;
+        this.pieceCliquer.type = piece.type;
+        this.pieceCliquer.prixReparation = piece.prixReparation;
+        this.pieceCliquer.prixRemplacement = piece.prixRemplacement;
         this.submitted = false;
         this.updatePieceDialog = true;
     }
@@ -172,39 +189,70 @@ export class CRUDPiece implements OnInit {
     }
 
     insertPiece() {
+        this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
-
-        if (!this.nomPieceInsert) {
-            this.errorMessage = "Le nom de pièce est obligatoire";
+        if (
+            !this.pieceInsert.nom ||
+            !this.pieceInsert.prixRemplacement ||
+            this.pieceInsert.prixRemplacement == 0 ||
+            !this.pieceInsert.type ||
+            (this.pieceInsert.type != 1 && this.pieceInsert.type != 11) ||
+            (this.pieceInsert.type == 11 && (!this.pieceInsert.prixReparation || this.pieceInsert.prixReparation == 0))
+        ) {
+            this.errorMessage = "Certaines données sont incorrectess ou manquantes";
+            this.isLoading = false;
         } else {
             this.managerService.insertPiece(
-                this.nomPieceInsert
+                this.pieceInsert.nom,
+                this.pieceInsert.type,
+                this.pieceInsert.prixReparation,
+                this.pieceInsert.prixRemplacement
             ).subscribe({
                 next: (data) => {
                     this.hideNewPieceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
     }
 
     updatePiece() {
-        if (!this.pieceCliquer.idPiece || !this.pieceCliquer.nom) {
+        this.isLoading = true;
+        if (
+            !this.pieceCliquer.idPiece ||
+            !this.pieceCliquer.nom ||
+            !this.pieceCliquer.prixRemplacement ||
+            this.pieceCliquer.prixRemplacement == 0 ||
+            !this.pieceCliquer.type ||
+            (this.pieceCliquer.type != 1 && this.pieceCliquer.type != 11) ||
+            (
+                this.pieceCliquer.type == 11 &&
+                (!this.pieceCliquer.prixReparation || this.pieceCliquer.prixReparation == 0)
+            )
+        ) {
             this.errorMessage = "Veuillez indiquer la pièce que vous souhaitez modifier";
+            this.isLoading = false;
         } else {
             this.managerService.updatePiece(
                 this.pieceCliquer.idPiece,
-                this.pieceCliquer.nom
+                this.pieceCliquer.nom,
+                this.pieceCliquer.type,
+                this.pieceCliquer.prixReparation,
+                this.pieceCliquer.prixRemplacement
             ).subscribe({
                 next: (data) => {
                     this.hideUpdatePieceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
@@ -217,6 +265,7 @@ export class CRUDPiece implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 const ids = this.selectedProducts.map(product => product._id);
                 console.log(ids);
 
@@ -228,10 +277,12 @@ export class CRUDPiece implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }
@@ -254,16 +305,19 @@ export class CRUDPiece implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deletePiece(
                     [piece._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({

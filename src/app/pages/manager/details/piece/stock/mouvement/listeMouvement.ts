@@ -189,7 +189,7 @@ export class ListeMouvement implements OnInit {
         this.loading=true;
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
         this.listMouvement = [];
         this.stockService.getListeMouvement(

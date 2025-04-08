@@ -22,6 +22,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../../service/product.service';
 import { ManagerService } from '../../../../../service/manager/manager.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -57,7 +58,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudDetailPiece.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -72,7 +74,13 @@ export class CRUDDetailsPiece implements OnInit {
     detailPieces: [] = [];
     allMarques: [] = [];
     allPieces: [] = [];
-    detailInsert: { idMarque: string, idPiece: string} = { idMarque: '', idPiece: '' };
+    detailInsert: {
+        idMarque: string, idPiece: string
+    } = { idMarque: '', idPiece: '' };
+    detailModif: {
+        idDetailPiece : string
+    } = { idDetailPiece: '' };
+    isLoading: boolean = false;
 
     dropdownValues = [
         { name: 'New York', code: 'NY' },
@@ -128,9 +136,10 @@ export class CRUDDetailsPiece implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading = true;
         var page = 1;
         if (event) {
-            page = event.first / event.rows;
+            page = (event.first / event.rows)+1;
         }
         this.detailPieces = [];
         this.managerService.getListDetailPiece(page).subscribe(data => {
@@ -138,9 +147,10 @@ export class CRUDDetailsPiece implements OnInit {
             this.nbDetailPiece = data.nbDetailsPiece;
             this.allMarques = data.marques;
             this.allPieces = data.pieces;
-
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 
@@ -158,6 +168,14 @@ export class CRUDDetailsPiece implements OnInit {
         this.submitted = false;
         this.newPieceDetailDialog = true;
     }
+
+    openUpdateDetailPiece(piece: any) {
+        this.errorMessage = "";
+        this.detailModif.idDetailPiece = piece._id;
+        this.submitted = false;
+        this.updatePieceDialog = true;
+    }
+
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
     }
@@ -170,10 +188,11 @@ export class CRUDDetailsPiece implements OnInit {
     }
 
     insertDetailPiece() {
+        this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
-
         if (!this.detailInsert.idPiece || !this.detailInsert.idMarque ) {
             this.errorMessage = "Veuillez entrer les données corrects";
+            this.isLoading = false;
         } else {
             this.managerService.insertDetailPiece(
                 this.detailInsert.idPiece,
@@ -182,10 +201,12 @@ export class CRUDDetailsPiece implements OnInit {
                 next: (data) => {
                     this.hideNewPieceDetailDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading = false;
                 },
                 error: (error) => {
                     this.errorMessage = error.error.message;
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading = false;
                 }
             });
         }
@@ -197,6 +218,7 @@ export class CRUDDetailsPiece implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 const ids = this.selectedProducts.map(product => product._id);
                 console.log(ids);
 
@@ -208,6 +230,7 @@ export class CRUDDetailsPiece implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
@@ -220,6 +243,7 @@ export class CRUDDetailsPiece implements OnInit {
     hideNewPieceDetailDialog() {
         this.newPieceDetailDialog = false;
         this.submitted = false;
+        this.detailInsert = { idMarque: '', idPiece: '' };
     }
 
     hideUpdateDetailPieceDialog() {
@@ -233,15 +257,18 @@ export class CRUDDetailsPiece implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading = true;
                 this.managerService.deleteDetailPiece(
                     [piece._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading = false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
                 this.messageService.add({

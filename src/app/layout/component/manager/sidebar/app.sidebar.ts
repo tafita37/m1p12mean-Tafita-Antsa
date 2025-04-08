@@ -17,21 +17,41 @@ export class AppSidebarManager {
             {
                 label: 'Accueil',
                 items: [
-                    {
-                        label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/manager/dashboard']
-                    },
+                    // {
+                    //     label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/manager/dashboard']
+                    // },
                     {
                         label: 'Stock', icon: 'pi pi-box pi-wrench', routerLink: ['/manager/piece/stock']
+                    },
+                    {
+                        label: 'Rendez-vous à valider',
+                        icon: 'pi pi-calendar pi-wrench',
+                        routerLink: ['/manager/rdv/nonValider']
                     },
                 ]
             },
             {
-                label: 'Validation',
+                label: 'Mécanicien',
+                items: [
+                    {
+                        label: 'Liste des mécaniciens',
+                        icon: 'pi pi-fw pi-cog',
+                        routerLink: ['/manager/mecanicien/list']
+                    },
+                ]
+            },
+            {
+                label: 'Utilisateur',
                 items: [
                     {
                         label: 'Inscription à valider',
                         icon: 'pi pi-fw pi-user',
                         routerLink: ['/manager/user/userNotValider']
+                    },
+                    {
+                        label: 'CRUD',
+                        icon: 'pi pi-fw pi-database',
+                        routerLink: ['/manager/user/crud']
                     }
                 ]
             },
@@ -39,10 +59,18 @@ export class AppSidebarManager {
                 label: 'Données',
                 items: [
                     {
-                        label: 'Pièces', icon: 'pi pi-fw pi-wrench', routerLink: ['/manager/piece/crud']
-                    },
-                    {
-                        label: 'Détails pièces', icon: 'pi pi-cog pi-wrench', routerLink: ['/manager/piece/crudDetail']
+                        label: 'Pièces', icon: 'pi pi-fw pi-wrench', items: [
+                            {
+                                label: 'Pièces',
+                                icon: 'pi pi-fw pi-wrench',
+                                routerLink: ['/manager/piece/crud']
+                            },
+                            {
+                                label: 'Détails',
+                                icon: 'pi pi-cog pi-wrench',
+                                routerLink: ['/manager/piece/crudDetail']
+                            }
+                        ]
                     },
                     {
                         label: 'Marques', icon: 'pi pi-car pi-wrench', routerLink: ['/manager/marque/crud']
@@ -51,7 +79,23 @@ export class AppSidebarManager {
                         label: 'Fournisseur',
                         icon: 'pi pi-users pi-wrench',
                         routerLink: ['/manager/piece/crudFournisseur']
-                    }
+                    },
+                    {
+                        label: 'Services',
+                        icon: 'pi pi-fw pi-cog',
+                        items: [
+                            {
+                                label: 'Services',
+                                icon: 'pi pi-fw pi-cog',
+                                routerLink: ['/manager/service/crudService']
+                            },
+                            {
+                                label: 'Sous-services',
+                                icon: 'pi pi-fw pi-wrench',
+                                routerLink: ['/manager/service/crudSousService']
+                            }
+                        ]
+                    },
                 ]
             },
             // {

@@ -1,3 +1,9 @@
+<!-- <app-floating-configurator /> -->
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
+
 <p-toolbar styleClass="mb-6">
     <ng-template #start>
         <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewMarque()" />
@@ -23,7 +29,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des marques"
     [showCurrentPageReport]="true"
 >

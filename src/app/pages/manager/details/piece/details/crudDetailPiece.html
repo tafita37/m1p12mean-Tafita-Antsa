@@ -1,3 +1,8 @@
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
+
 <p-toolbar styleClass="mb-6">
     <ng-template #start>
         <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewDetailPiece()" />
@@ -23,7 +28,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des détails de pièces"
     [showCurrentPageReport]="true"
 >
@@ -59,13 +64,7 @@
             <td>{{ detail.piece.nom }}</td>
             <td>{{ detail.marque.nom }}</td>
             <td>
-                <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [rounded]="true"
-                    [outlined]="true"
-                    (click)="deleteDetailPiece(detail)"
-                />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteDetailPiece(detail)" />
             </td>
         </tr>
     </ng-template>

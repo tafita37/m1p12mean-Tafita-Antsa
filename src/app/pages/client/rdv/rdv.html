@@ -1,0 +1,99 @@
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="Prendre rendez-vous" icon="pi pi-plus" severity="secondary" class="mr-2" (click)="openNewRdvDialog()"/>
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+<div class="card">
+    <!-- <div class="font-semibold text-xl mb-4">Empty Page</div>
+        <p>Use this page to start from scratch and place your custom content.</p> -->
+    <button (click)="goToMonthView()">Vue mensuelle</button>
+    <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+</div>
+
+<p-dialog [(visible)]="insertDialog" [style]="{ width: '600px', height : '600px'}" header="Prendre rendez-vous" [modal]="true" >
+    <div class="mb-2">
+        <label for="matricule" class="block font-bold">Voiture</label>
+        <p-select
+            id="voiture"
+            [options]="allVoitures"
+            styleClass="mb-3"
+            optionValue="_id"
+            optionLabel="matricule"
+            placeholder="Voiture"
+            [appendTo]="'body'"
+            [(ngModel)]="idVoitureInsert"
+            fluid
+        />
+    </div>
+    <div class="mb-2">
+        <label for="service" class="block font-bold">Services</label>
+        <p-select
+            [options]="allServices"
+            styleClass="mb-3"
+            optionValue="_id"
+            optionLabel="nom"
+            placeholder="Service"
+            [appendTo]="'body'"
+            [(ngModel)]="idServiceInsert"
+            fluid
+        />
+    </div>
+    <div *ngIf="idServiceInsert" class="mb-2">
+        <label for="sous" class="block font-bold">Sous-services</label>
+        <p-multiselect
+            [options]="allSousServices"
+            [(ngModel)]="sousSelected"
+            placeholder="Sélectionnez le sous-service"
+            optionLabel="nom"
+            optionValue="_id"
+            display="chip"
+            [filter]="true"
+            (onChange)="onMultiselectChange($event)"
+            fluid
+            appendTo="body"
+        >
+            <ng-template #selecteditems let-sous>
+                @for (sou of sous; track sou.code) {
+                    <div class="inline-flex items-center py-1 px-2 bg-primary text-primary-contrast rounded-border mr-2">
+                        <div>{{ sou.nom }}</div>
+                    </div>
+                }
+            </ng-template>
+            <ng-template #item let-sous>
+                <div class="flex items-center justify-between w-full" (click)="$event.stopPropagation()">
+                    <div>{{ sous.nom }}</div>
+                    <p-inputnumber
+                        placeholder="Quantité"
+                        id="prixRemplacement"
+                        [inputStyle]="{width: '80px', height: '30px'}"
+                        [disabled]="!sous.isSelected"
+                        (onClick)="$event.stopPropagation()"
+                        [(ngModel)]="listQuantite[sous._id]"
+                    />
+                </div>
+            </ng-template>
+        </p-multiselect>
+    </div>
+    <div class="mb-2">
+        <label for="dates" class="block font-bold">Choisir au moins {{nbDate}} date de disponibilité</label>
+        {{selectedDates}}
+        <p-calendar
+            [(ngModel)]="selectedDates"
+            selectionMode="multiple"
+            [inline]="true"
+            fluid
+            appendTo="body"
+            id="dates"
+        />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewRdvDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertRDV()"/>
+    </ng-template>
+</p-dialog>
+

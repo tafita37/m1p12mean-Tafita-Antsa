@@ -20,8 +20,8 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ProductService } from '../../service/product.service';
-import { ManagerService, UserInterface } from '../../../service/manager/manager.service';
+import { ProductService } from '../../../service/product.service';
+import { ManagerService, UserInterface } from '../../../../service/manager/manager.service';
 
 interface Column {
     field: string;
@@ -35,7 +35,7 @@ interface ExportColumn {
 }
 
 @Component({
-    selector: 'app-crud-mecanicien',
+    selector: 'app-user-not-valider',
     standalone: true,
     imports: [
         CommonModule,
@@ -59,13 +59,13 @@ interface ExportColumn {
         IconFieldModule,
         ConfirmDialogModule
     ],
-    templateUrl: './userNotValider.html',
+    templateUrl: './crudUser.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class UserNotValider implements OnInit {
+export class CRUDUser implements OnInit {
     errorMessage: string = '';
     sucessMessage: string = '';
-    validerInscriptionDialog: boolean = false;
+    updateDialog: boolean = false;
 
     users: [] = [];
 
@@ -83,6 +83,8 @@ export class UserNotValider implements OnInit {
 
     userCliquer: any = {};
 
+    otherDataCliquer: {typeClient : string|null, dateEmbauche : Date|null} = {typeClient : null, dateEmbauche : null};
+
     validerUser: { idUser: string; typeClient: string | null; dateEmbauche: Date | null } = {
         idUser: "",
         typeClient: null,
@@ -98,7 +100,7 @@ export class UserNotValider implements OnInit {
 
     minDate: Date = new Date('2000-01-01');
 
-    selectedProducts!: UserInterface[] | null;
+    selectedProducts: { _id: string, name: string }[] = [];
 
     submitted: boolean = false;
 
@@ -110,7 +112,7 @@ export class UserNotValider implements OnInit {
 
     cols!: Column[];
 
-    nbNonValider: number = 0;
+    nbUser: number = 0;
 
     loading: boolean = false;
 
@@ -125,15 +127,18 @@ export class UserNotValider implements OnInit {
     }
 
     loadData(event: any | null = null): void {
-        const page = event ? event.first / event.rows : 1;
+        this.loading = true;
+        const page = event ? (event.first / event.rows)+1 : 1;
         this.users = [];
         this.typeClients = [];
-        this.managerService.getListUserUnvalidate(page).subscribe(data => {
-            this.users = data.user;
+        this.managerService.getListUser(page).subscribe(data => {
+            this.users = data.users;
             this.typeClients = data.typeClients;
-            this.nbNonValider = data.nbUser;
+            this.nbUser = data.nbUser;
+            this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading = false;
         });
     }
 
@@ -148,32 +153,37 @@ export class UserNotValider implements OnInit {
     openNew() {
         this.userCliquer = {};
         this.submitted = false;
-        this.validerInscriptionDialog = true;
+        this.updateDialog = true;
     }
 
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
     }
 
-    validerInscription(user: any) {
+    openUpdateDialog(user: any) {
         this.userCliquer = JSON.parse(JSON.stringify(user));
         this.roleUserCliquer = JSON.parse(JSON.stringify(user.role));
-        this.validerUser.typeClient = this.userCliquer.client.typeClient;
-        this.validerInscriptionDialog = true;
+        if (this.roleUserCliquer.niveau === 10) {
+            this.otherDataCliquer.dateEmbauche = new Date(this.userCliquer.mecanicien.dateEmbauche);
+        } else {
+            this.otherDataCliquer.typeClient = this.userCliquer.client.typeClient;
+        }
+
+        this.updateDialog = true;
     }
 
-    confirmerValidationInscription() {
-        this.validerUser.idUser = this.userCliquer._id;
-
-        if (this.roleUserCliquer.niveau === 1 && this.validerUser.typeClient === null) {
+    updateUser() {
+        if (this.roleUserCliquer.niveau === 1 && this.otherDataCliquer.typeClient === null) {
             this.errorMessage = "Veuillez entrer le type de client";
-        } else if (this.roleUserCliquer.niveau === 10 && this.validerUser.dateEmbauche === null) {
+        } else if (this.roleUserCliquer.niveau === 10 && this.otherDataCliquer.dateEmbauche === null) {
             this.errorMessage = "Veuillez entrer la date d'embauche";
         } else {
-            this.managerService.validerInscription(
-                this.validerUser.idUser,
-                this.validerUser.typeClient,
-                this.validerUser.dateEmbauche
+            this.managerService.updateUser(
+                this.userCliquer._id,
+                this.userCliquer.nom,
+                this.userCliquer.prenom,
+                this.userCliquer.email,
+                this.otherDataCliquer
             ).subscribe({
                 next: (data) => {
                     console.log(data.message);
@@ -194,20 +204,26 @@ export class UserNotValider implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                // this.users.set(this.users().filter((val) => !this.selectedProducts?.includes(val)));
-                this.selectedProducts = null;
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Products Deleted',
-                    life: 3000
+                const ids = this.selectedProducts.map(product => product._id);
+                this.managerService.deleteUsers(
+                    ids
+                ).subscribe({
+                    next: (data) => {
+                        console.log(data.message);
+                        // this.hideDialog();     // Fermer le dialogue après le succès
+                        this.loadData();       // Recharger les données après le succès
+                    },
+                    error: (error) => {
+                        alert(error.error.message);
+                        console.error('Erreur lors de la connexion:', error);
+                    }
                 });
             }
         });
     }
 
     hideDialog() {
-        this.validerInscriptionDialog = false;
+        this.updateDialog = false;
         this.submitted = false;
     }
 
@@ -217,8 +233,8 @@ export class UserNotValider implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.managerService.refuserInscription(
-                    user._id
+                this.managerService.deleteUsers(
+                    [user._id]
                 ).subscribe({
                     next: (data) => {
                         console.log(data.message);

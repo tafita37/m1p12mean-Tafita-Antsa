@@ -1,5 +1,9 @@
+<!-- <app-floating-configurator /> -->
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
 <p-toolbar styleClass="mb-6">
-
     <!-- <ng-template #end>
         <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
     </ng-template> -->
@@ -19,7 +23,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des inscriptions non validées"
     [showCurrentPageReport]="true"
 >
@@ -34,9 +38,6 @@
     </ng-template>
     <ng-template #header>
         <tr>
-            <th style="width: 3rem">
-                <p-tableHeaderCheckbox />
-            </th>
             <th pSortableColumn="name" style="min-width: 16rem">
                 Nom
                 <p-sortIcon field="name" />
@@ -57,9 +58,6 @@
     </ng-template>
     <ng-template #body let-user>
         <tr>
-            <td style="width: 3rem">
-                <p-tableCheckbox [value]="user" />
-            </td>
             <td style="min-width: 16rem">{{ user.nom }}</td>
             <td>{{ user.prenom }}</td>
             <td>{{ user.email }}</td>

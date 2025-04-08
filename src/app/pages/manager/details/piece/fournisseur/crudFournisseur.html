@@ -1,20 +1,12 @@
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
+
 <p-toolbar styleClass="mb-6">
     <ng-template #start>
-        <p-button
-            label="New"
-            icon="pi pi-plus"
-            severity="secondary"
-            class="mr-2"
-            (onClick)="openInsertNewFournisseur()"
-        />
-        <p-button
-            severity="secondary"
-            label="Delete"
-            icon="pi pi-trash"
-            outlined
-            (onClick)="deleteSelectedProducts()"
-            [disabled]="!selectedProducts || !selectedProducts.length"
-        />
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewFournisseur()" />
+        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
     </ng-template>
 
     <!-- <ng-template #end>
@@ -36,7 +28,7 @@
     [tableStyle]="{ 'min-width': '75rem' }"
     [(selection)]="selectedProducts"
     [rowHover]="true"
-    dataKey="id"
+    dataKey="_id"
     currentPageReportTemplate="Liste des fournisseurs"
     [showCurrentPageReport]="true"
 >
@@ -77,20 +69,8 @@
             <td>{{ fournisseur.contact }}</td>
             <td>{{ fournisseur.email }}</td>
             <td>
-                <p-button
-                    icon="pi pi-pencil"
-                    class="mr-2"
-                    [rounded]="true"
-                    [outlined]="true"
-                    (click)="openUpdateFournisseur(fournisseur)"
-                />
-                <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [rounded]="true"
-                    [outlined]="true"
-                    (click)="deleteFournisseur(fournisseur)"
-                />
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdateFournisseur(fournisseur)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteFournisseur(fournisseur)" />
             </td>
         </tr>
     </ng-template>
@@ -102,11 +82,11 @@
     </div>
     <div class="mb-3">
         <label for="contact" class="block font-bold">Contact</label>
-        <input type="text" pInputText id="contact" required autofocus fluid  [(ngModel)]="fournisseurInsert.contact" />
+        <input type="text" pInputText id="contact" required autofocus fluid [(ngModel)]="fournisseurInsert.contact" />
     </div>
     <div class="mb-3">
         <label for="email" class="block font-bold">Email</label>
-        <input type="email" pInputText id="email" required autofocus fluid  [(ngModel)]="fournisseurInsert.email" />
+        <input type="email" pInputText id="email" required autofocus fluid [(ngModel)]="fournisseurInsert.email" />
     </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
     <ng-template #footer>
@@ -121,11 +101,11 @@
     </div>
     <div class="mb-3">
         <label for="contact" class="block font-bold">Contact</label>
-        <input type="text" pInputText id="contact" required autofocus fluid  [(ngModel)]="fournisseurModif.contact" />
+        <input type="text" pInputText id="contact" required autofocus fluid [(ngModel)]="fournisseurModif.contact" />
     </div>
     <div class="mb-3">
         <label for="email" class="block font-bold">Email</label>
-        <input type="email" pInputText id="email" required autofocus fluid  [(ngModel)]="fournisseurModif.email" />
+        <input type="email" pInputText id="email" required autofocus fluid [(ngModel)]="fournisseurModif.email" />
     </div>
     <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
     <ng-template #footer>
