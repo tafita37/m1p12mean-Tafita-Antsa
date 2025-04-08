@@ -21,9 +21,9 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../../service/product.service';
-import { ManagerService, UserInterface } from '../../../../../service/manager/manager.service';
 import { StockService } from '../../../../../service/manager/stock/stock.service';
 import { Router } from '@angular/router';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -59,7 +59,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './stockPiece.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -138,6 +139,7 @@ export class StockPiece implements OnInit {
     nbStock: number = 0;
 
     loading: boolean = false;
+    isLoading: boolean = false;
     _selectedDate: Date = new Date();
 
     constructor(
@@ -164,6 +166,7 @@ export class StockPiece implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading=true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows)+1;
@@ -176,8 +179,10 @@ export class StockPiece implements OnInit {
             this.allMarque = data.marques;
             this.allUser = data.users;
             this.allFournisseur = data.fournisseurs;
+            this.loading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 
@@ -215,6 +220,7 @@ export class StockPiece implements OnInit {
     }
 
     insertStockPiece() {
+        this.isLoading=true;
         if (
             !this.mouvementInsert.idMarque ||
             !this.mouvementInsert.idPiece ||
@@ -245,9 +251,11 @@ export class StockPiece implements OnInit {
                 next: (data) => {
                     this.hideNewStockPieceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading=false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading=false;
                 }
             });
         }

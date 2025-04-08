@@ -163,7 +163,6 @@ export class ManagerService {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-
         return this.http.post(this.insertServiceUrl, { nom, sousServices }, { headers });
     }
 
@@ -194,7 +193,6 @@ export class ManagerService {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-
         return this.http.post(this.ajoutPieceDetailUrl, { idPiece, idMarque }, { headers });
     }
 

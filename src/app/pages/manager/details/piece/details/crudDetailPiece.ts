@@ -176,7 +176,6 @@ export class CRUDDetailsPiece implements OnInit {
         this.updatePieceDialog = true;
     }
 
-
     typeOf(user: any): string {
         return typeof user; // Cela retournera 'object' si c'est un objet, 'string', 'number', etc.
     }
@@ -191,8 +190,6 @@ export class CRUDDetailsPiece implements OnInit {
     insertDetailPiece() {
         this.isLoading = true;
         this.validerUser.idUser = this.userCliquer._id;
-
-
         if (!this.detailInsert.idPiece || !this.detailInsert.idMarque ) {
             this.errorMessage = "Veuillez entrer les données corrects";
             this.isLoading = false;

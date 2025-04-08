@@ -1,20 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '../../../../../layout/service/layout.service';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
-    selector: 'app-revenue-stream-widget',
-    imports: [ChartModule],
+    selector: 'app-revenue-ca',
+    imports: [ChartModule, InputNumberModule,FormsModule],
     templateUrl: "./revenuestreamwidget.html"
 })
-export class RevenueStreamWidget {
+export class RevenueStreamWidget implements OnChanges {
+    @Input() statPiece: any;
+
+    ngOnChanges(changes: SimpleChanges) {
+        console.log(this.statPiece);
+        if (changes['statPiece'] && this.statPiece) {
+            this.initChart();
+        }
+    }
+
     chartData: any;
 
     chartOptions: any;
 
     subscription!: Subscription;
+
+    _anneeCA: number = 0;
+
+    @Output() anneeChange = new EventEmitter<number>();
+
+    get anneeCA(): number {
+        return this._anneeCA;
+    }
+
+    set anneeCA(value: number) {
+        this._anneeCA = value;
+        this.anneeChange.emit(value);
+    }
 
     constructor(public layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
@@ -24,6 +48,7 @@ export class RevenueStreamWidget {
 
     ngOnInit() {
         this.initChart();
+        this.anneeCA = new Date().getFullYear();
     }
 
     initChart() {
@@ -52,7 +77,8 @@ export class RevenueStreamWidget {
                     type: 'bar',
                     label: 'Pièces',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
-                    data: [5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000],
+                    data: this.statPiece.map((stat: any) => stat.total),
+                    // data: [5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000],
                     barThickness: 10
                 },
                 {
