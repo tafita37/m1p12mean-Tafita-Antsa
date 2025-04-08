@@ -238,12 +238,6 @@ export class StockPiece implements OnInit {
             } else {
                 this.mouvementInsert.idFournisseur = null;
             }
-            // ✅ Formattage de la date à minuit locale (sans UTC)
-            const d = new Date(this.mouvementInsert.dateMouvement);
-            const year = d.getFullYear();
-            const month = d.getMonth(); // ⚠️ Pas +1 ici car Date attend 0-indexed
-            const day = d.getDate();
-            this.mouvementInsert.dateMouvement = new Date(year, month, day, 0, 0, 0); // Minuit locale
             this.stockService.newMouvementStock(
                 this.mouvementInsert.idPiece,
                 this.mouvementInsert.idMarque,
