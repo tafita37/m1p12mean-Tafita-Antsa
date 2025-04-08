@@ -220,6 +220,8 @@ export class StockPiece implements OnInit {
     }
 
     insertStockPiece() {
+        console.log(this.mouvementInsert);
+        
         this.isLoading=true;
         if (
             !this.mouvementInsert.idMarque ||
