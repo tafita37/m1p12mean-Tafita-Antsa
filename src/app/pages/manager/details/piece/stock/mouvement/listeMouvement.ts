@@ -186,19 +186,24 @@ export class ListeMouvement implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading=true;
         var page = 1;
         if (event) {
             page = event.first / event.rows;
         }
         this.listMouvement = [];
-        this.stockService.getListeMouvement(page, this.dateDebut, this.dateFin, this.idDetailPiece, this.typeMouvement).subscribe(data => {
+        this.stockService.getListeMouvement(
+            page, this.dateDebut, this.dateFin, this.idDetailPiece, this.typeMouvement
+        ).subscribe(data => {
             this.titreAffichage = "Mouvements de " + data.detailPiece.piece.nom + " " + data.detailPiece.marque.nom;
             this.listMouvement = data.mouvements;
             console.log(this.listMouvement);
 
             this.nbMouvement = data.nbMouvements;
+            this.loading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 
