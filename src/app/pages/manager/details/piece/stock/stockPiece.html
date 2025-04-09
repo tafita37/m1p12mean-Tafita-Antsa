@@ -36,7 +36,14 @@
             <h5 class="m-0">Liste des pièces en stock</h5>
             <p-iconfield>
                 <p-inputicon styleClass="pi pi-search" />
-                <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="selectedDate" />
+                <p-datepicker 
+                    [showIcon]="true" 
+                    [showButtonBar]="true" 
+                    [appendTo]="'body'" 
+                    fluid 
+                    placeholder="Date" 
+                    [(ngModel)]="selectedDate" 
+                />
             </p-iconfield>
         </div>
     </ng-template>

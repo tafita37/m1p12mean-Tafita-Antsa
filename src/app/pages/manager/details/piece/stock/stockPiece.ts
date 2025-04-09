@@ -195,7 +195,18 @@ export class StockPiece implements OnInit {
     }
 
     openInsertNewStockPiece() {
+        this.mouvementInsert={
+            idPiece : "", 
+            idMarque : "", 
+            idUser : "", 
+            idFournisseur : null, 
+            prix : 0, 
+            nb : 0, 
+            isEntree : false, 
+            dateMouvement : new Date()
+        };
         this.nomPieceInsert = "";
+        this.errorMessage="";
         this.submitted = false;
         this.newStockPieceDialog = true;
     }
@@ -256,6 +267,7 @@ export class StockPiece implements OnInit {
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
                     this.isLoading=false;
+                    this.errorMessage = error.error.message;
                 }
             });
         }
