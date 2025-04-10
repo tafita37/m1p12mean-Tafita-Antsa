@@ -21,6 +21,8 @@ import { Product, ProductService } from '../../service/product.service';
 import { RdvService } from '../../../service/rdv/rdv.service';
 import { Router } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DialogModule } from 'primeng/dialog';
 
 interface expandedRows {
     [key: string]: boolean;
@@ -46,7 +48,9 @@ interface expandedRows {
         RatingModule,
         RippleModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule,
+        DialogModule
     ],
     templateUrl: "./rdvNv.html",
     styleUrl: "./rdvNv.css",
@@ -81,6 +85,7 @@ export class RDVNv implements OnInit {
     balanceFrozen: boolean = false;
 
     loading: boolean = true;
+    isLoading: boolean = true;
     nbRDVNv: number = 0;
 
     @ViewChild('filter') filter!: ElementRef;
@@ -119,6 +124,7 @@ export class RDVNv implements OnInit {
     }
 
     refuserRDV(demande: any) {
+        this.isLoading=true;
         this.confirmationService.confirm({
             message: 'Êtes-vous sur de vouloir refuser la demande de ' + demande.voiture.client.user.nom + " " + demande.voiture.client.user.prenom+' ?',
             header: 'Confirmer',
@@ -134,10 +140,12 @@ export class RDVNv implements OnInit {
                             detail: 'Product Deleted',
                             life: 3000
                         });
+                        this.isLoading=false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading=false;
                     }
                 });
             }
