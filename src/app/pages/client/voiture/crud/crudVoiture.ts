@@ -23,6 +23,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../service/product.service';
 import { ClientService } from '../../../../service/client/client.service';
 import { Router } from '@angular/router';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -58,7 +59,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './crudVoiture.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -124,6 +126,7 @@ export class CRUDVoiture implements OnInit {
     nbVoiture: number = 0;
 
     loading: boolean = false;
+    isLoading: boolean = false;
 
     constructor(
         private messageService: MessageService,
@@ -137,6 +140,7 @@ export class CRUDVoiture implements OnInit {
     }
 
     loadData(event: any | null = null): void {
+        this.loading=true;
         const page = event ? (event.first / event.rows)+1 : 1;
         this.voitures = [];
         this.typeClients = [];
@@ -144,8 +148,10 @@ export class CRUDVoiture implements OnInit {
             this.voitures = data.voitures;
             this.nbVoiture = data.nbVoiture;
             this.allMarques = data.allMarques;
+            this.loading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 
@@ -175,15 +181,15 @@ export class CRUDVoiture implements OnInit {
     }
 
     openInsertDialog() {
+        this.voitureInsert={matricule : "", marque : "", anneeFabrication : new Date().getFullYear()};
         this.insertDialog = true;
-        console.log(this.insertDialog);
-
     }
 
     insertVoiture() {
         if (!this.voitureInsert.matricule || !this.voitureInsert.marque || !this.voitureInsert.anneeFabrication) {
             this.errorMessage = "Veuillez remplir tous les champs";
         }  else {
+            this.isLoading=true;
             this.clientService.insertVoiture(
                 this.voitureInsert.marque,
                 this.voitureInsert.matricule,
@@ -191,11 +197,14 @@ export class CRUDVoiture implements OnInit {
             ).subscribe({
                 next: (data) => {
                     console.log(data.message);
-                    this.hideDialog();     // Fermer le dialogue après le succès
+                    this.hideNewVoitureDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading=false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.hideNewVoitureDialog();
+                    this.isLoading=false;
                 }
             });
         }
@@ -210,6 +219,7 @@ export class CRUDVoiture implements OnInit {
         ) {
             this.errorMessage = "Veuillez remplir tous les champs";
         } else {
+            this.isLoading=true;
             this.clientService.updateVoiture(
                 this.voitureUpdate.idVoiture,
                 this.voitureUpdate.marque,
@@ -220,9 +230,11 @@ export class CRUDVoiture implements OnInit {
                     console.log(data.message);
                     this.hideDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading=false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading=false;
                 }
             });
         }
@@ -235,6 +247,7 @@ export class CRUDVoiture implements OnInit {
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading=true;
                 const ids = this.selectedProducts.map(product => product._id);
                 this.clientService.deleteVoitures(
                     ids
@@ -243,10 +256,12 @@ export class CRUDVoiture implements OnInit {
                         console.log(data.message);
                         // this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading=false;
                     },
                     error: (error) => {
                         alert(error.error.message);
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading=false;
                     }
                 });
             }
@@ -269,6 +284,7 @@ export class CRUDVoiture implements OnInit {
             header: 'Confirmer',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
+                this.isLoading=true;
                 this.clientService.deleteVoitures(
                     [voiture._id]
                 ).subscribe({
@@ -276,9 +292,11 @@ export class CRUDVoiture implements OnInit {
                         console.log(data.message);
                         this.hideDialog();     // Fermer le dialogue après le succès
                         this.loadData();       // Recharger les données après le succès
+                        this.isLoading=false;
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading=false;
                     }
                 });
                 this.messageService.add({

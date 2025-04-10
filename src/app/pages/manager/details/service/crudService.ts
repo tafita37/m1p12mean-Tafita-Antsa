@@ -278,6 +278,7 @@ export class CRUDService implements OnInit {
             this.sousSelected.length == 0
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
+            this.isLoading = false;
         } else {
             this.managerService.insertService(
                 this.serviceInsert.nom,
@@ -304,6 +305,7 @@ export class CRUDService implements OnInit {
             !this.serviceUpdate.nom
         ) {
             this.errorMessage = "Les données entrées sont incorrectes";
+            this.isLoading = false;
         } else {
             this.managerService.updateService(
                 this.serviceUpdate.id,
