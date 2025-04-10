@@ -17,6 +17,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CalendarModule } from 'primeng/calendar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-empty',
@@ -35,7 +36,8 @@ import { CalendarModule } from 'primeng/calendar';
         SelectModule,
         FormsModule,
         CommonModule,
-        CalendarModule
+        CalendarModule,
+        ProgressSpinnerModule
         // FullCalendarComponent
     ],
     templateUrl: "./rdv.html"
@@ -53,6 +55,7 @@ export class RDV {
     selectedDates: Date[] = [];
     nbDate: number = 1;
     plannings: any[] = [];
+    isLoading : boolean = false;
 
     get idServiceInsert(): string {
         return this._idServiceInsert;
@@ -110,6 +113,7 @@ export class RDV {
 
             return;
         }
+        this.isLoading=true;
         let details: any[] = [];
         console.log(this.sousSelected, this.listQuantite, this.sousSelected.length);
 
@@ -138,9 +142,12 @@ export class RDV {
             next: (data) => {
                 this.hideNewRdvDialog();
                 this.loadData();       // Recharger les données après le succès
+                this.isLoading=false;
             },
             error: (error) => {
                 console.error('Erreur lors de la connexion:', error);
+                this.hideNewRdvDialog();
+                this.isLoading=false;
             }
         });
     }
