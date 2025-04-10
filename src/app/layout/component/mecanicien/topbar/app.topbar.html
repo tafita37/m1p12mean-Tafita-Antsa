@@ -52,18 +52,29 @@
 
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
+                  <button type="button" class="layout-topbar-action">
+                    <i class="pi pi-calendar"></i>
+                    <span>Calendar</span>
+                  </button>
+                  <button type="button" class="layout-topbar-action">
+                    <i class="pi pi-inbox"></i>
+                    <span>Messages</span>
+                  </button>
+              
+                  <!-- Bouton Profile -->
+                  <div class="relative inline-block" (click)="toggleProfileMenu()">
                     <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-calendar"></i>
-                        <span>Calendar</span>
+                      <i class="pi pi-user"></i>
+                      <span>Profile</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
-                    </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-user"></i>
-                        <span>Profile</span>
-                    </button>
+              
+                    <!-- Menu déroulant -->
+                    <div *ngIf="isProfileMenuOpen" class="absolute right-0 mt-2 w-40 bg-white shadow-md rounded-md z-50">
+                      <button (click)="logout()" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <i class="pi pi-sign-out mr-2"></i> Déconnexion
+                      </button>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>
