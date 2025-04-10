@@ -234,6 +234,7 @@ export class CRUDDetailsPiece implements OnInit {
                     },
                     error: (error) => {
                         console.error('Erreur lors de la connexion:', error);
+                        this.isLoading = false;
                     }
                 });
             }

@@ -231,7 +231,6 @@ export class StockPiece implements OnInit {
     }
 
     insertStockPiece() {
-        this.isLoading=true;
         if (
             !this.mouvementInsert.idMarque ||
             !this.mouvementInsert.idPiece ||
@@ -241,6 +240,7 @@ export class StockPiece implements OnInit {
         ) {
             this.errorMessage = "Veuillez compléter tout les champs";
         } else {
+            this.isLoading=true;
             if(this.mouvementInsert.isEntree){
                 if (!this.mouvementInsert.idFournisseur) {
                     this.errorMessage = "Veuillez compléter tout les champs";

@@ -215,8 +215,14 @@ export class CRUDFournisseur implements OnInit {
 
     updateFournisseur() {
         this.isLoading = true;
-        if (!this.fournisseurModif.idFournisseur || !this.fournisseurModif.nom || !this.fournisseurModif.email || !this.fournisseurModif.contact) {
+        if (
+            !this.fournisseurModif.idFournisseur || 
+            !this.fournisseurModif.nom || 
+            !this.fournisseurModif.email || 
+            !this.fournisseurModif.contact
+        ) {
             this.errorMessage = "Veuillez entrer les données corrects";
+            this.isLoading = false;
         } else {
             this.managerService.updateFournisseur(
                 this.fournisseurModif.idFournisseur,
