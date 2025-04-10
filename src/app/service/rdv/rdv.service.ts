@@ -59,7 +59,7 @@ export class RdvService {
         return this.http.get(this.planningOfDemandeUrl + "?idDemande=" + idDemande, { headers });
     }
 
-    newRDV(idVoiture: string, idService: string, details: any[], dates: Date[]): Observable<any> {
+    newRDV(idVoiture: string, idService: string, details: any[], dates: string[]): Observable<any> {
         const token = localStorage.getItem(environment.tokenClientStorage);
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`

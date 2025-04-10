@@ -123,12 +123,17 @@ export class RDV {
                 qte: this.listQuantite[this.sousSelected[i]]
             })
         }
-        this.selectedDates;
+        let listeDateString : string[]=[];
+        for(let i=0; i<this.selectedDates.length; i++) {
+            listeDateString.push(
+                `${this.selectedDates[i].getFullYear()}-${(this.selectedDates[i].getMonth()+1).toString().padStart(2, '0')}-${this.selectedDates[i].getDate().toString().padStart(2, '0')}`
+            );
+        }
         this.rdvService.newRDV(
             this.idVoitureInsert,
             this.idServiceInsert,
             details,
-            this.selectedDates
+            listeDateString
         ).subscribe({
             next: (data) => {
                 this.hideNewRdvDialog();
