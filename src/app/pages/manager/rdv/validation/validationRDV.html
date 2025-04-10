@@ -1,3 +1,7 @@
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
 <div *ngIf="nbListPieceAcheter==0">
     <div class="card">
         <div class="font-semibold text-xl mb-4">Valider le rendez-vous</div>

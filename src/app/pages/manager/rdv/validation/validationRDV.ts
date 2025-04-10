@@ -26,6 +26,7 @@ import { MessageModule } from 'primeng/message';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { StockService } from '../../../../service/manager/stock/stock.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface expandedRows {
     [key: string]: boolean;
@@ -55,7 +56,8 @@ interface expandedRows {
         Calendar,
         MessageModule,
         DialogModule,
-        DatePickerModule
+        DatePickerModule,
+        ProgressSpinnerModule
     ],
     templateUrl: "./validationRDV.html",
     styleUrl: "./validationRDV.css",
@@ -97,7 +99,7 @@ export class ValidationRDV implements OnInit {
 
     balanceFrozen: boolean = false;
 
-    loading: boolean = true;
+    loading: boolean = false;
     idDemande: string | null = "";
 
     details : any[] = [];
@@ -129,6 +131,7 @@ export class ValidationRDV implements OnInit {
     demande: any = {};
 
     @ViewChild('filter') filter!: ElementRef;
+    isLoading : boolean = false;
 
     constructor(
         private rdvService: RdvService,
@@ -173,6 +176,7 @@ export class ValidationRDV implements OnInit {
     }
 
     acheterPiece() {
+        this.isLoading=true;
         this.stockService.newMouvementStock(
             this.formAchatPiece.idPiece,
             this.formAchatPiece.idMarque,
@@ -185,12 +189,16 @@ export class ValidationRDV implements OnInit {
         ).subscribe(data => {
             this.hideNewAchatPieceDialog();
             this.loadData();
+            this.isLoading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.hideNewAchatPieceDialog();
+            this.isLoading=false;
         });
     }
 
     validerRDV() {
+        this.isLoading=true;
         let planning = [];
         for (let i = 0; i < this.details.length; i++) {
             const dateDebut = new Date(this.validationInsert[this.details[i].sousService._id].date);
@@ -238,8 +246,10 @@ export class ValidationRDV implements OnInit {
             this.listeAVendre
         ).subscribe(data => {
             this.router.navigate(['/manager/rdv/nonValider']);
+            this.isLoading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.isLoading=false;
         });
     }
 
@@ -250,6 +260,7 @@ export class ValidationRDV implements OnInit {
             page = (event.first / event.rows) + 1;
         }
         // this.marques = [];
+        this.loading=true;
         this.rdvService.getAllDataForValidation(this.idDemande).subscribe(data => {
             console.log(data.listeAVendre);
             this.listeAVendre=data.listeAVendre;
@@ -281,6 +292,7 @@ export class ValidationRDV implements OnInit {
 
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 
