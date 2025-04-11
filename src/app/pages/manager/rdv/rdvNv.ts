@@ -85,7 +85,7 @@ export class RDVNv implements OnInit {
     balanceFrozen: boolean = false;
 
     loading: boolean = true;
-    isLoading: boolean = true;
+    isLoading: boolean = false;
     nbRDVNv: number = 0;
 
     @ViewChild('filter') filter!: ElementRef;
