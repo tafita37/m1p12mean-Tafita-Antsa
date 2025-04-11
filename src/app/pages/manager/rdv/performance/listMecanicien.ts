@@ -124,7 +124,7 @@ export class ListMecanicien implements OnInit {
         this._moisRecherche = value;
         if (this.anneeRecherche != null&&this.moisRecherche != null) {
             this.loadData();
-            this.titreAffichage = "Performances des mécaniciens en " + this.listeMois[this.moisRecherche-1].label + " " + this.anneeRecherche;
+            this.titreAffichage = "Performances des mécaniciens en " + this.listeMois[this.moisRecherche].label + " " + this.anneeRecherche;
         }
     }
 
@@ -136,7 +136,7 @@ export class ListMecanicien implements OnInit {
         this._anneeRecherche = value;
         this.loadData();
         if (this.moisRecherche != null) {
-            this.titreAffichage = "Performances des mécaniciens en " + this.listeMois[this.moisRecherche-1].label + " " + this.anneeRecherche;
+            this.titreAffichage = "Performances des mécaniciens en " + this.listeMois[this.moisRecherche].label + " " + this.anneeRecherche;
         } else {
             this.titreAffichage = "Performances des mécaniciens en "+ this.anneeRecherche;
         }
