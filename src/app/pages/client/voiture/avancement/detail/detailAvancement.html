@@ -80,7 +80,7 @@
                             <p-rating
                                 [(ngModel)]="nbEtoilePlanning[detail._id].nbEtoile"
                                 (onRate)="noterPlanning(detail)"
-                                [disabled]="detail.avancement!=100||detail.demande.dateValidationTravail!==null"
+                                [disabled]="detail.avancement!=100||detail.dateValidationTravail!==null"
                             />
                         </div>
                     </td>
