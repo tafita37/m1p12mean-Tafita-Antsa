@@ -1,7 +1,7 @@
 <p-toolbar styleClass="mb-6">
-    <!-- <ng-template #start>
+    <ng-template #start>
         <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
-    </ng-template> -->
+    </ng-template>
 
     <!-- <ng-template #end>
         <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
@@ -31,15 +31,15 @@
             <h5 class="m-0">{{titreAffichage}}</h5>
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-4">
-                    <p-select 
-                        [options]="typeSearch" 
-                        styleClass="mb-3" 
-                        optionValue="value" 
-                        optionLabel="label" 
-                        placeholder="Type" 
-                        [appendTo]="'body'" 
-                        fluid 
-                        [(ngModel)]="typeMouvement" 
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
                     />
                 </div>
                 <div class="col-span-4">
@@ -88,13 +88,821 @@
 </p-table>
 <p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
     <div>
-        <label for="piece" class="block font-bold">Pièce</label>
-        <p-select [options]="allPiece" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Piece" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idPiece" />
+        <label for="user" class="block font-bold">Utilisateur</label>
+        <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
     </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Quantité</label>
+        <p-inputnumber id="nb" fluid placeholder="Quantité" [(ngModel)]="mouvementInsert.nb" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Date de mouvement</label>
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-radiobutton id="category3" class="mr-1" name="category" [value]="true" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category3">Entrée</label>
+        </div>
+        <div class="col-span-6">
+            <p-radiobutton id="category4" class="mr-1" name="category" [value]="false" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category4">Sortie</label>
+        </div>
+    </div>
+    <div class="mt-3" *ngIf="mouvementInsert.isEntree">
+        <label for="fournisseurs" class="block font-bold">Fournisseur</label>
+        <p-select [options]="allFournisseur" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Fournisseur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idFournisseur" />
+    </div>
+    <div class="mb-3 mt-3">
+        <label for="prixAchat" class="block font-bold"> {{ mouvementInsert.isEntree ? 'Prix d\'achat' : 'Prix de vente' }} </label>
+        <p-inputnumber id="prixAchat" fluid placeholder="Prix" [(ngModel)]="mouvementInsert.prix" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewStockPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="listMouvement"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbMouvement"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des mouvements"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">{{titreAffichage}}</h5>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
+                    />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <!-- <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th> -->
+            <th>
+                Utilisateur
+                <!-- <p-sortIcon field="user" /> -->
+            </th>
+            <th>Fournisseur</th>
+            <th>Type</th>
+            <th>Date du mouvement</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mouvement>
+        <tr>
+            <td>{{mouvement.utilisateur.nom}} {{mouvement.utilisateur.prenom}} ({{mouvement.utilisateur.role.nom}})</td>
+            <td *ngIf="mouvement.fournisseur">{{mouvement.fournisseur.nom}}</td>
+            <td *ngIf="!mouvement.fournisseur">Non défini</td>
+            <td *ngIf="mouvement.isEntree">Entree</td>
+            <td *ngIf="!mouvement.isEntree">Sortie</td>
+            <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
+            <!-- <td>
+                <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
     <div>
-        <label for="marque" class="block font-bold">Marque</label>
-        <p-select [options]="allMarque" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Marque" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idMarque" />
+        <label for="user" class="block font-bold">Utilisateur</label>
+        <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
     </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Quantité</label>
+        <p-inputnumber id="nb" fluid placeholder="Quantité" [(ngModel)]="mouvementInsert.nb" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Date de mouvement</label>
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-radiobutton id="category3" class="mr-1" name="category" [value]="true" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category3">Entrée</label>
+        </div>
+        <div class="col-span-6">
+            <p-radiobutton id="category4" class="mr-1" name="category" [value]="false" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category4">Sortie</label>
+        </div>
+    </div>
+    <div class="mt-3" *ngIf="mouvementInsert.isEntree">
+        <label for="fournisseurs" class="block font-bold">Fournisseur</label>
+        <p-select [options]="allFournisseur" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Fournisseur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idFournisseur" />
+    </div>
+    <div class="mb-3 mt-3">
+        <label for="prixAchat" class="block font-bold"> {{ mouvementInsert.isEntree ? 'Prix d\'achat' : 'Prix de vente' }} </label>
+        <p-inputnumber id="prixAchat" fluid placeholder="Prix" [(ngModel)]="mouvementInsert.prix" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewStockPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="listMouvement"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbMouvement"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des mouvements"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">{{titreAffichage}}</h5>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
+                    />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <!-- <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th> -->
+            <th>
+                Utilisateur
+                <!-- <p-sortIcon field="user" /> -->
+            </th>
+            <th>Fournisseur</th>
+            <th>Type</th>
+            <th>Date du mouvement</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mouvement>
+        <tr>
+            <td>{{mouvement.utilisateur.nom}} {{mouvement.utilisateur.prenom}} ({{mouvement.utilisateur.role.nom}})</td>
+            <td *ngIf="mouvement.fournisseur">{{mouvement.fournisseur.nom}}</td>
+            <td *ngIf="!mouvement.fournisseur">Non défini</td>
+            <td *ngIf="mouvement.isEntree">Entree</td>
+            <td *ngIf="!mouvement.isEntree">Sortie</td>
+            <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
+            <!-- <td>
+                <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
+    <div>
+        <label for="user" class="block font-bold">Utilisateur</label>
+        <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Quantité</label>
+        <p-inputnumber id="nb" fluid placeholder="Quantité" [(ngModel)]="mouvementInsert.nb" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Date de mouvement</label>
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-radiobutton id="category3" class="mr-1" name="category" [value]="true" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category3">Entrée</label>
+        </div>
+        <div class="col-span-6">
+            <p-radiobutton id="category4" class="mr-1" name="category" [value]="false" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category4">Sortie</label>
+        </div>
+    </div>
+    <div class="mt-3" *ngIf="mouvementInsert.isEntree">
+        <label for="fournisseurs" class="block font-bold">Fournisseur</label>
+        <p-select [options]="allFournisseur" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Fournisseur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idFournisseur" />
+    </div>
+    <div class="mb-3 mt-3">
+        <label for="prixAchat" class="block font-bold"> {{ mouvementInsert.isEntree ? 'Prix d\'achat' : 'Prix de vente' }} </label>
+        <p-inputnumber id="prixAchat" fluid placeholder="Prix" [(ngModel)]="mouvementInsert.prix" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewStockPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="listMouvement"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbMouvement"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des mouvements"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">{{titreAffichage}}</h5>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
+                    />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <!-- <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th> -->
+            <th>
+                Utilisateur
+                <!-- <p-sortIcon field="user" /> -->
+            </th>
+            <th>Fournisseur</th>
+            <th>Type</th>
+            <th>Date du mouvement</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mouvement>
+        <tr>
+            <td>{{mouvement.utilisateur.nom}} {{mouvement.utilisateur.prenom}} ({{mouvement.utilisateur.role.nom}})</td>
+            <td *ngIf="mouvement.fournisseur">{{mouvement.fournisseur.nom}}</td>
+            <td *ngIf="!mouvement.fournisseur">Non défini</td>
+            <td *ngIf="mouvement.isEntree">Entree</td>
+            <td *ngIf="!mouvement.isEntree">Sortie</td>
+            <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
+            <!-- <td>
+                <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
+    <div>
+        <label for="user" class="block font-bold">Utilisateur</label>
+        <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Quantité</label>
+        <p-inputnumber id="nb" fluid placeholder="Quantité" [(ngModel)]="mouvementInsert.nb" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Date de mouvement</label>
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-radiobutton id="category3" class="mr-1" name="category" [value]="true" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category3">Entrée</label>
+        </div>
+        <div class="col-span-6">
+            <p-radiobutton id="category4" class="mr-1" name="category" [value]="false" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category4">Sortie</label>
+        </div>
+    </div>
+    <div class="mt-3" *ngIf="mouvementInsert.isEntree">
+        <label for="fournisseurs" class="block font-bold">Fournisseur</label>
+        <p-select [options]="allFournisseur" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Fournisseur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idFournisseur" />
+    </div>
+    <div class="mb-3 mt-3">
+        <label for="prixAchat" class="block font-bold"> {{ mouvementInsert.isEntree ? 'Prix d\'achat' : 'Prix de vente' }} </label>
+        <p-inputnumber id="prixAchat" fluid placeholder="Prix" [(ngModel)]="mouvementInsert.prix" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewStockPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="listMouvement"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbMouvement"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des mouvements"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">{{titreAffichage}}</h5>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
+                    />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <!-- <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th> -->
+            <th>
+                Utilisateur
+                <!-- <p-sortIcon field="user" /> -->
+            </th>
+            <th>Fournisseur</th>
+            <th>Type</th>
+            <th>Date du mouvement</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mouvement>
+        <tr>
+            <td>{{mouvement.utilisateur.nom}} {{mouvement.utilisateur.prenom}} ({{mouvement.utilisateur.role.nom}})</td>
+            <td *ngIf="mouvement.fournisseur">{{mouvement.fournisseur.nom}}</td>
+            <td *ngIf="!mouvement.fournisseur">Non défini</td>
+            <td *ngIf="mouvement.isEntree">Entree</td>
+            <td *ngIf="!mouvement.isEntree">Sortie</td>
+            <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
+            <!-- <td>
+                <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
+    <div>
+        <label for="user" class="block font-bold">Utilisateur</label>
+        <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Quantité</label>
+        <p-inputnumber id="nb" fluid placeholder="Quantité" [(ngModel)]="mouvementInsert.nb" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Date de mouvement</label>
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-radiobutton id="category3" class="mr-1" name="category" [value]="true" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category3">Entrée</label>
+        </div>
+        <div class="col-span-6">
+            <p-radiobutton id="category4" class="mr-1" name="category" [value]="false" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category4">Sortie</label>
+        </div>
+    </div>
+    <div class="mt-3" *ngIf="mouvementInsert.isEntree">
+        <label for="fournisseurs" class="block font-bold">Fournisseur</label>
+        <p-select [options]="allFournisseur" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Fournisseur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idFournisseur" />
+    </div>
+    <div class="mb-3 mt-3">
+        <label for="prixAchat" class="block font-bold"> {{ mouvementInsert.isEntree ? 'Prix d\'achat' : 'Prix de vente' }} </label>
+        <p-inputnumber id="prixAchat" fluid placeholder="Prix" [(ngModel)]="mouvementInsert.prix" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewStockPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="listMouvement"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbMouvement"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des mouvements"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">{{titreAffichage}}</h5>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
+                    />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <!-- <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th> -->
+            <th>
+                Utilisateur
+                <!-- <p-sortIcon field="user" /> -->
+            </th>
+            <th>Fournisseur</th>
+            <th>Type</th>
+            <th>Date du mouvement</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mouvement>
+        <tr>
+            <td>{{mouvement.utilisateur.nom}} {{mouvement.utilisateur.prenom}} ({{mouvement.utilisateur.role.nom}})</td>
+            <td *ngIf="mouvement.fournisseur">{{mouvement.fournisseur.nom}}</td>
+            <td *ngIf="!mouvement.fournisseur">Non défini</td>
+            <td *ngIf="mouvement.isEntree">Entree</td>
+            <td *ngIf="!mouvement.isEntree">Sortie</td>
+            <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
+            <!-- <td>
+                <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
+    <div>
+        <label for="user" class="block font-bold">Utilisateur</label>
+        <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Quantité</label>
+        <p-inputnumber id="nb" fluid placeholder="Quantité" [(ngModel)]="mouvementInsert.nb" />
+    </div>
+    <div class="mb-3">
+        <label for="nb" class="block font-bold">Date de mouvement</label>
+        <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="mouvementInsert.dateMouvement" />
+    </div>
+    <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6">
+            <p-radiobutton id="category3" class="mr-1" name="category" [value]="true" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category3">Entrée</label>
+        </div>
+        <div class="col-span-6">
+            <p-radiobutton id="category4" class="mr-1" name="category" [value]="false" [(ngModel)]="mouvementInsert.isEntree" />
+            <label for="category4">Sortie</label>
+        </div>
+    </div>
+    <div class="mt-3" *ngIf="mouvementInsert.isEntree">
+        <label for="fournisseurs" class="block font-bold">Fournisseur</label>
+        <p-select [options]="allFournisseur" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Fournisseur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idFournisseur" />
+    </div>
+    <div class="mb-3 mt-3">
+        <label for="prixAchat" class="block font-bold"> {{ mouvementInsert.isEntree ? 'Prix d\'achat' : 'Prix de vente' }} </label>
+        <p-inputnumber id="prixAchat" fluid placeholder="Prix" [(ngModel)]="mouvementInsert.prix" />
+    </div>
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideNewStockPieceDialog()" />
+        <p-button label="Enregistrer" icon="pi pi-check" (click)="insertStockPiece()" />
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="updatePieceDialog" [style]="{ width: 'auto' }" header="Modifier" [modal]="true" #elseBlock>
+    <label for="name" class="block font-bold mb-3">Nom</label>
+    <input type="text" pInputText id="name" required autofocus fluid [(ngModel)]="pieceCliquer.nom" />
+    <p-message *ngIf="errorMessage" severity="error" styleClass="mt-5">{{ errorMessage }}</p-message>
+    <ng-template #footer>
+        <p-button label="Annuler" icon="pi pi-times" text (click)="hideUpdatePieceDialog()" />
+        <p-button label="Modifier" icon="pi pi-check" (click)="updatePiece()" />
+    </ng-template>
+</p-dialog>
+
+<p-confirmdialog [style]="{ width: '450px' }" />
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
+    </ng-template>
+
+    <!-- <ng-template #end>
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+    </ng-template> -->
+</p-toolbar>
+
+<p-table
+    #dt
+    [value]="listMouvement"
+    [rows]="10"
+    [columns]="cols"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadData($event)"
+    [totalRecords]="nbMouvement"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [(selection)]="selectedProducts"
+    [rowHover]="true"
+    dataKey="_id"
+    currentPageReportTemplate="Liste des mouvements"
+    [showCurrentPageReport]="true"
+>
+    <ng-template #caption>
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">{{titreAffichage}}</h5>
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-4">
+                    <p-select
+                        [options]="typeSearch"
+                        styleClass="mb-3"
+                        optionValue="value"
+                        optionLabel="label"
+                        placeholder="Type"
+                        [appendTo]="'body'"
+                        fluid
+                        [(ngModel)]="typeMouvement"
+                    />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateDebut" />
+                </div>
+                <div class="col-span-4">
+                    <p-datepicker [showIcon]="true" [showButtonBar]="true" [appendTo]="'body'" fluid placeholder="Date" [(ngModel)]="dateFin" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #header>
+        <tr>
+            <!-- <th style="width: 3rem">
+                <p-tableHeaderCheckbox />
+            </th> -->
+            <th>
+                Utilisateur
+                <!-- <p-sortIcon field="user" /> -->
+            </th>
+            <th>Fournisseur</th>
+            <th>Type</th>
+            <th>Date du mouvement</th>
+            <th style="text-align: right;">Quantité</th>
+            <th style="text-align: right;">Prix unitaire</th>
+            <th style="text-align: right;">Prix total</th>
+        </tr>
+    </ng-template>
+    <ng-template #body let-mouvement>
+        <tr>
+            <td>{{mouvement.utilisateur.nom}} {{mouvement.utilisateur.prenom}} ({{mouvement.utilisateur.role.nom}})</td>
+            <td *ngIf="mouvement.fournisseur">{{mouvement.fournisseur.nom}}</td>
+            <td *ngIf="!mouvement.fournisseur">Non défini</td>
+            <td *ngIf="mouvement.isEntree">Entree</td>
+            <td *ngIf="!mouvement.isEntree">Sortie</td>
+            <td>{{mouvement.dateMouvement | date: 'yyyy-MM-dd'}}</td>
+            <td style="text-align: right;">{{mouvement.nb | number:'1.0-2':'fr'}}</td>
+            <td style="text-align: right;">{{mouvement.prix | number:'1.0-2':'fr'}} Ar</td>
+            <td style="text-align: right;">{{mouvement.prix*mouvement.nb | number:'1.0-2':'fr'}} Ar</td>
+            <!-- <td>
+                <p-button icon="pi pi-download" class="mr-2" [rounded]="true" [outlined]="true" (click)="openUpdatePiece(stock)" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deletePiece(piece)" />
+            </td> -->
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
     <div>
         <label for="user" class="block font-bold">Utilisateur</label>
         <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />

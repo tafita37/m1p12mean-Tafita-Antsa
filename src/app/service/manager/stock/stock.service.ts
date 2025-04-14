@@ -10,6 +10,8 @@ export class StockService {
     private listeStockUrl = environment.baseUrl + "/manager/piece/stock/allDataStock";
     private listeMouvementOneDetailStockUrl = environment.baseUrl + "/manager/piece/stock/listeMouvement";
     private newMouvementStockUrl = environment.baseUrl + "/manager/piece/stock/insert";
+    private newMouvementUrl = environment.baseUrl + "/mouvement/newMouvement";
+
 
     getListStock(numPage: Number, date:Date): Observable<any> {
         const token = localStorage.getItem(environment.tokenManagerStorage);
@@ -63,6 +65,16 @@ export class StockService {
             this.newMouvementStockUrl,
             { idPiece, idMarque, idUser, idFournisseur, prix, nb, isEntree, dateMouvement : dateString },
             { headers }
+        );
+    }
+
+    newMouvement(detailPiece: any,utilisateur: any,fournisseur: any,prix: any,nb: any,isEntree: any,dateMouvement: any) {
+        const token = localStorage.getItem(environment.tokenManagerStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.post(this.newMouvementUrl,{detailPiece,utilisateur,fournisseur,prix,nb,isEntree,dateMouvement},
+            {headers}
         );
     }
 
