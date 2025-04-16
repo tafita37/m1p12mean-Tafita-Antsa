@@ -23,6 +23,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProductService } from '../../../../../service/product.service';
 import { StockService } from '../../../../../../service/manager/stock/stock.service';
 import { ActivatedRoute } from '@angular/router';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface Column {
     field: string;
@@ -58,7 +59,8 @@ interface ExportColumn {
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: './listeMouvement.html',
     providers: [MessageService, ProductService, ConfirmationService]
@@ -73,11 +75,13 @@ export class ListeMouvement implements OnInit {
     nomPieceInsert: string = '';
     pieceCliquer: { nom: string, idPiece: string } = { nom: '', idPiece: '' };
     listMouvement: [] = [];
+    detailPiece : any;
     allPiece: [] = [];
     allMarque: [] = [];
     allUser: [] = [];
     allFournisseur: [] = [];
     titreAffichage: string = '';
+    titreNewStock: string = '';
     typeSearch: [
         { label: string, value: number }, { label: string, value: number }, { label: string, value: number }
     ] = [{ label: 'Tout', value: 0 }, { label: 'Entrée', value: 1 }, { label: 'Sortie', value: -1 }];
@@ -143,6 +147,7 @@ export class ListeMouvement implements OnInit {
     nbMouvement: number = 0;
 
     loading: boolean = false;
+    isLoading: boolean = false;
     _dateDebut: Date |null = null;
     _dateFin: Date | null = null;
     _typeMouvement : number | 0 = 0;
@@ -197,9 +202,13 @@ export class ListeMouvement implements OnInit {
         ).subscribe(data => {
             this.titreAffichage = "Mouvements de " + data.detailPiece.piece.nom + " " + data.detailPiece.marque.nom;
             this.listMouvement = data.mouvements;
-            console.log(this.listMouvement);
-
+            this.detailPiece=data.detailPiece;
+            this.titreNewStock="Nouveau mouvement de"+this.detailPiece.piece.nom+" "+this.detailPiece.marque.nom ;
+            this.mouvementInsert.idMarque=this.detailPiece.marque._id;
+            this.mouvementInsert.idPiece=this.detailPiece.piece._id;
             this.nbMouvement = data.nbMouvements;
+            this.allUser = data.users;
+            this.allFournisseur = data.fournisseurs;
             this.loading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
@@ -251,6 +260,7 @@ export class ListeMouvement implements OnInit {
         ) {
             this.errorMessage = "Veuillez compléter tout les champs";
         } else {
+            this.isLoading=true;
             if(this.mouvementInsert.isEntree){
                 if (!this.mouvementInsert.idFournisseur) {
                     this.errorMessage = "Veuillez compléter tout les champs";
@@ -272,9 +282,11 @@ export class ListeMouvement implements OnInit {
                 next: (data) => {
                     this.hideNewStockPieceDialog();     // Fermer le dialogue après le succès
                     this.loadData();       // Recharger les données après le succès
+                    this.isLoading=false;
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
+                    this.isLoading=false;
                 }
             });
         }
@@ -330,6 +342,12 @@ export class ListeMouvement implements OnInit {
     hideNewStockPieceDialog() {
         this.newStockPieceDialog = false;
         this.submitted = false;
+        this.mouvementInsert.idUser="";
+        this.mouvementInsert.idFournisseur= '';
+        this.mouvementInsert.prix= 0;
+        this.mouvementInsert.nb= 0;
+        this.mouvementInsert.isEntree= false;
+        this.mouvementInsert.dateMouvement= new Date();
     }
 
     hideUpdatePieceDialog() {

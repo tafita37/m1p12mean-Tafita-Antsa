@@ -323,6 +323,14 @@ export class StockPiece implements OnInit {
     hideNewStockPieceDialog() {
         this.newStockPieceDialog = false;
         this.submitted = false;
+        this.mouvementInsert.idMarque="";
+        this.mouvementInsert.idPiece="";
+        this.mouvementInsert.idUser="";
+        this.mouvementInsert.idFournisseur= '';
+        this.mouvementInsert.prix= 0;
+        this.mouvementInsert.nb= 0;
+        this.mouvementInsert.isEntree= false;
+        this.mouvementInsert.dateMouvement= new Date();
     }
 
     hideUpdatePieceDialog() {
