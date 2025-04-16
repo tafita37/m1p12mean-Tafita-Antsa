@@ -1,7 +1,11 @@
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
 <p-toolbar styleClass="mb-6">
-    <!-- <ng-template #start>
+    <ng-template #start>
         <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openInsertNewStockPiece()" />
-    </ng-template> -->
+    </ng-template>
 
     <!-- <ng-template #end>
         <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
@@ -86,15 +90,7 @@
         </tr>
     </ng-template>
 </p-table>
-<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
-    <div>
-        <label for="piece" class="block font-bold">Pièce</label>
-        <p-select [options]="allPiece" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Piece" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idPiece" />
-    </div>
-    <div>
-        <label for="marque" class="block font-bold">Marque</label>
-        <p-select [options]="allMarque" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Marque" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idMarque" />
-    </div>
+<p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" [header]="titreNewStock" [modal]="true">
     <div>
         <label for="user" class="block font-bold">Utilisateur</label>
         <p-select [options]="allUser" styleClass="mb-3" optionValue="_id" optionLabel="fullName" placeholder="Utilisateur" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idUser" />
