@@ -145,8 +145,7 @@ export class ListeMouvement implements OnInit {
     loading: boolean = false;
     _dateDebut: Date |null = null;
     _dateFin: Date | null = null;
-    _typeMouvement : number | 0 = 0;    
-    _selectedDate: Date = new Date();
+    _typeMouvement : number | 0 = 0;
 
     constructor(
         private messageService: MessageService,
@@ -186,11 +185,6 @@ export class ListeMouvement implements OnInit {
         this.loadData();
     }
 
-    set selectedDate(value: Date) {
-        this._selectedDate = value;
-        this.loadData();
-    }
-
     loadData(event: any | null = null): void {
         this.loading=true;
         var page = 1;
@@ -213,24 +207,9 @@ export class ListeMouvement implements OnInit {
         });
     }
 
-    getAllUser() {
-        this.loading = true;
-        var page = 1;
-        this.stockService.getListStock(page, this.selectedDate).subscribe(data => {
-            this.allUser = data.users;
-            this.allFournisseur = data.fournisseurs;
-            this.loading = false;
-        }, error => {
-            console.error("Erreur lors de la connexion:", error);
-            this.loading=false;
-        });
-    }
-
     ngOnInit(): void {
         this.idDetailPiece = this.route.snapshot.paramMap.get('idDetailPiece')!;
         this.loadData();
-        this.getAllUser();
-      
     }
 
     onGlobalFilter(table: Table, event: Event) {
@@ -239,8 +218,6 @@ export class ListeMouvement implements OnInit {
 
     openInsertNewStockPiece() {
         this.nomPieceInsert = "";
-        
-        this.errorMessage = "";
         this.submitted = false;
         this.newStockPieceDialog = true;
     }
@@ -266,6 +243,8 @@ export class ListeMouvement implements OnInit {
 
     insertStockPiece() {
         if (
+            !this.mouvementInsert.idMarque ||
+            !this.mouvementInsert.idPiece ||
             !this.mouvementInsert.idUser ||
             !this.mouvementInsert.prix ||
             !this.mouvementInsert.nb
@@ -280,18 +259,24 @@ export class ListeMouvement implements OnInit {
             } else {
                 this.mouvementInsert.idFournisseur = null;
             }
-
-            this.stockService.newMouvement(this.idDetailPiece,this.mouvementInsert.idUser, this.mouvementInsert.idFournisseur,this.mouvementInsert.prix,this.mouvementInsert.nb,this.mouvementInsert.isEntree,this.mouvementInsert.dateMouvement).subscribe({
+            this.stockService.newMouvementStock(
+                this.mouvementInsert.idPiece,
+                this.mouvementInsert.idMarque,
+                this.mouvementInsert.idUser,
+                this.mouvementInsert.idFournisseur,
+                this.mouvementInsert.prix,
+                this.mouvementInsert.nb,
+                this.mouvementInsert.isEntree,
+                this.mouvementInsert.dateMouvement
+            ).subscribe({
                 next: (data) => {
-                    this.sucessMessage = "Mouvement ajouté avec succès";
-                    this.hideNewStockPieceDialog();    
-                    this.loadData(); 
+                    this.hideNewStockPieceDialog();     // Fermer le dialogue après le succès
+                    this.loadData();       // Recharger les données après le succès
                 },
                 error: (error) => {
                     console.error('Erreur lors de la connexion:', error);
-                    this.errorMessage = "Erreur lors de l'ajout du mouvement";
                 }
-            })  
+            });
         }
     }
 
