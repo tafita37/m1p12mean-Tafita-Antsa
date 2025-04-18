@@ -85,7 +85,7 @@ export class ListMecanicien implements OnInit {
 
     balanceFrozen: boolean = false;
 
-    loading: boolean = true;
+    loading: boolean = false;
     nbPlanning: number = 0;
 
     nbEtoilePlanning: any = {};
@@ -154,6 +154,7 @@ export class ListMecanicien implements OnInit {
     ) { }
 
     loadData(event: any | null = null): void {
+        this.loading=true;
         var page = 1;
         if (event) {
             page = (event.first / event.rows) + 1;
@@ -162,9 +163,11 @@ export class ListMecanicien implements OnInit {
         this.performanceService.getAllPerformance(this.moisRecherche, this.anneeRecherche).subscribe(data => {
             this.listMecanicien = data.statsParMecanicien;
             this.loading = false;
+            this.loading=false;
         }, error => {
             this.loading = false;
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 
