@@ -50,12 +50,15 @@
                     <div class="flex justify-between items-center">Nombre d'interventions réalisées</div>
                 </th>
                 <th>
+                    <div class="flex justify-between items-center">Nombre d'interventions en cours</div>
+                </th>
+                <th>
                     <div class="flex justify-between items-center">Délai de réalisation moyen</div>
                 </th>
                 <th>
                     <div class="flex justify-between items-center">Taux de respect des estimations</div>
                 </th>
-                <th style="min-width: 6rem">
+                <th style="min-width: 6rem;">
                     <div class="flex justify-between items-center">Note moyenne</div>
                 </th>
             </tr>
@@ -65,9 +68,14 @@
                 <td>{{ mecanicien.mecanicien.user.nom }} {{ mecanicien.mecanicien.user.prenom }}</td>
                 <td>{{ mecanicien.mecanicien.user.email }}</td>
                 <td>{{ mecanicien.mecanicien.dateEmbauche| date:'yyyy-MM-dd' }}</td>
-                <td>{{ mecanicien.nombreInterventions | number:'1.0-2' }}</td>
-                <td>{{ mecanicien.delaiMoyen | number:'1.0-2' }} min</td>
-                <td>{{ mecanicien.tauxRespectEstimation | number:'1.0-2' }} %</td>
+                <td style="text-align: right;">{{ mecanicien.nombreInterventionsFinis | number:'1.0-2' }}</td>
+                <td style="text-align: right;">{{ mecanicien.nombreInterventionsEnCours | number:'1.0-2' }}</td>
+                <td style="text-align: right;">
+                    {{ mecanicien.delaiMoyen!=null ? (mecanicien.delaiMoyen | number:'1.0-2') : 0 }} min
+                </td>
+                <td style="text-align: right;">
+                    {{ mecanicien.tauxRespectEstimation!=null ?  (mecanicien.tauxRespectEstimation | number:'1.0-2') : 0 }} %
+                </td>
                 <td>
                     <p-rating [(ngModel)]="mecanicien.moyenneEtoiles" [readonly]="true"></p-rating>
                 </td>
