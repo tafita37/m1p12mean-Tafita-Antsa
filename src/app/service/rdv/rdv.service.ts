@@ -14,6 +14,7 @@ export class RdvService {
     private validerRDVUrl = environment.baseUrl + "/manager/rdv/validerRDV";
     private refuserRDVUrl = environment.baseUrl + "/manager/rdv/refuserRDV";
     private planningMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getPlanning";
+    private statPerfMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getStatPerformance";
     private planningMecanicienAValiderUrl = environment.baseUrl + "/manager/mecanicien/listeTacheAValider";
     private planningOfDemandeUrl = environment.baseUrl + "/client/rdv/planningOfDemande";
     private planningMecanicienUpdateUrl = environment.baseUrl + "/mecanicien/rdv/updatePlanning";
@@ -38,6 +39,17 @@ export class RdvService {
         });
 
         return this.http.get(this.planningMecanicienUrl + "?page=" + numPage, { headers });
+    }
+
+    getStatMecanicienPerformance(anneeIntervention:Number, anneeEtoile : Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenMecanicienStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(
+            this.statPerfMecanicienUrl + "?anneeIntervention=" + anneeIntervention+"&anneeEtoile="+anneeEtoile, { headers }
+        );
     }
 
     getPlanningOfMecanicienAValider(numPage:Number, idMecanicien : string | null): Observable<any> {

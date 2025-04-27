@@ -47,7 +47,7 @@ export class LoginMecanicien {
             this.loginUserService.loginUserMecanicien(this.user).subscribe(data => {
                 localStorage.setItem(environment.tokenMecanicienStorage, data.token);
                 this.sucessMessage = "Connecté";
-                this.router.navigate(['/mecanicien/rdv/listeTache']);
+                this.router.navigate(['/mecanicien/stat']);
                 this.isLoading = false;
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
