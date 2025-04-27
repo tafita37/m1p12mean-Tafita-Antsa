@@ -18,6 +18,9 @@ export class AppSidebarMecanicien {
                 label: 'Rendez-vous',
                 items: [
                     {
+                        label: 'Performance', icon: 'pi pi-fw pi-home', routerLink: ['/mecanicien/stat']
+                    },
+                    {
                         label: 'To-do list', icon: 'pi pi-check pi-wrench', routerLink: ['/mecanicien/rdv/listeTache']
                     },
                 ]
