@@ -23,6 +23,8 @@ import { Router } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 interface expandedRows {
     [key: string]: boolean;
@@ -50,7 +52,9 @@ interface expandedRows {
         IconFieldModule,
         ConfirmDialogModule,
         CalendarModule,
-        InputNumberModule
+        InputNumberModule,
+        DialogModule,
+        ProgressSpinnerModule
     ],
     templateUrl: "./listeTache.html",
     styleUrl: "./listeTache.css",
@@ -84,7 +88,8 @@ export class ListeTache implements OnInit {
 
     balanceFrozen: boolean = false;
 
-    loading: boolean = true;
+    loading: boolean = false;
+    isLoading: boolean = false;
     nbPlanning: number = 0;
 
     @ViewChild('filter') filter!: ElementRef;
@@ -100,14 +105,17 @@ export class ListeTache implements OnInit {
     ) { }
 
     updateEtatTache(tache: any) {
+        this.isLoading=true;
         this.RDVService.updatePlanning(
             this.etatTacheInsert[tache._id].idPlanning,
             this.etatTacheInsert[tache._id].tempsPasse,
             this.etatTacheInsert[tache._id].resteAFaire
         ).subscribe(data => {
+            this.isLoading=false;
             this.loadData();
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.isLoading=false;
         });
     }
 
@@ -117,6 +125,7 @@ export class ListeTache implements OnInit {
             page = (event.first / event.rows) + 1;
         }
         this.listPlanning = [];
+        this.loading=true;
         this.RDVService.getPlanningMecanicien(page).subscribe(data => {
             this.listPlanning = data.listPlanning;
             for (let i = 0; i < this.listPlanning.length; i++) {
@@ -141,6 +150,7 @@ export class ListeTache implements OnInit {
             this.loading = false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 

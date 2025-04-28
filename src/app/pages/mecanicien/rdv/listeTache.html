@@ -1,20 +1,13 @@
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [style]="{ width: 'auto' }">
+    <p-progressSpinner styleClass="custom-spinner" />
+    <p>Chargement...</p>
+</p-dialog>
 <div class="card">
-        <div class="font-semibold text-xl mb-4">Liste des tâches à faire</div>
-        <p-table
-            #dt1
-            [value]="listPlanning"
-            (onLazyLoad)="loadData($event)"
-            [totalRecords]="nbPlanning"
-            dataKey="_id"
-            [rows]="10"
-            [lazy]="true"
-            [loading]="loading"
-            [rowHover]="true"
-            [showGridlines]="true"
-            [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
-            responsiveLayout="scroll"
-        >
-            <!-- <ng-template #caption>
+    <div class="font-semibold text-xl mb-4">Liste des tâches à faire</div>
+    <p-table #dt1 [value]="listPlanning" (onLazyLoad)="loadData($event)" [totalRecords]="nbPlanning" dataKey="_id"
+        [rows]="10" [lazy]="true" [loading]="loading" [rowHover]="true" [showGridlines]="true"
+        [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']" responsiveLayout="scroll">
+        <!-- <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
                 <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
                 <p-iconfield iconPosition="left" class="ml-auto">
@@ -25,81 +18,66 @@
                 </p-iconfield>
             </div>
         </ng-template> -->
-            <ng-template #header>
-                <tr>
-                    <th style="min-width: 12rem">
-                        <div class="flex justify-between items-center">Sous-service</div>
-                    </th>
-                    <th>
-                        <div class="flex justify-between items-center">Date</div>
-                    </th>
-                    <th>
-                        <div class="flex justify-between items-center">Heure de début</div>
-                    </th>
-                    <th>
-                        <div class="flex justify-between items-center">Heure de fin prévu</div>
-                    </th>
-                    <th style="min-width: 12rem">
-                        <div class="flex justify-between items-center">Etat</div>
-                    </th>
-                    <th>
-                        <div class="flex justify-between items-center">Temps passé</div>
-                    </th>
-                    <th>
-                        <div class="flex justify-between items-center">Reste</div>
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template #body let-detail>
-                <tr>
-                    <td>{{ detail.sousService.nom }}</td>
-                    <td>{{ detail.dateHeureDebut| date:'yyyy-MM-dd'  }}</td>
-                    <td>{{ detail.dateHeureDebut| date:'HH:mm:ss'  }}</td>
-                    <td>{{ detail.dateHeureFin| date:'HH:mm:ss'  }}</td>
-                    <td>
-                        <div class="progress-with-label">
-                            <label>Avancement : {{ detail.avancement | number:'1.0-2' }}%</label>
-                            <p-progressbar
-                                [value]="detail.avancement"
-                                [showValue]="false"
-                                [style]="{ height: '0.5rem' }"
-                            />
-                        </div>
-                    </td>
-                    <td >
-                        <p-inputnumber
-                            fluid
-                            placeholder="Temps passé en minute"
-                            [(ngModel)]="etatTacheInsert[detail._id].tempsPasse"
-                        />
-                    </td>
-                    <td >
-                        <p-inputnumber
-                            fluid
-                            placeholder="Reste à faire en minute"
-                            [(ngModel)]="etatTacheInsert[detail._id].resteAFaire"
-                        />
-                    </td>
-                    <td>
-                            <p-button
-                                icon="pi pi-check"
-                                class="mr-2"
-                                [rounded]="true"
-                                [outlined]="true"
-                                (click)="updateEtatTache(detail)"
-                            />
-                    </td>
-                </tr>
-            </ng-template>
-            <ng-template #emptymessage>
-                <tr>
-                    <td colspan="8">No customers found.</td>
-                </tr>
-            </ng-template>
-            <ng-template #loadingbody>
-                <tr>
-                    <td colspan="8">Loading customers data. Please wait.</td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">Sous-service</div>
+                </th>
+                <th>
+                    <div class="flex justify-between items-center">Date</div>
+                </th>
+                <th>
+                    <div class="flex justify-between items-center">Heure de début</div>
+                </th>
+                <th>
+                    <div class="flex justify-between items-center">Heure de fin prévu</div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">Etat</div>
+                </th>
+                <th>
+                    <div class="flex justify-between items-center">Temps passé</div>
+                </th>
+                <th>
+                    <div class="flex justify-between items-center">Reste</div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-detail>
+            <tr>
+                <td>{{ detail.sousService.nom }}</td>
+                <td>{{ detail.dateHeureDebut| date:'yyyy-MM-dd' }}</td>
+                <td>{{ detail.dateHeureDebut| date:'HH:mm:ss' }}</td>
+                <td>{{ detail.dateHeureFin| date:'HH:mm:ss' }}</td>
+                <td>
+                    <div class="progress-with-label">
+                        <label>Avancement : {{ detail.avancement | number:'1.0-2' }}%</label>
+                        <p-progressbar [value]="detail.avancement" [showValue]="false" [style]="{ height: '0.5rem' }" />
+                    </div>
+                </td>
+                <td>
+                    <p-inputnumber fluid placeholder="Temps passé en minute"
+                        [(ngModel)]="etatTacheInsert[detail._id].tempsPasse" />
+                </td>
+                <td>
+                    <p-inputnumber fluid placeholder="Reste à faire en minute"
+                        [(ngModel)]="etatTacheInsert[detail._id].resteAFaire" />
+                </td>
+                <td>
+                    <p-button icon="pi pi-check" class="mr-2" [rounded]="true" [outlined]="true"
+                        (click)="updateEtatTache(detail)" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No customers found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading customers data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
