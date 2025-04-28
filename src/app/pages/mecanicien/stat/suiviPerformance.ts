@@ -30,8 +30,8 @@ export class SuiviPerformance {
 
     subscription!: Subscription;
 
-    _anneeIntervention: number = 0;
-    _anneeEtoile: number = 0;
+    _anneeIntervention: number = new Date().getFullYear();
+    _anneeEtoile: number = new Date().getFullYear();
 
     get anneeIntervention(): number {
         return this._anneeIntervention;
@@ -39,6 +39,10 @@ export class SuiviPerformance {
 
     set anneeIntervention(value: number) {
         this._anneeIntervention = value;
+        this.dataATemps.splice(0, this.dataATemps.length);
+        this.dataAvance.splice(0, this.dataAvance.length);
+        this.dataRetard.splice(0, this.dataRetard.length);
+        this.loadData("autre");
     }
 
     get anneeEtoile(): number {
@@ -47,44 +51,59 @@ export class SuiviPerformance {
 
     set anneeEtoile(value: number) {
         this._anneeEtoile = value;
+        this.dataBonneNote.splice(0, this.dataBonneNote.length);
+        this.dataMauvaiseNote.splice(0, this.dataMauvaiseNote.length);
+        this.loadData("etoile");
     }
 
     constructor(public layoutService: LayoutService, private rdvService : RdvService) {
-        this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
-            this.initChart();
-        });
+        // const documentStyle = getComputedStyle(document.documentElement);
+        // const textColor = documentStyle.getPropertyValue('--text-color');
+        // const borderColor = documentStyle.getPropertyValue('--surface-border');
+        // const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
+        // this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
+        //     this.initChart(textColor, borderColor, textMutedColor);
+        // });
     }
 
-    loadData() {
+    loadData(type : string) {
+        const documentStyle = getComputedStyle(document.documentElement);
+        const textColor = documentStyle.getPropertyValue('--text-color');
+        const borderColor = documentStyle.getPropertyValue('--surface-border');
+        const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
         this.rdvService.getStatMecanicienPerformance(this.anneeIntervention, this.anneeEtoile).subscribe(data => {
-            for(let i=0; i<data.statPerformance.length; i++) {
-                this.dataATemps.push(data.statPerformance[i].aTemps);
-                this.dataAvance.push(data.statPerformance[i].enAvance);
-                this.dataRetard.push(data.statPerformance[i].aTemps);
+            if(this.dataATemps.length==0&&this.dataAvance.length==0&&this.dataRetard.length==0) {
+                for(let i=0; i<data.statPerformance.length; i++) {
+                    this.dataATemps.push(data.statPerformance[i].aTemps);
+                    this.dataAvance.push(data.statPerformance[i].enAvance);
+                    this.dataRetard.push(data.statPerformance[i].aTemps);
+                }
             }
-            for(let i=0; i<data.statEtoile.length; i++) {
-                this.dataBonneNote.push(data.statEtoile[i].nombreBonneNote);
-                this.dataMauvaiseNote.push(data.statEtoile[i].nombreMauvaisesNotes);
+            if(this.dataBonneNote.length==0&&this.dataMauvaiseNote.length==0) {
+                for(let i=0; i<data.statEtoile.length; i++) {
+                    this.dataBonneNote.push(data.statEtoile[i].nombreBonneNote);
+                    this.dataMauvaiseNote.push(data.statEtoile[i].nombreMauvaisesNotes);
+                }
             }
-            this.initChart();
+            if(type=="both") {
+                this.initChart(textColor, borderColor, textMutedColor);
+            } else if(type=="etoile") {
+                this.initEtoileChart(textColor, textMutedColor, borderColor);
+            } else {
+                console.log("autre");
+                
+                this.initInterventionsChart(textColor, textMutedColor, borderColor);
+            }
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
     }
 
     ngOnInit() {
-        this.anneeIntervention = new Date().getFullYear();
-        this.anneeEtoile = new Date().getFullYear();
-        this.loadData();
-        // this.initChart();
+        this.loadData("both");
     }
 
-    initChart() {
-        const documentStyle = getComputedStyle(document.documentElement);
-        const textColor = documentStyle.getPropertyValue('--text-color');
-        const borderColor = documentStyle.getPropertyValue('--surface-border');
-        const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
-
+    initInterventionsChart(textColor : string, textMutedColor:string, borderColor:string) {
         this.chartDataIntervention = {
             labels: [
                 'Janvier',
@@ -125,37 +144,6 @@ export class SuiviPerformance {
             ]
         };
 
-        this.chartDataEtoile = {
-            labels: [
-                'Janvier',
-                'Fevrier',
-                'Mars',
-                'Avril',
-                'Mai',
-                'Juin',
-                'Juillet',
-                'Aout',
-                'Septembre',
-                'Octobre',
-                'Novembre',
-                'Décembre'
-            ],
-            datasets: [
-                {
-                    type: 'bar',
-                    label: 'Fréquence de bonnes notes',
-                    backgroundColor: '#69c779',
-                    data: this.dataBonneNote
-                },
-                {
-                    type: 'bar',
-                    label: 'Fréquence des mauvaises notes',
-                    backgroundColor: '#f57c7c',
-                    data: this.dataMauvaiseNote
-                }
-            ]            
-        };
-
         this.chartOptionsIntervention = {
             maintainAspectRatio: false,
             aspectRatio: 0.8,
@@ -190,6 +178,41 @@ export class SuiviPerformance {
                 }
             }
         };
+    }
+
+    initEtoileChart(textColor:string, textMutedColor:string, borderColor:string) {
+        this.chartDataEtoile = {
+            labels: [
+                'Janvier',
+                'Fevrier',
+                'Mars',
+                'Avril',
+                'Mai',
+                'Juin',
+                'Juillet',
+                'Aout',
+                'Septembre',
+                'Octobre',
+                'Novembre',
+                'Décembre'
+            ],
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Fréquence de bonnes notes',
+                    backgroundColor: '#69c779',
+                    data: this.dataBonneNote
+                },
+                {
+                    type: 'bar',
+                    label: 'Fréquence des mauvaises notes',
+                    backgroundColor: '#f57c7c',
+                    data: this.dataMauvaiseNote
+                }
+            ]            
+        };
+        
+        
 
         this.chartOptionsEtoile = {
             maintainAspectRatio: false,
@@ -225,6 +248,11 @@ export class SuiviPerformance {
                 }
             }
         };
+    }
+
+    initChart(textColor:string, borderColor:string, textMutedColor:string) {
+        this.initInterventionsChart(textColor, textMutedColor, borderColor);
+        this.initEtoileChart(textColor, textMutedColor, borderColor);
     }
 
     ngOnDestroy() {
