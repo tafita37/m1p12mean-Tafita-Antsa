@@ -15,6 +15,8 @@ export class RdvService {
     private refuserRDVUrl = environment.baseUrl + "/manager/rdv/refuserRDV";
     private planningMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getPlanning";
     private statPerfMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getStatPerformance";
+    private statInterventionMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getStatIntervention";
+    private statEtoileMecanicienUrl = environment.baseUrl + "/mecanicien/rdv/getStatEtoile";
     private planningMecanicienAValiderUrl = environment.baseUrl + "/manager/mecanicien/listeTacheAValider";
     private planningOfDemandeUrl = environment.baseUrl + "/client/rdv/planningOfDemande";
     private planningMecanicienUpdateUrl = environment.baseUrl + "/mecanicien/rdv/updatePlanning";
@@ -49,6 +51,28 @@ export class RdvService {
 
         return this.http.get(
             this.statPerfMecanicienUrl + "?anneeIntervention=" + anneeIntervention+"&anneeEtoile="+anneeEtoile, { headers }
+        );
+    }
+
+    getStatMecanicienEtoile(anneeEtoile : Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenMecanicienStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(
+            this.statEtoileMecanicienUrl + "?anneeEtoile="+anneeEtoile, { headers }
+        );
+    }
+
+    getStatMecanicienIntervention(anneeIntervention:Number): Observable<any> {
+        const token = localStorage.getItem(environment.tokenMecanicienStorage);
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.get(
+            this.statInterventionMecanicienUrl + "?anneeIntervention=" + anneeIntervention, { headers }
         );
     }
 

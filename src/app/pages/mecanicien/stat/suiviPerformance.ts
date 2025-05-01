@@ -30,43 +30,12 @@ export class SuiviPerformance {
 
     subscription!: Subscription;
 
-    _anneeIntervention: number = new Date().getFullYear();
-    _anneeEtoile: number = new Date().getFullYear();
+    anneeIntervention: number = new Date().getFullYear();
+    anneeEtoile: number = new Date().getFullYear();
 
-    get anneeIntervention(): number {
-        return this._anneeIntervention;
-    }
+    constructor(public layoutService: LayoutService, private rdvService : RdvService) {}
 
-    set anneeIntervention(value: number) {
-        this._anneeIntervention = value;
-        this.dataATemps.splice(0, this.dataATemps.length);
-        this.dataAvance.splice(0, this.dataAvance.length);
-        this.dataRetard.splice(0, this.dataRetard.length);
-        this.loadData("autre");
-    }
-
-    get anneeEtoile(): number {
-        return this._anneeEtoile;
-    }
-
-    set anneeEtoile(value: number) {
-        this._anneeEtoile = value;
-        this.dataBonneNote.splice(0, this.dataBonneNote.length);
-        this.dataMauvaiseNote.splice(0, this.dataMauvaiseNote.length);
-        this.loadData("etoile");
-    }
-
-    constructor(public layoutService: LayoutService, private rdvService : RdvService) {
-        // const documentStyle = getComputedStyle(document.documentElement);
-        // const textColor = documentStyle.getPropertyValue('--text-color');
-        // const borderColor = documentStyle.getPropertyValue('--surface-border');
-        // const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
-        // this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
-        //     this.initChart(textColor, borderColor, textMutedColor);
-        // });
-    }
-
-    loadData(type : string) {
+    loadData() {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const borderColor = documentStyle.getPropertyValue('--surface-border');
@@ -85,22 +54,56 @@ export class SuiviPerformance {
                     this.dataMauvaiseNote.push(data.statEtoile[i].nombreMauvaisesNotes);
                 }
             }
-            if(type=="both") {
-                this.initChart(textColor, borderColor, textMutedColor);
-            } else if(type=="etoile") {
-                this.initEtoileChart(textColor, textMutedColor, borderColor);
-            } else {
-                console.log("autre");
-                
-                this.initInterventionsChart(textColor, textMutedColor, borderColor);
+            this.initChart(textColor, borderColor, textMutedColor);
+        }, error => {
+            console.error('Erreur lors de la connexion:', error);
+        });
+    }
+
+    rechercheEtoile() {
+        const documentStyle = getComputedStyle(document.documentElement);
+        const textColor = documentStyle.getPropertyValue('--text-color');
+        const borderColor = documentStyle.getPropertyValue('--surface-border');
+        const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
+        this.dataBonneNote.splice(0, this.dataBonneNote.length);
+        this.dataMauvaiseNote.splice(0, this.dataMauvaiseNote.length);
+        this.rdvService.getStatMecanicienEtoile(this.anneeEtoile).subscribe(data => {
+            if(this.dataBonneNote.length==0&&this.dataMauvaiseNote.length==0) {
+                for(let i=0; i<data.statEtoile.length; i++) {
+                    this.dataBonneNote.push(data.statEtoile[i].nombreBonneNote);
+                    this.dataMauvaiseNote.push(data.statEtoile[i].nombreMauvaisesNotes);
+                }
             }
+            this.initEtoileChart(textColor, textMutedColor, borderColor);
+        }, error => {
+            console.error('Erreur lors de la connexion:', error);
+        });
+    }
+
+    rechercherIntervention() {
+        const documentStyle = getComputedStyle(document.documentElement);
+        const textColor = documentStyle.getPropertyValue('--text-color');
+        const borderColor = documentStyle.getPropertyValue('--surface-border');
+        const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
+        this.dataATemps.splice(0, this.dataATemps.length);
+        this.dataAvance.splice(0, this.dataAvance.length);
+        this.dataRetard.splice(0, this.dataRetard.length);
+        this.rdvService.getStatMecanicienIntervention(this.anneeIntervention).subscribe(data => {
+            if(this.dataATemps.length==0&&this.dataAvance.length==0&&this.dataRetard.length==0) {
+                for(let i=0; i<data.statPerformance.length; i++) {
+                    this.dataATemps.push(data.statPerformance[i].aTemps);
+                    this.dataAvance.push(data.statPerformance[i].enAvance);
+                    this.dataRetard.push(data.statPerformance[i].aTemps);
+                }
+            }
+            this.initInterventionsChart(textColor, textMutedColor, borderColor);
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
     }
 
     ngOnInit() {
-        this.loadData("both");
+        this.loadData();
     }
 
     initInterventionsChart(textColor : string, textMutedColor:string, borderColor:string) {
