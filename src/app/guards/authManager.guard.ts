@@ -26,11 +26,13 @@ export const authManagerGuard: CanActivateFn = (route, state) => {
             if (response.valid) {
                 return true;
             } else {
+                localStorage.removeItem(environment.tokenManagerStorage);
                 router.navigate(['/auth/loginManager']);
                 return false;
             }
         }),
         catchError(() => {
+            localStorage.removeItem(environment.tokenManagerStorage);
             router.navigate(['/auth/loginManager']);
             return of(false);
         })
@@ -58,11 +60,13 @@ export const authClientGuard: CanActivateFn = (route, state) => {
             if (response.valid) {
                 return true;
             } else {
+                localStorage.removeItem(environment.tokenClientStorage);
                 router.navigate(['/auth/loginClient']);
                 return false;
             }
         }),
         catchError(() => {
+            localStorage.removeItem(environment.tokenClientStorage);
             router.navigate(['/auth/loginClient']);
             return of(false);
         })
@@ -90,11 +94,13 @@ export const authMecanicienGuard: CanActivateFn = (route, state) => {
             if (response.valid) {
                 return true;
             } else {
+                localStorage.removeItem(environment.tokenMecanicienStorage);
                 router.navigate(['/auth/loginMecanicien']);
                 return false;
             }
         }),
         catchError(() => {
+            localStorage.removeItem(environment.tokenMecanicienStorage);
             router.navigate(['/auth/loginMecanicien']);
             return of(false);
         })

@@ -1,21 +1,42 @@
 <div class="grid grid-cols-12 gap-3">
+    <!-- Première carte -->
     <div class="col-span-12 xl:col-span-6">
         <div class="card !mb-8">
-            <div class="grid grid-cols-12 gap-4 items-center">
-                <div class="col-span-6 font-semibold text-xl">Nombres d'interventions réalisés</div>
-                <p-inputNumber [showButtons]="true" mode="decimal" [min]="2000" class="col-span-6"
-                    [(ngModel)]="anneeIntervention" />
+            <div class="grid grid-cols-12">
+                <div class="col-span-12 xl:col-span-6 font-semibold text-xl whitespace-nowrap">
+                    Nombre d'interventions réalisés
+                  </div>
+                  
+
+                <div class="col-span-12 xl:col-span-6 flex gap-2 items-center">
+                    <p-inputNumber [showButtons]="true" mode="decimal" [min]="2000" [(ngModel)]="anneeIntervention"
+                        inputId="intervention-input" class="flex-1" />
+                    <button 
+                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition" 
+                        (click)="rechercherIntervention()"
+                    >
+                        Rechercher
+                    </button>
+                </div>
             </div>
 
             <p-chart type="bar" [data]="chartDataIntervention" [options]="chartOptionsIntervention" class="h-80" />
         </div>
     </div>
+
+    <!-- Deuxième carte -->
     <div class="col-span-12 xl:col-span-6">
         <div class="card !mb-8">
             <div class="grid grid-cols-12 gap-4 items-center">
-                <div class="col-span-6 font-semibold text-xl">Nombre d'étoile</div>
-                <p-inputNumber [showButtons]="true" mode="decimal" [min]="2000" class="col-span-6"
-                    [(ngModel)]="anneeEtoile" />
+                <div class="col-span-12 xl:col-span-4 font-semibold text-xl">Nombre d'étoile</div>
+
+                <div class="col-span-12 xl:col-span-8 flex gap-2 items-center">
+                    <p-inputNumber [showButtons]="true" mode="decimal" [min]="2000" [(ngModel)]="anneeEtoile"
+                        inputId="etoile-input" class="flex-1" />
+                    <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition" (click)="rechercheEtoile()">
+                        Rechercher
+                    </button>
+                </div>
             </div>
 
             <p-chart type="bar" [data]="chartDataEtoile" [options]="chartOptionsEtoile" class="h-80" />
