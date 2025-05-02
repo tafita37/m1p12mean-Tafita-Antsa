@@ -1,6 +1,6 @@
 <div class="card">
         <div class="font-semibold text-xl mb-4">
-            Liste des tâches à valider de {{mecanicien?.user?.nom+" "+mecanicien?.user?.prenom}}
+            Liste des tâches à valider de {{ mecanicien?.user ? mecanicien.user.nom + " " + mecanicien.user.prenom : '' }}
         </div>
         <p-table
             #dt1
