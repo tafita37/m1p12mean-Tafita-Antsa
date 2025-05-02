@@ -96,7 +96,7 @@ export class ListMecanicien implements OnInit {
 
     // Liste des mois avec id et label
     listeMois = [
-        { id: null, label: 'Tout' },
+        { id: null, label: 'Mois' },
         { id: 1, label: 'Janvier' },
         { id: 2, label: 'Février' },
         { id: 3, label: 'Mars' },
