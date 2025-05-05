@@ -132,12 +132,15 @@ export class UserNotValider implements OnInit {
         const page = event ? (event.first / event.rows)+1 : 1;
         this.users = [];
         this.typeClients = [];
+        this.loading=true;
         this.managerService.getListUserUnvalidate(page).subscribe(data => {
             this.users = data.user;
             this.typeClients = data.typeClients;
             this.nbNonValider = data.nbUser;
+            this.loading=false;
         }, error => {
             console.error('Erreur lors de la connexion:', error);
+            this.loading=false;
         });
     }
 
