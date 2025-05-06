@@ -57,7 +57,7 @@
                 Durée du service
                 <p-sortIcon field="dureeMinute" />
             </th>
-            <th pSortableColumn="pieces">Pièces</th>
+            <th pSortableColumn="pieces">Outils</th>
         </tr>
     </ng-template>
     <ng-template #body let-sous>
@@ -69,7 +69,7 @@
             <td style="text-align: right">{{ sous.prix | number:'1.0-2':'fr' }} ar</td>
             <td style="text-align: right">{{ sous.dureeMinute | number:'1.0-2':'fr' }} min</td>
             <td>
-                <p-button type="button" label="Pièces" (click)="toggleDataTable(op2, sous, $event)" />
+                <p-button type="button" label="Outils" (click)="toggleDataTable(op2, sous, $event)" />
             </td>
             <td>
                 <p-button
@@ -142,11 +142,11 @@
         <label for="dureeService" class="block font-bold">Durée du service</label>
         <p-inputnumber id="dureeService" fluid [(ngModel)]="sousServiceInsert.dureeMinute" />
     </div>
-    <div class="font-semibold text-xl">Pièces</div>
+    <div class="font-semibold text-xl">Outils</div>
     <p-multiselect
         [options]="allPieces"
         [(ngModel)]="piecesSelected"
-        placeholder="Sélectionnez les pièces"
+        placeholder="Sélectionnez les outils"
         optionLabel="nom"
         optionValue="_id"
         display="chip"
@@ -200,11 +200,11 @@
         <label for="dureeMinute" class="block font-bold">Durée du service</label>
         <p-inputnumber id="dureeMinute" fluid [(ngModel)]="sousServiceUpdate.dureeMinute" />
     </div>
-    <div class="font-semibold text-xl">Pièces</div>
+    <div class="font-semibold text-xl">Outils</div>
     <p-multiselect
         [options]="allPieceUpdate"
         [(ngModel)]="piecesSelectedUpdate"
-        placeholder="Sélectionnez les pièces"
+        placeholder="Sélectionnez les outils"
         optionLabel="nom"
         optionValue="_id"
         display="chip"

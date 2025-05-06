@@ -235,7 +235,7 @@ export class CRUDPiece implements OnInit {
                 (!this.pieceCliquer.prixReparation || this.pieceCliquer.prixReparation == 0)
             )
         ) {
-            this.errorMessage = "Veuillez indiquer la pièce que vous souhaitez modifier";
+            this.errorMessage = "Veuillez indiquer l'outil que vous souhaitez modifier";
             this.isLoading = false;
         } else {
             this.managerService.updatePiece(
@@ -261,7 +261,7 @@ export class CRUDPiece implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
+            message: 'Etes vous sur de vouloir supprimer ces outils ?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {

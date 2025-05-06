@@ -226,7 +226,7 @@ export class CRUDMarque implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
+            message: 'Etes vous sur de vouloir supprimer ces marques ?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {

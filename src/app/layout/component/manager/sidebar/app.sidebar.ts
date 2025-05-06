@@ -59,9 +59,9 @@ export class AppSidebarManager {
                 label: 'Données',
                 items: [
                     {
-                        label: 'Pièces', icon: 'pi pi-fw pi-wrench', items: [
+                        label: 'Outils', icon: 'pi pi-fw pi-wrench', items: [
                             {
-                                label: 'Pièces',
+                                label: 'Outils',
                                 icon: 'pi pi-fw pi-wrench',
                                 routerLink: ['/manager/piece/crud']
                             },

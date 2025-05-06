@@ -328,7 +328,7 @@ export class CRUDService implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
+            message: 'Etes vous sur de vouloir supprimer ces services ?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {

@@ -294,7 +294,7 @@ export class ListeMouvement implements OnInit {
 
     updatePiece() {
         if (!this.pieceCliquer.idPiece || !this.pieceCliquer.nom) {
-            this.errorMessage = "Veuillez indiquer la pièce que vous souhaitez modifier";
+            this.errorMessage = "Veuillez indiquer l'outil que vous souhaitez modifier";
         } else {
             // this.stockService.updatePiece(
             //     this.pieceCliquer.idPiece,
@@ -314,7 +314,7 @@ export class ListeMouvement implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
+            message: 'Etes vous sur de vouloir supprimer ces outils ?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {

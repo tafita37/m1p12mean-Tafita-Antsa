@@ -28,12 +28,12 @@
     [(selection)]="selectedProducts"
     [rowHover]="true"
     dataKey="_id"
-    currentPageReportTemplate="Liste des pièces"
+    currentPageReportTemplate="Liste des outils"
     [showCurrentPageReport]="true"
 >
     <ng-template #caption>
         <div class="flex items-center justify-between">
-            <h5 class="m-0">Liste des pièces en stock</h5>
+            <h5 class="m-0">Liste des outils en stock</h5>
             <p-iconfield>
                 <p-inputicon styleClass="pi pi-search" />
                 <p-datepicker 
@@ -53,7 +53,7 @@
                 <p-tableHeaderCheckbox />
             </th> -->
             <th pSortableColumn="piece">
-                Pièce
+                Outil
                 <p-sortIcon field="piece" />
             </th>
             <th pSortableColumn="marque">
@@ -85,7 +85,7 @@
 </p-table>
 <p-dialog [(visible)]="newStockPieceDialog" [style]="{ width: '450px' }" header="Nouveau mouvement" [modal]="true" #elseBlock>
     <div>
-        <label for="piece" class="block font-bold">Pièce</label>
+        <label for="piece" class="block font-bold">Outil</label>
         <p-select [options]="allPiece" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Piece" [appendTo]="'body'" fluid [(ngModel)]="mouvementInsert.idPiece" />
     </div>
     <div>

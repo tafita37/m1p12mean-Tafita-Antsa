@@ -29,12 +29,12 @@
     [(selection)]="selectedProducts"
     [rowHover]="true"
     dataKey="_id"
-    currentPageReportTemplate="Liste des détails de pièces"
+    currentPageReportTemplate="Liste des détails de outils"
     [showCurrentPageReport]="true"
 >
     <ng-template #caption>
         <div class="flex items-center justify-between">
-            <h5 class="m-0">Liste des détails pièces</h5>
+            <h5 class="m-0">Liste des détails outils</h5>
             <!-- <p-iconfield>
                 <p-inputicon styleClass="pi pi-search" />
                 <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
@@ -47,7 +47,7 @@
                 <p-tableHeaderCheckbox />
             </th>
             <th pSortableColumn="piece">
-                Pièce
+                Outil
                 <p-sortIcon field="piece" />
             </th>
             <th pSortableColumn="marque">
@@ -71,8 +71,17 @@
 </p-table>
 <p-dialog [(visible)]="newPieceDetailDialog" [style]="{ width: '450px' }" header="Créer" [modal]="true">
     <div>
-        <label for="piece" class="block font-bold">Piece</label>
-        <p-select [(ngModel)]="detailInsert.idPiece" [options]="allPieces" styleClass="mb-3" optionValue="_id" optionLabel="nom" placeholder="Piece" [appendTo]="'body'" fluid />
+        <label for="piece" class="block font-bold">Outil</label>
+        <p-select 
+            [(ngModel)]="detailInsert.idPiece" 
+            [options]="allPieces" 
+            styleClass="mb-3" 
+            optionValue="_id" 
+            optionLabel="nom" 
+            placeholder="Outil" 
+            [appendTo]="'body'" 
+            fluid 
+        />
     </div>
     <div>
         <label for="marque" class="block font-bold">Marque</label>

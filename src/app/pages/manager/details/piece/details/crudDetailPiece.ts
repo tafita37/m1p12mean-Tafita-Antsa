@@ -214,7 +214,7 @@ export class CRUDDetailsPiece implements OnInit {
 
     deleteSelectedProducts() {
         this.confirmationService.confirm({
-            message: 'Etes vous sur de vouloir supprimer ces pièces ?',
+            message: 'Etes vous sur de vouloir supprimer ces outils ?',
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
