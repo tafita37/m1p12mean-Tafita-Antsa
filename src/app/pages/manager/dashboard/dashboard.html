@@ -1,11 +1,11 @@
 <div class="grid grid-cols-12 gap-3">
-    <app-other-stat class="contents" [fournisseurStat]="statFournisseur" />
+    <app-other-stat class="contents" [fournisseurStat]="statFournisseur" [clientStat]="statClient" [statMecanicien]="statMecanicien"/>
     <div class="col-span-12 xl:col-span-6">
-        <app-recent-sales-widget />
+        <app-recent-sales-widget (anneeClientChange)="onAnneeClientChange($event)" [topClients]="topClients"/>
         <!-- <app-best-selling-widget /> -->
     </div>
     <div class="col-span-12 xl:col-span-6">
-        <app-revenue-ca (anneeChange)="onAnneeChange($event)" [statPiece]="statPiece"/>
+        <app-revenue-ca (anneeChange)="onAnneeChange($event)" [statPiece]="statPiece" [statService]="statService"/>
         <!-- <app-notifications-widget /> -->
     </div>
 </div>

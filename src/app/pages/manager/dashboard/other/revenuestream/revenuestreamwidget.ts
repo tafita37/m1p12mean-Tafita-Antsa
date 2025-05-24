@@ -13,12 +13,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class RevenueStreamWidget implements OnChanges {
     @Input() statPiece: any;
+    @Input() statService: any;
 
     ngOnChanges(changes: SimpleChanges) {
-        console.log(this.statPiece);
-        if (changes['statPiece'] && this.statPiece) {
+        // if (changes['statPiece'] && this.statPiece) {
             this.initChart();
-        }
+        // }
     }
 
     chartData: any;
@@ -85,7 +85,8 @@ export class RevenueStreamWidget implements OnChanges {
                     type: 'bar',
                     label: 'Services',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-700'),
-                    data: [2100, 8400, 2400, 7500, 5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000],
+                    data: this.statService.map((stat: any) => stat.total),
+                    // data: [2100, 8400, 2400, 7500, 5000, 10000, 15000, 4000, 5000, 10000, 15000, 4000],
                     barThickness: 10
                 }
             ]

@@ -17,9 +17,9 @@ export class AppSidebarManager {
             {
                 label: 'Accueil',
                 items: [
-                    // {
-                    //     label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/manager/dashboard']
-                    // },
+                    {
+                        label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/manager/dashboard']
+                    },
                     {
                         label: 'Stock', icon: 'pi pi-box pi-wrench', routerLink: ['/manager/piece/stock']
                     },
