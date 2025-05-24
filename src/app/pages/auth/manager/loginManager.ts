@@ -50,7 +50,7 @@ export class LoginManager {
                 localStorage.setItem(environment.tokenManagerStorage, data.token);
                 this.sucessMessage = "Connecté";
                 this.isLoading = false;
-                this.router.navigate(['/manager/user/userNotValider']);
+                this.router.navigate(['/manager/dashboard']);
             }, error => {
                 console.error('Erreur lors de la connexion:', error);
                 this.errorMessage = error.error.message;

@@ -11,15 +11,25 @@ import { StatistiqueService } from '../../../service/manager/stat/statistique.se
 })
 export class Dashboard {
     statFournisseur: {} = {};
+    statMecanicien: {} = {};
+    statClient: {} = {};
+    topClients: any[] = [];
     statPiece = [];
+    statService = [];
     anneeStat = new Date().getFullYear();
+    anneeClient = new Date().getFullYear();
 
     constructor(private statistiqueService: StatistiqueService) { }
 
     loadData(): void {
-        this.statistiqueService.getAllStat(this.anneeStat).subscribe(data => {
+        this.statistiqueService.getAllStat(this.anneeStat, this.anneeClient).subscribe(data => {
+            this.statMecanicien= data.meilleurMecanicien.length != 0 ? data.meilleurMecanicien[0] : {};
             this.statFournisseur = data.bestFournisseur;
+            this.statClient = data.bestClient.length!=0 ? data.bestClient[0] : {};
+            // this.topClients = data.topClients;
             this.statPiece = data.statPiece;
+            this.statService = data.statService;
+            
         }, error => {
             console.error('Erreur lors de la connexion:', error);
         });
@@ -27,7 +37,25 @@ export class Dashboard {
 
     onAnneeChange(nouvelleValeur: number) {
         this.anneeStat = nouvelleValeur;
-        this.loadData();
+        
+        this.statistiqueService.getStatPieceService(this.anneeStat).subscribe(data => {
+            // console.log(data);
+            
+            this.statPiece = data.statPiece;
+            this.statService = data.statService;
+            
+        }, error => {
+            console.error('Erreur lors de la connexion:', error);
+        });
+    }
+
+    onAnneeClientChange(nouvelleValeur: number) {
+        this.anneeClient = nouvelleValeur;
+        this.statistiqueService.getStatTopClient(this.anneeClient).subscribe(data => {
+            this.topClients = data.topClients;
+        }, error => {
+            console.error('Erreur lors de la connexion:', error);
+        });
     }
 
     ngOnInit(): void {

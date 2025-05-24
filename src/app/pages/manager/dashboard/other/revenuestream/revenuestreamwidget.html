@@ -1,7 +1,7 @@
 <div class="card !mb-8">
     <div class="grid grid-cols-12 gap-4 items-center">
         <div class="col-span-6 font-semibold text-xl">Chiffres d'affaire</div>
-        <p-inputNumber [showButtons]="true" mode="decimal" [min]="2000" class="col-span-6" [(ngModel)]="anneeCA" />
+        <p-inputNumber [showButtons]="true" mode="decimal" [min]="2000" class="col-span-6" [(ngModel)]="anneeCA" placeholder="Année"/>
     </div>
 
     <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-80" />
